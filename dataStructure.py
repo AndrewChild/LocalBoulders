@@ -142,7 +142,7 @@ class Route(ModuleBaseClass):
         elif grade <= 10:
             self.color = 'Goldenrod!50'
             self.color_hex = webcolors.name_to_hex('Goldenrod')
-        elif grade <= 5:
+        else:
             self.color = 'red!20'
             self.color_hex = webcolors.name_to_hex('red')
 
@@ -189,7 +189,7 @@ class Variation(ModuleBaseClass):
         elif grade <= 10:
             self.color = 'Goldenrod!50'
             self.color_hex = webcolors.name_to_hex('Goldenrod')
-        elif grade <= 5:
+        else:
             self.color = 'red!20'
             self.color_hex = webcolors.name_to_hex('red')
 

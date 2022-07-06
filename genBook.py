@@ -38,4 +38,3 @@ def gen_book(book):
 
     process = subprocess.Popen(['pdflatex', '-output-directory', '../', 'guideBook.tex', ], cwd=r'./sections')
     process.wait()
-    shutil.copyfile('./sections/main.pdf', f'./{book.name}.pdf')
