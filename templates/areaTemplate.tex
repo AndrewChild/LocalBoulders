@@ -1,0 +1,69 @@
+\colorlet{shadecolor}{\chapterColor}
+\chapter{\VAR{area.name}}\label{a:\VAR{area.name}}
+\markboth{\color{white}\VAR{area.name} \protect\thepage \hspace{4pt}}{}
+\lhead{\textcolor{\chapterColor}{\rule[-2pt]{\textwidth}{15pt}}}
+\VAR{area.description or "\\"}
+
+%% for subArea in area.subareas.values()
+%% for map in subArea.subAreaMaps.values()
+%% if map.size == 'f'
+\fullPic{../maps/subarea/\VAR{map.outFileName}}{\VAR{map.description}}
+%% else
+\halfPic{../maps/subarea/\VAR{map.outFileName}}{\VAR{map.description}}
+%% endif
+%% endfor
+%% if subArea.name
+\section{\VAR{subArea.name}}\label{sa:\VAR{subArea.name}}
+%% endif
+
+\VAR{subArea.description or "\\"}
+
+%% for photo in subArea.photos
+\halfPic{./Image/\VAR{photo.fileName}}{\VAR{photo.description}}
+%% endfor
+
+%% if subArea.boulders
+%% for boulder in subArea.boulders.values()
+%% for topo in boulder.topos.values()
+%% if topo.size == 'f'
+\fullPic{../maps/topos/\VAR{topo.outFileName}}{\VAR{topo.description}}
+%% else
+\halfPic{../maps/topos/\VAR{topo.outFileName}}{\VAR{topo.description}}
+%% endif
+%% endfor
+\subsection*{\VAR{boulder.name}}\label{bf:\VAR{boulder.name}}
+\VAR{boulder.description or "\\"}
+
+%% for photo in boulder.photos
+\halfPic{./Image/\VAR{photo.fileName}}{\VAR{photo.description}}
+%% endfor
+
+%% if boulder.routes
+%% if loop.index ==1 
+\begin{enumerate}[]
+%% else
+\begin{enumerate}[resume]
+%% endif
+
+%% for route in boulder.routes.values()
+	\item\label{rt:\VAR{route.name}} \colorbox{\VAR{route.color}}{\textbf{\VAR{route.name} V\VAR{route.grade} \VAR{route.rating_string} \VAR{route.serious_string}} }
+	\newline \VAR{route.description}\
+%% if route.variations.values()
+	\newline \textbf{Variations:}
+	\begin{enumerate}
+%% for variation in route.variations.values()
+		\item\label{vr:\VAR{variation.name}} \colorbox{\VAR{variation.color}}{\emph{\VAR{variation.name} V\VAR{variation.grade} \VAR{variation.rating_string} \VAR{variation.serious_string}}  }
+		\newline \VAR{variation.description}\
+%% endfor
+	\end{enumerate}
+%% endif
+%% endfor 
+\end{enumerate}
+%% endif
+
+%% endfor 
+%% endif
+%% endfor
+
+
+\clearpage

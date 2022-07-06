@@ -1,0 +1,29 @@
+\colorlet{shadecolor}{\chapterColor}
+\chapter{\VAR{area}}
+\markboth{\color{white}\VAR{area} \thepage}{}
+\lhead{\textcolor{\chapterColor}{\rule[-2pt]{\textwidth}{15pt}}}
+\VAR{description}
+
+%% for subArea in subAreas
+\section{\VAR{subArea}}
+%% for topo in subAreas[subArea].topos
+\begin{figure*}[h]
+\includegraphics[height=8cm]{./topos/\VAR{subarea}/\VAR{topo}}
+\centering
+\end{figure*}
+%% endfor
+\VAR{descriptin or "\\"}
+
+%% if loop.index ==1 
+\begin{enumerate}
+%% else
+\begin{enumerate}[resume]
+%% endif
+
+%% for route in subAreas[subArea].routes
+\item \textbf{\VAR{route} V\VAR{subAreas[subArea].routes[route].grade} \BLOCK{for x in range(subAreas[subArea].routes[route].rating)} \ding{72} \BLOCK{ endfor }} \newline \VAR{subAreas[subArea].routes[route].description}
+%% endfor 
+\end{enumerate}
+
+%% endfor 
+\clearpage
