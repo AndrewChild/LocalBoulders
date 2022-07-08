@@ -2,7 +2,7 @@
  Framework for building bouldering guidebooks
 
 # TODO:
-	## Python:
+	Python:
 	- Add area maps feature
 	- Link photos to routes
 	- Intro?
@@ -10,7 +10,7 @@
 	- photos assign to parents on init
 	- use of cammal case vs other conventions is inconsistent
 	- PEP8?
-	## LaTeX:
+	LaTeX:
     - Link photos to routes
     - add index (routes by grade and alphabetical)
     - GPS index of boulders
@@ -19,5 +19,5 @@
 	- add colaborators page
     - support half and full page photo sizes
     - there seems to be no way to include a full page photo on the first page of a chapter
-	## Other:
+	Other:
 	- Consider alternatives to LaTeX. HTML?
