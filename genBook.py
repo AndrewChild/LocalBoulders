@@ -26,7 +26,7 @@ def gen_book(book):
     mainTemplate = templateEnv.get_template("./templates/localBoulders.tex")
     introTemplate = templateEnv.get_template("./templates/introTemplate.tex")
     areaTemplate = templateEnv.get_template("./templates/areaTemplate.tex")
-    indicesTemplate = templateEnv.get_template("./templates/indicesTemplate.tex")
+    indicesTemplate = templateEnv.get_template("./templates/indexTemplate.tex")
 
     f = open(f'./sections/guideBook.tex', 'w')
     f.write(mainTemplate.render(book=book))
@@ -37,14 +37,9 @@ def gen_book(book):
         f.write(areaTemplate.render(area=area))
         f.close()
 
-    f = open(f'./sections/indices.tex', 'w')
+    f = open(f'./sections/index.tex', 'w')
     f.write(indicesTemplate.render(book=book))
     f.close()
 
-    # Removing these files prevents LaTeX from crashing for stupid reasons
-    # if os.path.exists('./guideBook.aux'):
-    #     os.remove('./guideBook.aux')
-    # if os.path.exists('./guideBook.log'):
-    #     os.remove('./guideBook.log')
     process = subprocess.Popen(['pdflatex', '-output-directory', '../', 'guideBook.tex', ], cwd=r'./sections')
     process.wait()

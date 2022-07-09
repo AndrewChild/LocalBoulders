@@ -11,6 +11,7 @@
 	- PEP8?
 	LaTeX:
     - Link photos to routes
+	- index formatting will break if a route name (or other item) is too long
     - GPS index of boulders
     - arete shortcut
     - add photo credits page
