@@ -1,0 +1,20 @@
+\colorlet{shadecolor}{\chapterColor}
+\chapter{Indicies}
+\section{Routes Alphabetical}
+\begin{center}
+\begin{supertabular}{llr}
+%%for route in book.allRoutes | sort(attribute="name")
+\VAR{route.name} V\VAR{route.grade}&\VAR{route.rating_string}& \pageref{\VAR{route.ref}:\VAR{route.name}} \\
+%%endfor
+\end{supertabular}
+\end{center}
+\section{Routes by grade}
+\begin{center}
+\begin{supertabular}{lr}
+%%for route in book.allRoutes | sort(reverse=true, attribute="rating") | sort(attribute="gradeNum")
+V\VAR{route.grade} \VAR{route.name} \VAR{route.rating_string}& \pageref{\VAR{route.ref}:\VAR{route.name}} \\
+%%endfor
+\end{supertabular}
+\end{center}
+\section{GPS Coordinates}
+\section{Photo Credits}

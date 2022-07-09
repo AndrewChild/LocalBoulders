@@ -11,10 +11,12 @@ from topo import update_svg
 from genBook import gen_book
 
 
-def get_color(grade):
+def get_grade_atts(grade):
+    gradeNum = grade
     if grade == '?':
         color = 'black!20'
         color_hex = webcolors.name_to_hex('black')
+        gradeNum = 42069 # set numeric value of unknown routes arbitrarily high
     elif grade <= 3:
         color = 'green!20'
         color_hex = webcolors.name_to_hex('green')
@@ -27,7 +29,7 @@ def get_color(grade):
     else:
         color = 'red!20'
         color_hex = webcolors.name_to_hex('red')
-    return color, color_hex
+    return color, color_hex, gradeNum
 
 
 def get_rating_string(rating):
@@ -107,8 +109,30 @@ class Book(ModuleBaseClass):
         self.author = author
         self.date = datetime.today().strftime('%Y-%m-%d')
         self.ref = 'bk'
+        # self.routesAlph = []
+        # self.routesGrade = []
 
     def gen(self):
+        allRoutes = []
+        allPhotos = []
+        for area in self.areas.values():
+            allPhotos = allPhotos + area.photos
+            for subArea in area.subareas.values():
+                allPhotos = allPhotos + subArea.photos
+                for boulder in subArea.boulders.values():
+                    allPhotos = allPhotos + boulder.photos
+                    for route in boulder.routes.values():
+                        allRoutes.append(route)
+                        for variation in route.variations.values():
+                            allRoutes.append(variation)
+
+        self.allRoutes = allRoutes
+        self.allPhotos = allPhotos
+        # routesAlph = allRoutes.sort(key=lambda x: x.name)
+        # routesGrade = allRoutes.sort(key=lambda x: (x.gradeNum, x.rating))
+        self.allPhotos = allPhotos
+
+
         gen_book(self)
 
 
@@ -156,7 +180,7 @@ class Route(ModuleBaseClass):
 
         self.serious_string = r'\warn ' * self.serious
         self.ref = 'rt'
-        self.color, self.color_hex = get_color(grade)
+        self.color, self.color_hex, self.gradeNum = get_grade_atts(grade)
         self.rating_string = get_rating_string(self.rating)
 
         assert self._parent_class == Boulder
@@ -183,7 +207,7 @@ class Variation(ModuleBaseClass):
 
         self.serious_string = r'\warn ' * self.serious
         self.ref = 'vr'
-        self.color, self.color_hex = get_color(grade)
+        self.color, self.color_hex, self.gradeNum = get_grade_atts(grade)
         self.rating_string = get_rating_string(self.rating)
 
         assert self._parent_class == Route
