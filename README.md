@@ -11,7 +11,6 @@
 	- PEP8?
 	LaTeX:
     - Link photos to routes
-    - add index (routes by grade and alphabetical)
     - GPS index of boulders
     - arete shortcut
     - add photo credits page
