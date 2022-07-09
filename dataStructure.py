@@ -11,6 +11,35 @@ from topo import update_svg
 from genBook import gen_book
 
 
+def get_color(grade):
+    if grade == '?':
+        color = 'black!20'
+        color_hex = webcolors.name_to_hex('black')
+    elif grade <= 3:
+        color = 'green!20'
+        color_hex = webcolors.name_to_hex('green')
+    elif grade <= 5:
+        color = 'RoyalBlue!20'
+        color_hex = webcolors.name_to_hex('RoyalBlue')
+    elif grade <= 10:
+        color = 'Goldenrod!50'
+        color_hex = webcolors.name_to_hex('Goldenrod')
+    else:
+        color = 'red!20'
+        color_hex = webcolors.name_to_hex('red')
+    return color, color_hex
+
+
+def get_rating_string(rating):
+    if rating < 0:
+        rating_string = ''
+    elif rating < 1:
+        rating_string = r'\ding{73}'
+    else:
+        rating_string = r'\ding{72} ' * rating
+    return rating_string
+
+# --------------------------------
 class ModuleMetaClass(type):
     """ Metaclass that is instantiated once for each class """
     _metaclass_instances = None
@@ -124,31 +153,11 @@ class Route(ModuleBaseClass):
         self.grade = grade
         self.rating = int(rating)
         self.serious = serious
+
         self.serious_string = r'\warn ' * self.serious
         self.ref = 'rt'
-
-        if grade == '?':
-            self.color = 'black!20'
-            self.color_hex = webcolors.name_to_hex('black')
-        elif grade <= 3:
-            self.color = 'green!20'
-            self.color_hex = webcolors.name_to_hex('green')
-        elif grade <= 5:
-            self.color = 'RoyalBlue!20'
-            self.color_hex = webcolors.name_to_hex('RoyalBlue')
-        elif grade <= 10:
-            self.color = 'Goldenrod!50'
-            self.color_hex = webcolors.name_to_hex('Goldenrod')
-        else:
-            self.color = 'red!20'
-            self.color_hex = webcolors.name_to_hex('red')
-
-        if self.rating < 0:
-            self.rating_string = ''
-        elif rating < 1:
-            self.rating_string = r'\ding{73}'
-        else:
-            self.rating_string = r'\ding{72} ' * self.rating
+        self.color, self.color_hex = get_color(grade)
+        self.rating_string = get_rating_string(self.rating)
 
         assert self._parent_class == Boulder
 
@@ -171,30 +180,11 @@ class Variation(ModuleBaseClass):
         self.grade = grade
         self.rating = rating
         self.serious = serious
+
         self.serious_string = r'\warn ' * self.serious
         self.ref = 'vr'
-        if grade == '?':
-            self.color = 'black!20'
-            self.color_hex = webcolors.name_to_hex('black')
-        elif grade <= 3:
-            self.color = 'green!20'
-            self.color_hex = webcolors.name_to_hex('green')
-        elif grade <= 5:
-            self.color = 'RoyalBlue!20'
-            self.color_hex = webcolors.name_to_hex('RoyalBlue')
-        elif grade <= 10:
-            self.color = 'Goldenrod!50'
-            self.color_hex = webcolors.name_to_hex('Goldenrod')
-        else:
-            self.color = 'red!20'
-            self.color_hex = webcolors.name_to_hex('red')
-
-        if self.rating < 0:
-            self.rating_string = ''
-        elif rating < 1:
-            self.rating_string = r'\ding{73}'
-        else:
-            self.rating_string = r'\ding{72} ' * self.rating
+        self.color, self.color_hex = get_color(grade)
+        self.rating_string = get_rating_string(self.rating)
 
         assert self._parent_class == Route
 
@@ -213,55 +203,58 @@ class Photo():
     def __init__(self, name, parent, fileName, description='', size='h', filepath='./images/', credit=''):
         self.name = name
         self.parent = parent
+        self.fileName = fileName
         self.description = description
         self.size = size
-        self.fileName = fileName
         self.filepath = filepath
         self.credit = credit
+
         parent.photos.append(self)
 
 
 class Topo():
     """class object for route topos"""
 
-    def __init__(self, name, boulder, fileName, description='', routes={}, size='h', filepath='./maps/topos/'):
+    def __init__(self, name, parent, fileName, description='', routes={}, size='h', filepath='./maps/topos/'):
         self.name = name
-        self.description = description
+        self.parent = parent
         self.fileName = fileName
+        self.description = description
         self.routes = routes.copy()  # not sure if this is necessary
-        self.boulder = boulder
-        self.outFileName = fileName.split('.')[0] + '_c.png'
         self.size = size
         self.filepath = filepath
+
+        self.outFileName = fileName.split('.')[0] + '_c.png'
 
         if self.size == 'f':
             self.scale = 1.0
         else:
             self.scale = 2.0
 
-        boulder.topos.append(self)
+        parent.topos.append(self)
         update_svg(self)
 
 
 class SubAreaMap():
     """class object for sub area maps"""
 
-    def __init__(self, name, subArea, fileName, description='', routes={}, size='h', filepath='./maps/subarea/'):
+    def __init__(self, name, parent, fileName, description='', routes={}, size='h', filepath='./maps/subarea/'):
         self.name = name
-        self.description = description
+        self.parent = parent
         self.fileName = fileName
+        self.description = description
         self.routes = routes.copy()  # not sure if this is necessary
-        self.subArea = subArea
-        self.outFileName = fileName.split('.')[0] + '_c.png'
         self.size = size
         self.filepath = filepath
+
+        self.outFileName = fileName.split('.')[0] + '_c.png'
 
         if self.size == 'f':
             self.scale = 1.0
         else:
             self.scale = 2.0
 
-        subArea.subAreaMaps.append(self)
+        parent.subAreaMaps.append(self)
         update_svg(self)
 
 

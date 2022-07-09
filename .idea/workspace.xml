@@ -2,11 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="0a6c10bf-a958-487f-b98e-0c57b57ccd44" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/dataStructure.py" beforeDir="false" afterPath="$PROJECT_DIR$/dataStructure.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/genBook.py" beforeDir="false" afterPath="$PROJECT_DIR$/genBook.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/areaTemplate.tex" beforeDir="false" afterPath="$PROJECT_DIR$/templates/areaTemplate.tex" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/localBoulders.tex" beforeDir="false" afterPath="$PROJECT_DIR$/templates/localBoulders.tex" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
