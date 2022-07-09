@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="0a6c10bf-a958-487f-b98e-0c57b57ccd44" name="Changes" comment="" />
+    <list default="true" id="0a6c10bf-a958-487f-b98e-0c57b57ccd44" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dataStructure.py" beforeDir="false" afterPath="$PROJECT_DIR$/dataStructure.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/genBook.py" beforeDir="false" afterPath="$PROJECT_DIR$/genBook.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/areaTemplate.tex" beforeDir="false" afterPath="$PROJECT_DIR$/templates/areaTemplate.tex" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/localBoulders.tex" beforeDir="false" afterPath="$PROJECT_DIR$/templates/localBoulders.tex" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -38,7 +44,7 @@
       <recent name="C:\Users\Me\Desktop\projects\guidebook" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.The Garden Guidebook">
+  <component name="RunManager" selected="Python.dataStructure">
     <configuration name="LocalBoulders" type="PythonConfigurationType" factoryName="Python">
       <module name="guidebook" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -81,10 +87,37 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="dataStructure" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="guidebook" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/dataStructure.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <list>
       <item itemvalue="Python.LocalBoulders" />
       <item itemvalue="Python.The Garden Guidebook" />
+      <item itemvalue="Python.dataStructure" />
     </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Python.dataStructure" />
+      </list>
+    </recent_temporary>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
@@ -102,7 +135,7 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="python-line">
           <url>file://$PROJECT_DIR$/genBook.py</url>
-          <line>38</line>
+          <line>37</line>
           <option name="timeStamp" value="8" />
         </line-breakpoint>
       </breakpoints>

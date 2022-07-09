@@ -7,7 +7,6 @@
 	- Link photos to routes
 	- Intro?
 	- gps coords for boulders
-	- photos assign to parents on init
 	- use of cammal case vs other conventions is inconsistent
 	- PEP8?
 	LaTeX:

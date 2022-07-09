@@ -42,12 +42,11 @@ class ModuleMetaClass(type):
 class ModuleBaseClass(metaclass=ModuleMetaClass):
     """ Base class for each of the derived classes in our tree """
 
-    def __init__(self, name, parent, description='', order=-1):
+    def __init__(self, name, parent, description=''):
         assert isinstance(parent, self._parent_class)
         self.name = name
         self._parent = parent
         self.description = description
-        self.order = order
 
         if self._child_class is not None:
             self._children = {}
@@ -74,12 +73,11 @@ class ModuleBaseClass(metaclass=ModuleMetaClass):
 
 # --------------------------------
 class Book(ModuleBaseClass):
-    def __init__(self, name, author, description='', order=-1):
-        super().__init__(name, None, description, order)
+    def __init__(self, name, author, description=''):
+        super().__init__(name, None, description)
         self.author = author
         self.date = datetime.today().strftime('%Y-%m-%d')
         self.ref = 'bk'
-
 
     def gen(self):
         gen_book(self)
@@ -88,33 +86,32 @@ class Book(ModuleBaseClass):
 class Area(ModuleBaseClass):
     _plural = 'areas'
 
-    def __init__(self, name, parent, description='', order=-1, photos=[], bannerPhoto=False):
-        super().__init__(name, parent, description, order)
-        self.photos = photos
+    def __init__(self, name, parent, description=''):
+        super().__init__(name, parent, description)
         self.ref = 'a'
-        self.bannerPhoto = bannerPhoto
+        self.photos = []
         assert self._parent_class == Book
 
 
 class Subarea(ModuleBaseClass):
     _plural = 'subareas'
 
-    def __init__(self, name, parent, description='', order=-1, photos=[], subAreaMaps={}):
-        super().__init__(name, parent, description, order)
-        self.photos = photos
+    def __init__(self, name, parent, description=''):
+        super().__init__(name, parent, description)
         self.ref = 'sa'
-        self.subAreaMaps = subAreaMaps.copy()
+        self.photos = []
+        self.subAreaMaps = []
         assert self._parent_class == Area
 
 
 class Boulder(ModuleBaseClass):
     _plural = 'boulders'
 
-    def __init__(self, name, parent, description='', order=-1, photos=[], topos={}):
-        super().__init__(name, parent, description, order)
-        self.photos = photos
+    def __init__(self, name, parent, description=''):
+        super().__init__(name, parent, description)
         self.ref = 'bd'
-        self.topos = topos.copy()
+        self.topos = []
+        self.photos = []
         assert self._parent_class == Subarea
 
 
@@ -122,12 +119,12 @@ class Route(ModuleBaseClass):
     """class object for an individual route or boulder"""
     _plural = 'routes'
 
-    def __init__(self, name, parent, description='PLACEHOLDER', order=-1, grade='?', rating=-1, serious=0):
-        super().__init__(name, parent, description, order)
+    def __init__(self, name, parent, description='PLACEHOLDER', grade='?', rating=-1, serious=0):
+        super().__init__(name, parent, description)
         self.grade = grade
         self.rating = int(rating)
         self.serious = serious
-        self.serious_string = r'\warn '*self.serious
+        self.serious_string = r'\warn ' * self.serious
         self.ref = 'rt'
 
         if grade == '?':
@@ -151,8 +148,7 @@ class Route(ModuleBaseClass):
         elif rating < 1:
             self.rating_string = r'\ding{73}'
         else:
-            self.rating_string = r'\ding{72} '*self.rating
-
+            self.rating_string = r'\ding{72} ' * self.rating
 
         assert self._parent_class == Boulder
 
@@ -170,12 +166,12 @@ class Variation(ModuleBaseClass):
     """class object for variations of routs"""
     _plural = 'variations'
 
-    def __init__(self, name, parent, description='PLACEHOLDER', order=-1, grade='?', rating=-1, serious=0):
-        super().__init__(name, parent, description, order)
+    def __init__(self, name, parent, description='PLACEHOLDER', grade='?', rating=-1, serious=0):
+        super().__init__(name, parent, description)
         self.grade = grade
         self.rating = rating
         self.serious = serious
-        self.serious_string = r'\warn '*self.serious
+        self.serious_string = r'\warn ' * self.serious
         self.ref = 'vr'
         if grade == '?':
             self.color = 'black!20'
@@ -198,7 +194,7 @@ class Variation(ModuleBaseClass):
         elif rating < 1:
             self.rating_string = r'\ding{73}'
         else:
-            self.rating_string = r'\ding{72} '*self.rating
+            self.rating_string = r'\ding{72} ' * self.rating
 
         assert self._parent_class == Route
 
@@ -214,22 +210,25 @@ class Variation(ModuleBaseClass):
 class Photo():
     """class object for general photos (action, scenery, etc.)"""
 
-    def __init__(self, name, fileName, description='', order=-1):
+    def __init__(self, name, parent, fileName, description='', size='h', filepath='./images/', credit=''):
         self.name = name
+        self.parent = parent
         self.description = description
-        self.order = order
+        self.size = size
         self.fileName = fileName
+        self.filepath = filepath
+        self.credit = credit
+        parent.photos.append(self)
 
 
 class Topo():
     """class object for route topos"""
 
-    def __init__(self, name, boulder, fileName, description='', order=-1, routes={}, size='h', filepath='./maps/topos/'):
+    def __init__(self, name, boulder, fileName, description='', routes={}, size='h', filepath='./maps/topos/'):
         self.name = name
         self.description = description
-        self.order = order
         self.fileName = fileName
-        self.routes = routes.copy()
+        self.routes = routes.copy()  # not sure if this is necessary
         self.boulder = boulder
         self.outFileName = fileName.split('.')[0] + '_c.png'
         self.size = size
@@ -239,19 +238,19 @@ class Topo():
             self.scale = 1.0
         else:
             self.scale = 2.0
-        boulder.topos.update({self.name: self})
+
+        boulder.topos.append(self)
         update_svg(self)
 
 
 class SubAreaMap():
     """class object for sub area maps"""
 
-    def __init__(self, name, subArea, fileName, description='', order=-1, routes={}, size='h', filepath='./maps/subarea/'):
+    def __init__(self, name, subArea, fileName, description='', routes={}, size='h', filepath='./maps/subarea/'):
         self.name = name
         self.description = description
-        self.order = order
         self.fileName = fileName
-        self.routes = routes.copy()
+        self.routes = routes.copy()  # not sure if this is necessary
         self.subArea = subArea
         self.outFileName = fileName.split('.')[0] + '_c.png'
         self.size = size
@@ -261,8 +260,10 @@ class SubAreaMap():
             self.scale = 1.0
         else:
             self.scale = 2.0
-        subArea.subAreaMaps.update({self.name: self})
+
+        subArea.subAreaMaps.append(self)
         update_svg(self)
+
 
 if __name__ == '__main__':
     sys.exit()

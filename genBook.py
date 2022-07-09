@@ -4,7 +4,6 @@ Local Boulders Guidebook builder v0.6
 import subprocess
 import jinja2
 import sys
-import shutil
 
 def gen_book(book):
 
