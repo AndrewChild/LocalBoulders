@@ -7,9 +7,9 @@
 %% for subArea in area.subareas.values()
 %% for map in subArea.subAreaMaps
 %% if map.size == 'f'
-\fullPic{\VAR{map.filepath}\VAR{map.outFileName}}{\VAR{map.description}}
+\fullPic{''}}{\VAR{map.filepath}\VAR{map.outFileName}}{\VAR{map.description}}
 %% else
-\halfPic{\VAR{map.filepath}\VAR{map.outFileName}}{\VAR{map.description}}
+\halfPic{''}{\VAR{map.filepath}\VAR{map.outFileName}}{\VAR{map.description}}
 %% endif
 %% endfor
 %% if subArea.name
@@ -19,23 +19,23 @@
 \VAR{subArea.description or "\\"}
 
 %% for photo in subArea.photos
-\halfPic{\VAR{photo.filepath}\VAR{photo.fileName}}{\VAR{photo.description}}
+\halfPic{\VAR{photo.latexRef}}{\VAR{photo.filepath}\VAR{photo.fileName}}{\VAR{photo.description}}\label{pt:\VAR{photo.name}}
 %% endfor
 
 %% if subArea.boulders
 %% for boulder in subArea.boulders.values()
 %% for topo in boulder.topos
 %% if topo.size == 'f'
-\fullPic{\VAR{topo.filepath}\VAR{topo.outFileName}}{\VAR{topo.description}}
+\fullPic{''}{\VAR{topo.filepath}\VAR{topo.outFileName}}{\VAR{topo.description}}
 %% else
-\halfPic{\VAR{topo.filepath}\VAR{topo.outFileName}}{\VAR{topo.description}}
+\halfPic{''}{\VAR{topo.filepath}\VAR{topo.outFileName}}{\VAR{topo.description}}
 %% endif
 %% endfor
 \subsection*{\VAR{boulder.name}}\label{bf:\VAR{boulder.name}}
 \VAR{boulder.description or "\\"}
 
 %% for photo in boulder.photos
-\halfPic{\VAR{photo.filepath}\VAR{photo.fileName}}{\VAR{photo.description}}
+\halfPic{\VAR{photo.latexRef}}{\VAR{photo.filepath}\VAR{photo.fileName}}{\VAR{photo.description}}\label{pt:\VAR{photo.name}}
 %% endfor
 
 %% if boulder.routes

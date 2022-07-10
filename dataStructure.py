@@ -224,7 +224,7 @@ class Variation(ModuleBaseClass):
 class Photo():
     """class object for general photos (action, scenery, etc.)"""
 
-    def __init__(self, name, parent, fileName, description='', size='h', filepath='./images/', credit=''):
+    def __init__(self, name, parent, fileName, description='', size='h', filepath='./images/', credit=None, route=None):
         self.name = name
         self.parent = parent
         self.fileName = fileName
@@ -232,6 +232,13 @@ class Photo():
         self.size = size
         self.filepath = filepath
         self.credit = credit
+        self.route = route
+
+        self.ref = 'pt'
+        if route:
+            self.latexRef = ' (See Page \\pageref{{{}:{}}})'.format(route.ref, route.name)
+        else:
+            self.latexRef = ''
 
         parent.photos.append(self)
 

@@ -5,18 +5,25 @@
 \section{Routes Alphabetical}
 \begin{center}
 \begin{supertabular}{lr}
-%%for route in book.allRoutes | sort(attribute="name")
+%% for route in book.allRoutes | sort(attribute="name")
 \VAR{route.name} V\VAR{route.grade} & \pageref{\VAR{route.ref}:\VAR{route.name}} \\
-%%endfor
+%% endfor
 \end{supertabular}
 \end{center}
 \section{Routes by grade}
 \begin{center}
 \begin{supertabular}{lrlr}
-%%for route in book.allRoutes | sort(reverse=true, attribute="rating") | sort(attribute="gradeNum")
+%% for route in book.allRoutes | sort(reverse=true, attribute="rating") | sort(attribute="gradeNum")
 V\VAR{route.grade}&\VAR{route.name} &\VAR{route.rating_string}\VAR{route.serious_string}& \pageref{\VAR{route.ref}:\VAR{route.name}} \\
-%%endfor
+%% endfor
 \end{supertabular}
 \end{center}
 \section{GPS Coordinates}
 \section{Photo Credits}
+\begin{supertabular}{lll}
+%% for photo in book.allPhotos
+%% if photo.credit
+\VAR{photo.name}&Page \pageref{pt:\VAR{photo.name}}&Credit: \VAR{photo.credit}\\
+%% endif
+%% endfor
+\end{supertabular}

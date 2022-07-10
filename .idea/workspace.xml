@@ -3,8 +3,9 @@
   <component name="ChangeListManager">
     <list default="true" id="0a6c10bf-a958-487f-b98e-0c57b57ccd44" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/genBook.py" beforeDir="false" afterPath="$PROJECT_DIR$/genBook.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/indicesTemplate.tex" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dataStructure.py" beforeDir="false" afterPath="$PROJECT_DIR$/dataStructure.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/areaTemplate.tex" beforeDir="false" afterPath="$PROJECT_DIR$/templates/areaTemplate.tex" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/indexTemplate.tex" beforeDir="false" afterPath="$PROJECT_DIR$/templates/indexTemplate.tex" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/templates/localBoulders.tex" beforeDir="false" afterPath="$PROJECT_DIR$/templates/localBoulders.tex" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -30,14 +31,14 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "last_opened_file_path": "C:/Users/anchi/Desktop/projects/guidebook/The-Garden-Guidebook/bookInput.py",
-    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/anchi/Desktop/projects/guidebook/The-Garden-Guidebook/bookInput.py&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\Me\Desktop\projects\guidebook" />
