@@ -7,6 +7,7 @@
 	- Intro?
 	- gps coords for boulders
 	- use of cammal case vs other conventions is inconsistent
+	- Area histograms
 	- PEP8?
 	LaTeX:
 	- index formatting will break if a route name (or other item) is too long

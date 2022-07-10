@@ -50,22 +50,20 @@
 \newcommand{\warn}{\ooalign{$\bigtriangleup$\cr\hidewidth!\hidewidth}}
 
 \begin{document}
-%\title{\VAR{title}}
-%\author{\VAR{author}}
-%\date{}
 \title{\VAR{book.name}}
 \author{\VAR{book.author}}
 \date{\VAR{book.date}}
 \maketitle
 
 \newcommand\chapterColor{MidnightBlue}
-\input{intro}
 \twocolumn
+\input{intro}
 \renewcommand\chapterColor{BrickRed}
 %% for area in book.areas.values()
 \input{areas/\VAR{area.name}}
-\renewcommand\chapterColor{\VAR{loop.cycle('BurntOrange','PineGreen','RoyalPurple','Aquamarine','RubineRed','MidnightBlue','BrickRed')}}
+\renewcommand\chapterColor{\VAR{loop.cycle('BurntOrange','PineGreen','RoyalPurple','Aquamarine','RubineRed','BrickRed')}}
 %% endfor 
+\renewcommand\chapterColor{MidnightBlue}
 \input{index}
 
 \end{document}
