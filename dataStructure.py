@@ -23,7 +23,7 @@ def get_grade_atts(grade):
     elif grade <= 5:
         color = 'RoyalBlue!20'
         color_hex = webcolors.name_to_hex('RoyalBlue')
-    elif grade <= 10:
+    elif grade <= 9:
         color = 'Goldenrod!50'
         color_hex = webcolors.name_to_hex('Goldenrod')
     else:
