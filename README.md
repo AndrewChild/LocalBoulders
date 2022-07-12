@@ -9,7 +9,6 @@
 	- use of cammal case vs other conventions is inconsistent
 	- PEP8?
 	LaTeX:
-	- index formatting will break if a route name (or other item) is too long
     - GPS index of boulders
     - arete shortcut
 	- add colaborators page

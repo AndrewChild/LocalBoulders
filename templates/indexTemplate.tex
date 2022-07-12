@@ -4,7 +4,7 @@
 \lhead{\textcolor{\chapterColor}{\rule[-2pt]{\textwidth}{15pt}}}
 \section{Routes Alphabetical}
 \begin{center}
-\begin{supertabular}{lr}
+\begin{supertabular}{p{0.65\linewidth}r}
 %% for route in book.allRoutes | sort(attribute="name")
 \VAR{route.name} V\VAR{route.grade} & \pageref{\VAR{route.ref}:\VAR{route.name}} \\
 %% endfor
@@ -12,7 +12,7 @@
 \end{center}
 \section{Routes by grade}
 \begin{center}
-\begin{supertabular}{lrlr}
+\begin{supertabular}{lp{0.5\linewidth}ll}
 %% for route in book.allRoutes | sort(reverse=true, attribute="rating") | sort(attribute="gradeNum")
 V\VAR{route.grade}&\VAR{route.name} &\VAR{route.rating_string}\VAR{route.serious_string}& \pageref{\VAR{route.ref}:\VAR{route.name}} \\
 %% endfor
@@ -20,7 +20,7 @@ V\VAR{route.grade}&\VAR{route.name} &\VAR{route.rating_string}\VAR{route.serious
 \end{center}
 \section{GPS Coordinates}
 \section{Photo Credits}
-\begin{supertabular}{lll}
+\begin{supertabular}{p{0.3\linewidth}lp{0.4\linewidth}}
 %% for photo in book.allPhotos
 %% if photo.credit
 \VAR{photo.name}&Page \pageref{pt:\VAR{photo.name}}&Credit: \VAR{photo.credit}\\
