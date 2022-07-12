@@ -17,7 +17,7 @@ def get_route_label(elm, routes, scale):
     if labellen < 3:
         radius = str(30*scale)
     else:
-        radius = str(labellen*10*scale)
+        radius = str(labellen*10*scale+10)
 
     circleAttributes = {
         'id': elm_id,
@@ -66,12 +66,12 @@ def update_svg(data_input):
         if elm_id in data_input.routes:
             dashlineAttributes = {
                 'id': elm_id + '_clone',
-                'style': f'fill:none;stroke:#FFFFFF;stroke-width:{10*scale};stroke-dasharray:{60*scale}, {60*scale}',
+                'style': f'fill:none;stroke:#FFFFFF;stroke-width:{7*scale};stroke-dasharray:{60*scale}, {60*scale}',
                 'd': elm.attrib['d']
             }
             lineAttributes = {
                 'id': elm_id,
-                'style': f'fill:none;stroke:{data_input.routes[elm_id].color_hex};stroke-width:{10*scale};stroke-dasharray:none',
+                'style': f'fill:none;stroke:{data_input.routes[elm_id].color_hex};stroke-width:{7*scale};stroke-dasharray:none',
                 'd': elm.attrib['d']
             }
             if 'marker' in elm.attrib['style']:

@@ -6,40 +6,9 @@ This file holds all of the data strucutres used in the Local Boulders python scr
 """
 import sys
 from datetime import datetime
-import webcolors
 from topo import update_svg
 from genBook import gen_book
-
-
-def get_grade_atts(grade):
-    gradeNum = grade
-    if grade == '?':
-        color = 'black!20'
-        color_hex = webcolors.name_to_hex('black')
-        gradeNum = 42069 # set numeric value of unknown routes arbitrarily high
-    elif grade <= 3:
-        color = 'green!20'
-        color_hex = webcolors.name_to_hex('green')
-    elif grade <= 5:
-        color = 'RoyalBlue!20'
-        color_hex = webcolors.name_to_hex('RoyalBlue')
-    elif grade <= 9:
-        color = 'Goldenrod!50'
-        color_hex = webcolors.name_to_hex('Goldenrod')
-    else:
-        color = 'red!20'
-        color_hex = webcolors.name_to_hex('red')
-    return color, color_hex, gradeNum
-
-
-def get_rating_string(rating):
-    if rating < 0:
-        rating_string = ''
-    elif rating < 1:
-        rating_string = r'\ding{73}'
-    else:
-        rating_string = r'\ding{72} ' * rating
-    return rating_string
+from lbResources import genHistogram, get_grade_atts, get_rating_string
 
 # --------------------------------
 class ModuleMetaClass(type):
@@ -109,8 +78,6 @@ class Book(ModuleBaseClass):
         self.author = author
         self.date = datetime.today().strftime('%Y-%m-%d')
         self.ref = 'bk'
-        # self.routesAlph = []
-        # self.routesGrade = []
 
     def gen(self):
         allRoutes = []
@@ -128,8 +95,6 @@ class Book(ModuleBaseClass):
 
         self.allRoutes = allRoutes
         self.allPhotos = allPhotos
-        # routesAlph = allRoutes.sort(key=lambda x: x.name)
-        # routesGrade = allRoutes.sort(key=lambda x: (x.gradeNum, x.rating))
         self.allPhotos = allPhotos
 
 
@@ -145,6 +110,8 @@ class Area(ModuleBaseClass):
         self.photos = []
         assert self._parent_class == Book
 
+    def histogram(self):
+        genHistogram(self)
 
 class Subarea(ModuleBaseClass):
     _plural = 'subareas'

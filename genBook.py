@@ -33,6 +33,7 @@ def gen_book(book):
     f.close()
 
     for area in book.areas.values():
+        area.histogram()
         f = open('./sections/areas/' + area.name + '.tex', 'w')
         f.write(areaTemplate.render(area=area))
         f.close()
