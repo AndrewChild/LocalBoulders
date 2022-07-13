@@ -4,7 +4,6 @@ Local Boulders Guidebook builder v0.6
 import subprocess
 import jinja2
 import sys
-import os
 
 
 def gen_book(book):
@@ -24,12 +23,17 @@ def gen_book(book):
         autoescape=False,
     )
     mainTemplate = templateEnv.get_template("./templates/localBoulders.tex")
+    acknowledgementsTemplate = templateEnv.get_template("./templates/acknowledgements.tex")
     introTemplate = templateEnv.get_template("./templates/introTemplate.tex")
     areaTemplate = templateEnv.get_template("./templates/areaTemplate.tex")
     indicesTemplate = templateEnv.get_template("./templates/indexTemplate.tex")
 
     f = open(f'./sections/guideBook.tex', 'w')
     f.write(mainTemplate.render(book=book))
+    f.close()
+
+    f = open(f'./sections/acknowledgements.tex', 'w')
+    f.write(acknowledgementsTemplate.render(book=book))
     f.close()
 
     for area in book.areas.values():

@@ -3,6 +3,8 @@ from matplotlib.ticker import MaxNLocator
 import numpy as np
 import numbers
 import webcolors
+import qrcode
+import cairosvg
 
 
 def get_grade_atts(grade):
@@ -75,3 +77,8 @@ def genHistogram(area):
     ax.yaxis.set_major_locator(MaxNLocator(integer=True))
 
     plt.savefig(f'./maps/plots/{area.name}.png')
+
+
+def create_qr(s, name):
+    qr_code = qrcode.make(s)
+    qr_code.save(f'./maps/qr/{name}_qr.png')

@@ -4,7 +4,10 @@
     <list default="true" id="0a6c10bf-a958-487f-b98e-0c57b57ccd44" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/indexTemplate.tex" beforeDir="false" afterPath="$PROJECT_DIR$/templates/indexTemplate.tex" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dataStructure.py" beforeDir="false" afterPath="$PROJECT_DIR$/dataStructure.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/genBook.py" beforeDir="false" afterPath="$PROJECT_DIR$/genBook.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lbResources.py" beforeDir="false" afterPath="$PROJECT_DIR$/lbResources.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/localBoulders.tex" beforeDir="false" afterPath="$PROJECT_DIR$/templates/localBoulders.tex" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -143,13 +146,8 @@
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="python-line">
-          <url>file://$PROJECT_DIR$/genBook.py</url>
-          <line>43</line>
-          <option name="timeStamp" value="8" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="python-line">
           <url>file://$PROJECT_DIR$/dataStructure.py</url>
-          <line>135</line>
+          <line>140</line>
           <option name="timeStamp" value="12" />
         </line-breakpoint>
       </breakpoints>

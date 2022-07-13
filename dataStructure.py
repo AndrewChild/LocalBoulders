@@ -8,7 +8,7 @@ import sys
 from datetime import datetime
 from topo import update_svg
 from genBook import gen_book
-from lbResources import genHistogram, get_grade_atts, get_rating_string
+from lbResources import genHistogram, get_grade_atts, get_rating_string, create_qr
 
 # --------------------------------
 class ModuleMetaClass(type):
@@ -73,11 +73,16 @@ class ModuleBaseClass(metaclass=ModuleMetaClass):
 
 # --------------------------------
 class Book(ModuleBaseClass):
-    def __init__(self, name, author, description=''):
+    def __init__(self, name, description='', repo='', dl='', collaborators=[]):
         super().__init__(name, None, description)
-        self.author = author
         self.date = datetime.today().strftime('%Y-%m-%d')
         self.ref = 'bk'
+        self.repo = repo
+        self.dl = dl
+        self.collaborators = collaborators
+
+        if dl:
+            create_qr(dl, f'{self.name}')
 
     def gen(self):
         allRoutes = []

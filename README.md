@@ -11,7 +11,6 @@
 	LaTeX:
     - GPS index of boulders
     - arete shortcut
-	- add colaborators page
     - support half and full page photo sizes
     - there seems to be no way to include a full page photo on the first page of a chapter
 	Other:
