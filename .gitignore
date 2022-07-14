@@ -1,5 +1,4 @@
-
-.idea/workspace.xml
-*.pyc
-.idea/workspace.xml
-*.pyc
+*.aux
+*.log
+.idea/*.*
+__pycache__/*.*

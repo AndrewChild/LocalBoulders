@@ -4,7 +4,6 @@ import numpy as np
 import numbers
 import webcolors
 import qrcode
-import cairosvg
 
 
 def get_grade_atts(grade):

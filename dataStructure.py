@@ -109,10 +109,14 @@ class Book(ModuleBaseClass):
 class Area(ModuleBaseClass):
     _plural = 'areas'
 
-    def __init__(self, name, parent, description=''):
+    def __init__(self, name, parent, description='', gps=None):
         super().__init__(name, parent, description)
         self.ref = 'a'
         self.photos = []
+        if gps:
+            self.gps = gps.replace(' ','')
+            create_qr(r'http://maps.google.com/maps?q='+self.gps, f'{self.name}')
+
         assert self._parent_class == Book
 
     def histogram(self):
@@ -121,11 +125,14 @@ class Area(ModuleBaseClass):
 class Subarea(ModuleBaseClass):
     _plural = 'subareas'
 
-    def __init__(self, name, parent, description=''):
+    def __init__(self, name, parent, description='', gps=None):
         super().__init__(name, parent, description)
         self.ref = 'sa'
         self.photos = []
         self.subAreaMaps = []
+        if gps:
+            self.gps = gps.replace(' ','')
+            create_qr(r'http://maps.google.com/maps?q='+self.gps, f'{self.name}')
         assert self._parent_class == Area
 
 

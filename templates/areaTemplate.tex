@@ -2,13 +2,23 @@
 \chapter{\VAR{area.name}}\label{a:\VAR{area.name}}
 \markboth{\color{white}\VAR{area.name} \protect\thepage \hspace{4pt}}{}
 \lhead{\textcolor{\chapterColor}{\rule[-2pt]{\textwidth}{15pt}}}
+%% if area.gps
+\qrcode{./maps/qr/\VAR{area.name}_qr.png}{http://maps.google.com/maps?q=\VAR{area.gps}}{Navigate to this area}
+%% endif
+\VAR{area.description or "\\"}
 \begin{figure}[h]
   \centering
     \includegraphics[width=\linewidth]{./maps/plots/\VAR{area.name}.png}
 \end{figure}
-\VAR{area.description or "\\"}
 
 %% for subArea in area.subareas.values()
+%% if subArea.name
+\section{\VAR{subArea.name}}\label{sa:\VAR{subArea.name}}
+%% endif
+%% if subArea.gps
+\qrcode{./maps/qr/\VAR{subArea.name}_qr.png}{http://maps.google.com/maps?q=\VAR{subArea.gps}}{Navigate to this sub area}
+%% endif
+\VAR{subArea.description or "\\"}
 %% for map in subArea.subAreaMaps
 %% if map.size == 'f'
 \fullPic{}}{\VAR{map.filepath}\VAR{map.outFileName}}{\VAR{map.description}}
@@ -16,11 +26,6 @@
 \halfPic{}{\VAR{map.filepath}\VAR{map.outFileName}}{\VAR{map.description}}
 %% endif
 %% endfor
-%% if subArea.name
-\section{\VAR{subArea.name}}\label{sa:\VAR{subArea.name}}
-%% endif
-
-\VAR{subArea.description or "\\"}
 
 %% for photo in subArea.photos
 \halfPic{\VAR{photo.latexRef}}{\VAR{photo.filepath}\VAR{photo.fileName}}{\VAR{photo.description}}\label{pt:\VAR{photo.name}}
