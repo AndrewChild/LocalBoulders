@@ -73,36 +73,19 @@ class ModuleBaseClass(metaclass=ModuleMetaClass):
 
 # --------------------------------
 class Book(ModuleBaseClass):
-    def __init__(self, name, description='', repo='', dl='', collaborators=[]):
+    def __init__(self, name, description='', repo='', dl='', collaborators=[], subarea_numbering=True):
         super().__init__(name, None, description)
         self.date = datetime.today().strftime('%Y-%m-%d')
         self.ref = 'bk'
         self.repo = repo
         self.dl = dl
         self.collaborators = collaborators
+        self.subarea_numbering = subarea_numbering
 
         if dl:
             create_qr(dl, f'{self.name}')
 
     def gen(self):
-        allRoutes = []
-        allPhotos = []
-        for area in self.areas.values():
-            allPhotos = allPhotos + area.photos
-            for subArea in area.subareas.values():
-                allPhotos = allPhotos + subArea.photos
-                for boulder in subArea.boulders.values():
-                    allPhotos = allPhotos + boulder.photos
-                    for route in boulder.routes.values():
-                        allRoutes.append(route)
-                        for variation in route.variations.values():
-                            allRoutes.append(variation)
-
-        self.allRoutes = allRoutes
-        self.allPhotos = allPhotos
-        self.allPhotos = allPhotos
-
-
         gen_book(self)
 
 
@@ -161,17 +144,26 @@ class Route(ModuleBaseClass):
         self.ref = 'rt'
         self.color, self.color_hex, self.gradeNum = get_grade_atts(grade)
         self.rating_string = get_rating_string(self.rating)
+        self.hasTopo = False
 
         assert self._parent_class == Boulder
 
-    def getRtNum(self):
+    def getRtNum(self, as_int=False):
         """returns the guidebook route number of the route"""
         ct = 1
-        for boulder in self._parent._parent.boulders.values():
-            for route in boulder.routes.values():
-                if route.name == self.name:
-                    return str(ct)
-                ct = ct + 1
+        if self._parent._parent._parent._parent.subarea_numbering:
+            subAreas = [self._parent._parent]
+        else:
+            subAreas = self._parent._parent._parent.subareas.values()
+        for subArea in subAreas:
+            for boulder in subArea.boulders.values():
+                for route in boulder.routes.values():
+                    if route.name == self.name:
+                        if as_int:
+                            return ct
+                        else:
+                            return str(ct)
+                    ct = ct + 1
 
 
 class Variation(ModuleBaseClass):
@@ -188,6 +180,7 @@ class Variation(ModuleBaseClass):
         self.ref = 'vr'
         self.color, self.color_hex, self.gradeNum = get_grade_atts(grade)
         self.rating_string = get_rating_string(self.rating)
+        self.hasTopo = False
 
         assert self._parent_class == Route
 
@@ -242,6 +235,8 @@ class Topo():
             self.scale = 2.0
 
         parent.topos.append(self)
+        for route in routes.values():
+            route.hasTopo = True
         update_svg(self)
 
 

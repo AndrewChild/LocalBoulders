@@ -7,6 +7,24 @@ import sys
 
 
 def gen_book(book):
+    allRoutes = []
+    allPhotos = []
+    for area in book.areas.values():
+        allPhotos = allPhotos + area.photos
+        for subArea in area.subareas.values():
+            allPhotos = allPhotos + subArea.photos
+            for boulder in subArea.boulders.values():
+                allPhotos = allPhotos + boulder.photos
+                for route in boulder.routes.values():
+                    allRoutes.append(route)
+                    route.num = route.getRtNum()
+                    for variation in route.variations.values():
+                        allRoutes.append(variation)
+
+    book.allRoutes = allRoutes
+    book.allPhotos = allPhotos
+    book.allPhotos = allPhotos
+
     # This stuff just tells JINJA2 how to read templates
     templateLoader = jinja2.FileSystemLoader(searchpath=sys.path[1])
     templateEnv = jinja2.Environment(

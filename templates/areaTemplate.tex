@@ -48,20 +48,22 @@
 %% endfor
 
 %% if boulder.routes
-%% if loop.index ==1 
 \begin{enumerate}[]
-%% else
-\begin{enumerate}[resume]
-%% endif
-
 %% for route in boulder.routes.values()
+	\setcounter{enumi}{\VAR{route.getRtNum(as_int=True)-1}}
 	\item\label{rt:\VAR{route.name}} \colorbox{\VAR{route.color}}{\textbf{\VAR{route.name} V\VAR{route.grade} \VAR{route.rating_string} \VAR{route.serious_string}} }
+	%% if not route.hasTopo
+	\newline (No Topo) 
+	%% endif
 	\newline \VAR{route.description}\
 %% if route.variations.values()
 	\newline \textbf{Variations:}
 	\begin{enumerate}
 %% for variation in route.variations.values()
 		\item\label{vr:\VAR{variation.name}} \colorbox{\VAR{variation.color}}{\emph{\VAR{variation.name} V\VAR{variation.grade} \VAR{variation.rating_string} \VAR{variation.serious_string}}  }
+		%% if not variation.hasTopo
+		\newline (No Topo) 
+		%% endif
 		\newline \VAR{variation.description}\
 %% endfor
 	\end{enumerate}
