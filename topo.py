@@ -102,6 +102,7 @@ def update_svg(data_input):
         old_root = ET.parse(newSVG).getroot()
         if ET.tostring(root) == ET.tostring(old_root):
             print(f'File {xmlFile} already up to date')
+            return
 
     print(f'writing {xmlFile} to png')
     newPNG = newSVG.replace('.svg', '.png')
