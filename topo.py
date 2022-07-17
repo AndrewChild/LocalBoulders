@@ -15,29 +15,28 @@ def get_route_label(elm, routes, scale):
     label = routes[elm_id].getRtNum()
     labellen = len(str(label))
     if labellen < 3:
-        radius = str(30*scale)
+        radius = str(20*scale)
     else:
-        radius = str(labellen*10*scale+10)
+        radius = str((labellen-2)*4*scale+20*scale)
 
     circleAttributes = {
         'id': elm_id,
-        'style': f'fill:{routes[elm_id].color_hex};fill-opacity:1;stroke:#FFFFFF;stroke-width:{5*scale};stroke-dasharray:none;stroke-opacity:1',
+        'style': f'fill:{routes[elm_id].color_hex};fill-opacity:1;stroke:#FFFFFF;stroke-width:{3*scale};stroke-dasharray:none;stroke-opacity:1',
         'cx': elm.attrib['cx'],
         'cy': elm.attrib['cy'],
         'r': radius
     }
     labelAttributes = {
         'id': elm_id + '_label',
-        'style': f'font-size:37.3333px;fill:#ffffff;fill-opacity:1;stroke:#ff0000;stroke-width:{10*scale};stroke-dasharray:none;stroke-opacity:1',
-        'x': str(float(elm.attrib['cx'])-11*labellen*scale),
-        'y': str(float(elm.attrib['cy'])+11*scale),
+        'style': f'font-size:37.3333px;fill:#ffffff;fill-opacity:1;stroke:#ff0000;stroke-width:{1*scale};stroke-dasharray:none;stroke-opacity:1',
+        'x': str(float(elm.attrib['cx'])-6*labellen*scale),
+        'y': str(float(elm.attrib['cy'])+7*scale),
     }
     textAttributes = {
         'id': elm_id + '_text',
-        'style': f'font-size:37.3333px;fill:#ffffff;fill-opacity:1;stroke:#ff0000;stroke-width:{10*scale};stroke-dasharray:none;stroke-opacity:1',
         'x': labelAttributes['x'],
         'y': labelAttributes['y'],
-        'style':f'font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:{37.3*scale}px;font-family:\'Courier New\';-inkscape-font-specification:\'Courier New\';fill:#FFFFFF;fill-opacity:1;stroke:none',
+        'style':f'font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:{19*scale}px;font-family:Arial;-inkscape-font-specification:\'Arial Bold\';fill:#FFFFFF;fill-opacity:1;stroke:none',
     }
     return circleAttributes, labelAttributes, textAttributes, label
 
@@ -66,12 +65,12 @@ def update_svg(data_input):
         if elm_id in data_input.routes:
             dashlineAttributes = {
                 'id': elm_id + '_clone',
-                'style': f'fill:none;stroke:#FFFFFF;stroke-width:{7*scale};stroke-dasharray:{60*scale}, {60*scale}',
+                'style': f'fill:none;stroke:#FFFFFF;stroke-width:{5*scale};stroke-dasharray:{20*scale}, {20*scale}',
                 'd': elm.attrib['d']
             }
             lineAttributes = {
                 'id': elm_id,
-                'style': f'fill:none;stroke:{data_input.routes[elm_id].color_hex};stroke-width:{7*scale};stroke-dasharray:none',
+                'style': f'fill:none;stroke:{data_input.routes[elm_id].color_hex};stroke-width:{5*scale};stroke-dasharray:none',
                 'd': elm.attrib['d']
             }
             if 'marker' in elm.attrib['style']:
@@ -103,14 +102,19 @@ def update_svg(data_input):
         old_root = ET.parse(newSVG).getroot()
         if ET.tostring(root) == ET.tostring(old_root):
             print(f'File {xmlFile} already up to date')
-            return
 
     print(f'writing {xmlFile} to png')
     newPNG = newSVG.replace('.svg', '.png')
     tree.write(newSVG)
     fileObj = open(newSVG)
+    if data_input.size == 'h':
+        owidth = 600
+    else:
+        owidth = 1200
+
     cairosvg.svg2png(file_obj=fileObj,
-                     write_to=newPNG)
+                     write_to=newPNG, dpi=200, output_width=owidth
+                     )
     fileObj.close()
     return
 
