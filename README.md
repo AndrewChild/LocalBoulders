@@ -13,6 +13,7 @@
 	- remove metaclasses
     - use itertools.count for indexing
     - instead of assigning topos to boulders assign them to their lowest numbered route
+    - limit photo height
     LaTeX:
     - GPS index of boulders
     - arete shortcut
