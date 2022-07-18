@@ -12,6 +12,7 @@
 	- move LaTeX specific stuff to its own folder/project
 	- remove metaclasses
     - use itertools.count for indexing
+    - instead of assigning topos to boulders assign them to their lowest numbered route
     LaTeX:
     - GPS index of boulders
     - arete shortcut

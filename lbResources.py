@@ -7,18 +7,34 @@ import qrcode
 
 
 def get_grade_atts(grade):
-    gradeNum = grade
-    if grade == '?':
+    try:
+        int(grade)
+    except ValueError:
+        if grade == '?':
+            gradeNum = -2
+        elif grade == 'B':
+            gradeNum = -1
+        elif grade[-1] == '+':
+            gradeNum = int(grade[0])+0.1
+        elif grade.split('/') == '/':
+            gradeNum = int(grade[0])+0.5
+        elif grade[-1] == '-':
+            gradeNum = int(grade[0])-0.1
+        else:
+            gradeNum= np.average([int(x) for x in grade.split('/')])
+    else:
+        gradeNum = grade
+
+    if gradeNum == -2:
         color = 'black!20'
         color_hex = webcolors.name_to_hex('black')
-        gradeNum = 42069 # set numeric value of unknown routes arbitrarily high
-    elif grade <= 3:
+    elif gradeNum <= 3:
         color = 'green!20'
         color_hex = webcolors.name_to_hex('green')
-    elif grade <= 6:
+    elif gradeNum <= 6:
         color = 'RoyalBlue!20'
         color_hex = webcolors.name_to_hex('RoyalBlue')
-    elif grade <= 9:
+    elif gradeNum <= 9:
         color = 'Goldenrod!50'
         color_hex = webcolors.name_to_hex('DarkGoldenrod')
     else:
@@ -47,22 +63,23 @@ def genHistogram(area):
                 for variation in route.variations.values():
                     areaRoutes.append(variation)
 
-    instances = np.zeros(19)
+    instances = np.zeros(20)
     for route in areaRoutes:
-        if isinstance(route.grade, numbers.Number):
-            instances[int(route.grade)] += 1
+        instances[int(round(route.gradeNum))+2] += 1
 
     while instances[-1] == 0 and len(instances) != 1:
         instances = instances[:-1]
 
-    instances = np.append(instances, [len(areaRoutes)-sum(instances)])
     colors = []
     labels = []
-    for i in range(len(instances)-1):
-        colors.append(get_grade_atts(i)[1])
-        labels.append(f'V{i}')
-    colors.append(get_grade_atts('?')[1])
-    labels.append('V?')
+    for i in range(len(instances)):
+        colors.append(get_grade_atts(i-2)[1])
+        if i == 0:
+            labels.append('?')
+        elif i == 1:
+            labels.append('B')
+        else:
+            labels.append(f'V{i-2}')
 
     ind = np.arange(len(instances))    # the x locations for the groups
     width = 0.8     # the width of the bars: can also be len(x) sequence
