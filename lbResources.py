@@ -6,41 +6,57 @@ import webcolors
 import qrcode
 
 
-def get_grade_atts(grade):
+def _get_grade_number(grade: str):
+    """ Takes the grade string and converts it to a number. 
+    In the case of non numeric values specific negative numbers will be used.
+    ? = -2
+    B = -1
+    in the case of +/- a .1 will be added or subtracted accordingly
+    in the case of split grade a .5 will be added to the lower number.
+    """
+
     try:
-        int(grade)
+        grade_number = int(grade)
+
     except ValueError:
         if grade == '?':
-            gradeNum = -2
+            grade_number = -2
         elif grade == 'B':
-            gradeNum = -1
+            grade_number = -1
         elif grade[-1] == '+':
-            gradeNum = int(grade[0])+0.1
-        elif grade.split('/') == '/':
-            gradeNum = int(grade[0])+0.5
+            grade_number = int(grade[:-1])+0.1
+        elif '/' in grade:
+            split_grades = grade.split("/")
+            grade_number = int(split_grades[0])+0.5
         elif grade[-1] == '-':
-            gradeNum = int(grade[0])-0.1
+            grade_number = int(grade[:-1])-0.1
         else:
-            gradeNum= np.average([int(x) for x in grade.split('/')])
-    else:
-        gradeNum = grade
+            grade_number= np.average([int(x) for x in grade.split('/')])
 
-    if gradeNum == -2:
+    return grade_number
+
+
+def get_grade_atts(grade):
+    """ generate the grade attributes
+    """
+    grade_number = _get_grade_number(grade)
+
+    if grade_number == -2:
         color = 'black!20'
         color_hex = webcolors.name_to_hex('black')
-    elif gradeNum <= 3:
+    elif grade_number <= 3:
         color = 'green!20'
         color_hex = webcolors.name_to_hex('green')
-    elif gradeNum <= 6:
+    elif grade_number <= 6:
         color = 'RoyalBlue!20'
         color_hex = webcolors.name_to_hex('RoyalBlue')
-    elif gradeNum <= 9:
+    elif grade_number <= 9:
         color = 'Goldenrod!50'
         color_hex = webcolors.name_to_hex('DarkGoldenrod')
     else:
         color = 'red!20'
         color_hex = webcolors.name_to_hex('DarkRed')
-    return color, color_hex, gradeNum
+    return color, color_hex, grade_number
 
 
 def get_rating_string(rating):
