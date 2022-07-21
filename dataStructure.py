@@ -7,8 +7,8 @@ This file holds all of the data strucutres used in the Local Boulders python scr
 import sys
 from datetime import datetime
 from topo import update_svg
-from genBook import gen_book
-from lbResources import genHistogram, get_grade_atts, get_rating_string, create_qr
+from genLaTeX import gen_book_LaTeX
+from lbResources import genHistogram, get_grade_atts, create_qr
 
 # --------------------------------
 class ModuleMetaClass(type):
@@ -86,7 +86,30 @@ class Book(ModuleBaseClass):
             create_qr(dl, f'{self.name}')
 
     def gen(self):
-        gen_book(self)
+        self.update()
+        gen_book_LaTeX(self)
+
+    def update(self):
+        """
+        Crawls through all classes contained in book and update variables with runtime information
+        """
+        all_routes = []
+        all_photos = []
+        for area in self.areas.values():
+            all_photos = all_photos + area.photos
+            for subArea in area.subareas.values():
+                all_photos = all_photos + subArea.photos
+                for boulder in subArea.boulders.values():
+                    all_photos = all_photos + boulder.photos
+                    for route in boulder.routes.values():
+                        all_routes.append(route)
+                        route.num = route.getRtNum()
+                        for variation in route.variations.values():
+                            all_routes.append(variation)
+
+        self.all_routes = all_routes
+        self.all_photos = all_photos
+
 
 
 class Area(ModuleBaseClass):
@@ -140,10 +163,8 @@ class Route(ModuleBaseClass):
         self.rating = int(rating)
         self.serious = serious
 
-        self.serious_string = r'\warn ' * self.serious
         self.ref = 'rt'
         self.color, self.color_hex, self.gradeNum = get_grade_atts(grade)
-        self.rating_string = get_rating_string(self.rating)
         self.hasTopo = False
 
         assert self._parent_class == Boulder
@@ -176,10 +197,8 @@ class Variation(ModuleBaseClass):
         self.rating = rating
         self.serious = serious
 
-        self.serious_string = r'\warn ' * self.serious
         self.ref = 'vr'
         self.color, self.color_hex, self.gradeNum = get_grade_atts(grade)
-        self.rating_string = get_rating_string(self.rating)
         self.hasTopo = False
 
         assert self._parent_class == Route
@@ -207,11 +226,6 @@ class Photo():
         self.route = route
 
         self.ref = 'pt'
-        if route:
-            self.latexRef = ' (See Page \\pageref{{{}:{}}})'.format(route.ref, route.name)
-        else:
-            self.latexRef = ''
-
         parent.photos.append(self)
 
 

@@ -5,7 +5,7 @@
 \section{Routes Alphabetical}
 \begin{center}
 \begin{supertabular}{p{0.65\linewidth}r}
-%% for route in book.allRoutes | sort(attribute="name")
+%% for route in book.all_routes | sort(attribute="name")
 \VAR{route.name} V\VAR{route.grade} & \pageref{\VAR{route.ref}:\VAR{route.name}} \\
 %% endfor
 \end{supertabular}
@@ -13,15 +13,15 @@
 \section{Routes by grade}
 \begin{center}
 \begin{supertabular}{lp{0.5\linewidth}ll}
-%% for route in book.allRoutes | sort(reverse=true, attribute="rating") | sort(attribute="gradeNum")
-V\VAR{route.grade}&\VAR{route.name} &\VAR{route.rating_string}\VAR{route.serious_string}& \pageref{\VAR{route.ref}:\VAR{route.name}} \\
+%% for route in book.all_routes | sort(reverse=true, attribute="rating") | sort(attribute="gradeNum")
+$\square$ V\VAR{route.grade}&\VAR{route.name} &\VAR{route.rating_LaTeX}\VAR{route.serious_LaTeX}& \pageref{\VAR{route.ref}:\VAR{route.name}} \\
 %% endfor
 \end{supertabular}
 \end{center}
 \section{GPS Coordinates}
 \section{Photo Credits}
 \begin{supertabular}{p{0.3\linewidth}lp{0.4\linewidth}}
-%% for photo in book.allPhotos
+%% for photo in book.all_photos
 %% if photo.credit
 \VAR{photo.name}&Page \pageref{pt:\VAR{photo.name}}&Credit: \VAR{photo.credit}\\
 %% endif

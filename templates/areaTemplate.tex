@@ -51,7 +51,7 @@
 \begin{enumerate}[]
 %% for route in boulder.routes.values()
 	\setcounter{enumi}{\VAR{route.getRtNum(as_int=True)-1}}
-	\item\label{rt:\VAR{route.name}} \colorbox{\VAR{route.color}}{\textbf{\VAR{route.name} V\VAR{route.grade} \VAR{route.rating_string} \VAR{route.serious_string}} }
+	\item\label{rt:\VAR{route.name}} \colorbox{\VAR{route.color_LaTeX}}{\textbf{\VAR{route.name} V\VAR{route.grade} \VAR{route.rating_LaTeX} \VAR{route.serious_LaTeX}} }
 	%% if not route.hasTopo
 	\newline (No Topo) 
 	%% endif
@@ -60,7 +60,7 @@
 	\newline \textbf{Variations:}
 	\begin{enumerate}
 %% for variation in route.variations.values()
-		\item\label{vr:\VAR{variation.name}} \colorbox{\VAR{variation.color}}{\emph{\VAR{variation.name} V\VAR{variation.grade} \VAR{variation.rating_string} \VAR{variation.serious_string}}  }
+		\item\label{vr:\VAR{variation.name}} \colorbox{\VAR{variation.color_LaTeX}}{\emph{\VAR{variation.name} V\VAR{variation.grade} \VAR{variation.rating_LaTeX} \VAR{variation.serious_LaTeX}}  }
 		%% if not variation.hasTopo
 		\newline (No Topo) 
 		%% endif

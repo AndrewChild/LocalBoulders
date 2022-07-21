@@ -6,24 +6,42 @@ import jinja2
 import sys
 
 
-def gen_book(book):
-    allRoutes = []
-    allPhotos = []
-    for area in book.areas.values():
-        allPhotos = allPhotos + area.photos
-        for subArea in area.subareas.values():
-            allPhotos = allPhotos + subArea.photos
-            for boulder in subArea.boulders.values():
-                allPhotos = allPhotos + boulder.photos
-                for route in boulder.routes.values():
-                    allRoutes.append(route)
-                    route.num = route.getRtNum()
-                    for variation in route.variations.values():
-                        allRoutes.append(variation)
+def _get_rating_string(rating):
+    """
+    Returns LaTeX string equivlent to climb strar rating
+    """
+    if rating < 0:
+        rating_string = ''
+    elif rating < 1:
+        rating_string = r'\ding{73}'
+    else:
+        rating_string = r'\ding{72} ' * rating
+    return rating_string
 
-    book.allRoutes = allRoutes
-    book.allPhotos = allPhotos
-    book.allPhotos = allPhotos
+
+def gen_book_LaTeX(book):
+    """
+    Updates book data structure with LaTeX specific variables then generates a book from templates
+    """
+
+    for route in book.all_routes:
+        route.rating_LaTeX = _get_rating_string(route.rating)
+        route.serious_LaTeX = r'\warn ' * route.serious
+        if route.color == 'DarkGoldenrod':
+            route.color = 'Goldenrod' #LaTeX does not know what Goldenrod is
+            route.color_LaTeX = route.color + '!50'
+        elif route.color == 'DarkRed':
+            route.color = 'red' #LaTeX does not know what DarkRed is
+            route.color_LaTeX = route.color + '!20'
+        else:
+            route.color_LaTeX = route.color + '!20'
+
+    for photo in book.all_photos:
+        if photo.route:
+            photo.latexRef = ' (See Page \\pageref{{{}:{}}})'.format(photo.route.ref, photo.route.name)
+        else:
+            photo.latexRef = ''
+
 
     # This stuff just tells JINJA2 how to read templates
     templateLoader = jinja2.FileSystemLoader(searchpath=sys.path[1])
@@ -42,7 +60,6 @@ def gen_book(book):
     )
     mainTemplate = templateEnv.get_template("./templates/localBoulders.tex")
     acknowledgementsTemplate = templateEnv.get_template("./templates/acknowledgements.tex")
-    introTemplate = templateEnv.get_template("./templates/introTemplate.tex")
     areaTemplate = templateEnv.get_template("./templates/areaTemplate.tex")
     indicesTemplate = templateEnv.get_template("./templates/indexTemplate.tex")
 

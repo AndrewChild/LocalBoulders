@@ -42,31 +42,17 @@ def get_grade_atts(grade):
     grade_number = _get_grade_number(grade)
 
     if grade_number == -2:
-        color = 'black!20'
-        color_hex = webcolors.name_to_hex('black')
+        color = 'black'
     elif grade_number <= 3:
-        color = 'green!20'
-        color_hex = webcolors.name_to_hex('green')
+        color = 'green'
     elif grade_number <= 6:
-        color = 'RoyalBlue!20'
-        color_hex = webcolors.name_to_hex('RoyalBlue')
+        color = 'RoyalBlue'
     elif grade_number <= 9:
-        color = 'Goldenrod!50'
-        color_hex = webcolors.name_to_hex('DarkGoldenrod')
+        color = 'DarkGoldenrod'
     else:
-        color = 'red!20'
-        color_hex = webcolors.name_to_hex('DarkRed')
+        color = 'DarkRed'
+    color_hex = webcolors.name_to_hex(color)
     return color, color_hex, grade_number
-
-
-def get_rating_string(rating):
-    if rating < 0:
-        rating_string = ''
-    elif rating < 1:
-        rating_string = r'\ding{73}'
-    else:
-        rating_string = r'\ding{72} ' * rating
-    return rating_string
 
 
 def genHistogram(area):
