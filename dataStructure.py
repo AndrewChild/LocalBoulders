@@ -4,6 +4,7 @@ Data Structures
 
 This file holds all of the data strucutres used in the Local Boulders python scripts
 """
+import os.path
 import sys
 from datetime import datetime
 from topo import update_svg
@@ -96,10 +97,20 @@ class Book(ModuleBaseClass):
             create_qr(self.paths['qr_o'] ,dl, f'{self.name}')
 
     def gen(self):
-        self.update()
+        self._init_paths()
+        self._update()
         gen_book_LaTeX(self)
 
-    def update(self):
+    def _init_paths(self):
+        """
+        ensures that all paths in os.paths exist
+        """
+        for path in self.paths.values():
+            if not os.path.exists(path):
+                print(f'Creating new directory: {path}')
+                os.makedirs(path)
+
+    def _update(self):
         """
         Crawls through all classes contained in book and update variables with runtime information
         """
@@ -109,8 +120,12 @@ class Book(ModuleBaseClass):
             all_photos = all_photos + area.photos
             for subArea in area.subareas.values():
                 all_photos = all_photos + subArea.photos
+                for map in subArea.subAreaMaps:
+                    update_svg(map)
                 for boulder in subArea.boulders.values():
                     all_photos = all_photos + boulder.photos
+                    for topo in boulder.topos:
+                        update_svg(topo)
                     for route in boulder.routes.values():
                         all_routes.append(route)
                         route.num = route.getRtNum()
@@ -276,7 +291,6 @@ class Topo():
         parent.topos.append(self)
         for route in routes.values():
             route.hasTopo = True
-        update_svg(self)
 
 
 class SubAreaMap():
@@ -307,7 +321,6 @@ class SubAreaMap():
             self.scale = 2.0
 
         parent.subAreaMaps.append(self)
-        update_svg(self)
 
 
 if __name__ == '__main__':
