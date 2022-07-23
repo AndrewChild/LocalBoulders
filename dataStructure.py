@@ -73,7 +73,16 @@ class ModuleBaseClass(metaclass=ModuleMetaClass):
 
 # --------------------------------
 class Book(ModuleBaseClass):
-    def __init__(self, name, description='', repo='', dl='', collaborators=[], subarea_numbering=True):
+    __path_defaults = {
+        'histogram_o': './maps/plots/',
+        'qr_o': './maps/qr/',
+        'topo_i': './maps/topos/',
+        'topo_o': './maps/topos/',
+        'subarea_i': './maps/subarea/',
+        'subarea_o': './maps/subarea/',
+        'photos': './images/'
+    }
+    def __init__(self, name, description='', repo='', dl='', collaborators=[], subarea_numbering=True, paths={}):
         super().__init__(name, None, description)
         self.date = datetime.today().strftime('%Y-%m-%d')
         self.ref = 'bk'
@@ -81,9 +90,10 @@ class Book(ModuleBaseClass):
         self.dl = dl
         self.collaborators = collaborators
         self.subarea_numbering = subarea_numbering
+        self.paths = {**self.__path_defaults, **paths}
 
         if dl:
-            create_qr(dl, f'{self.name}')
+            create_qr(self.paths['qr_o'] ,dl, f'{self.name}')
 
     def gen(self):
         self.update()
@@ -119,9 +129,10 @@ class Area(ModuleBaseClass):
         super().__init__(name, parent, description)
         self.ref = 'a'
         self.photos = []
+        self.paths = parent.paths
         if gps:
             self.gps = gps.replace(' ','')
-            create_qr(r'http://maps.google.com/maps?q='+self.gps, f'{self.name}')
+            create_qr(self.paths['qr_o'], 'http://maps.google.com/maps?q='+self.gps, f'{self.name}')
 
         assert self._parent_class == Book
 
@@ -136,9 +147,10 @@ class Subarea(ModuleBaseClass):
         self.ref = 'sa'
         self.photos = []
         self.subAreaMaps = []
+        self.paths = parent.paths
         if gps:
             self.gps = gps.replace(' ','')
-            create_qr(r'http://maps.google.com/maps?q='+self.gps, f'{self.name}')
+            create_qr(self.paths['qr_o'], r'http://maps.google.com/maps?q='+self.gps, f'{self.name}')
         assert self._parent_class == Area
 
 
@@ -150,6 +162,7 @@ class Boulder(ModuleBaseClass):
         self.ref = 'bd'
         self.topos = []
         self.photos = []
+        self.paths = parent.paths
         assert self._parent_class == Subarea
 
 
@@ -215,15 +228,19 @@ class Variation(ModuleBaseClass):
 class Photo():
     """class object for general photos (action, scenery, etc.)"""
 
-    def __init__(self, name, parent, fileName, description='', size='h', filepath='./images/', credit=None, route=None):
+    def __init__(self, name, parent, fileName, description='', size='h', path=None, credit=None, route=None):
         self.name = name
         self.parent = parent
         self.fileName = fileName
         self.description = description
         self.size = size
-        self.filepath = filepath
         self.credit = credit
         self.route = route
+
+        if path:
+            self.path = path
+        else:
+            self.path = parent.paths['photos']
 
         self.ref = 'pt'
         parent.photos.append(self)
@@ -232,14 +249,22 @@ class Photo():
 class Topo():
     """class object for route topos"""
 
-    def __init__(self, name, parent, fileName, description='', routes={}, size='h', filepath='./maps/topos/'):
+    def __init__(self, name, parent, fileName, description='', routes={}, size='h', path_i=None, path_o=None):
         self.name = name
         self.parent = parent
         self.fileName = fileName
         self.description = description
         self.routes = routes.copy()  # not sure if this is necessary
         self.size = size
-        self.filepath = filepath
+
+        if path_i:
+            self.path_i = path_i
+        else:
+            self.path_i = parent.paths['topo_i']
+        if path_o:
+            self.path_o = path_o
+        else:
+            self.path_o = parent.paths['topo_o']
 
         self.outFileName = fileName.split('.')[0] + '_c.png'
 
@@ -257,14 +282,22 @@ class Topo():
 class SubAreaMap():
     """class object for sub area maps"""
 
-    def __init__(self, name, parent, fileName, description='', routes={}, size='h', filepath='./maps/subarea/'):
+    def __init__(self, name, parent, fileName, description='', routes={}, size='h', path_i=None, path_o=None):
         self.name = name
         self.parent = parent
         self.fileName = fileName
         self.description = description
         self.routes = routes.copy()  # not sure if this is necessary
         self.size = size
-        self.filepath = filepath
+
+        if path_i:
+            self.path_i = path_i
+        else:
+            self.path_i = parent.paths['subarea_i']
+        if path_o:
+            self.path_o = path_o
+        else:
+            self.path_o = parent.paths['subarea_o']
 
         self.outFileName = fileName.split('.')[0] + '_c.png'
 

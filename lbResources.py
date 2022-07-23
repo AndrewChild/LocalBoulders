@@ -1,7 +1,6 @@
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MaxNLocator
 import numpy as np
-import numbers
 import webcolors
 import qrcode
 
@@ -97,6 +96,6 @@ def genHistogram(area):
     plt.savefig(f'./maps/plots/{area.name}.png')
 
 
-def create_qr(s, name):
+def create_qr(path, s, name):
     qr_code = qrcode.make(s)
-    qr_code.save(f'./maps/qr/{name}_qr.png')
+    qr_code.save(f'{path}{name}_qr.png')

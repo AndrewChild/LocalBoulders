@@ -4,12 +4,12 @@ import cairosvg
 import sys
 
 
-def mod_file_name(filePath, mod):
+def _mod_file_name(filePath, mod):
     file_bn = os.path.basename(filePath)
     file_bn_list = file_bn.split('.')
     return filePath.replace(file_bn, file_bn_list[0] + mod + '.' + file_bn_list[1])
 
-def get_route_label(elm, routes, scale):
+def _get_route_label(elm, routes, scale):
 
     elm_id = elm.attrib['id']
     label = routes[elm_id].getRtNum()
@@ -50,7 +50,7 @@ def update_svg(data_input):
     }
     n = r'{http://www.w3.org/2000/svg}'
 
-    xmlFile = data_input.filepath + data_input.fileName
+    xmlFile = data_input.path_i + data_input.fileName
     tree = ET.parse(xmlFile)
     root = tree.getroot()
     subTree = root.find('./svg:g', namespaces)
@@ -87,7 +87,7 @@ def update_svg(data_input):
         elm_id = elm.attrib['id']
         if elm_id in data_input.routes:
 
-            circleAttributes, labelAttributes, textAttributes, label = get_route_label(elm, data_input.routes, scale)
+            circleAttributes, labelAttributes, textAttributes, label = _get_route_label(elm, data_input.routes, scale)
             subTree.remove(elm)
             ET.SubElement(subTree, f'{n}circle', circleAttributes)
             ET.SubElement(subTree, f'{n}text', labelAttributes)
@@ -96,7 +96,7 @@ def update_svg(data_input):
                     t = ET.SubElement(elm2, f'{n}text', textAttributes).text = str(label)
 
     # write to file
-    newSVG = mod_file_name(xmlFile, '_c')
+    newSVG = data_input.path_o + data_input.fileName.split('.')[0] + '_c.' + data_input.fileName.split('.')[1]
 
     if os.path.exists(newSVG):
         old_root = ET.parse(newSVG).getroot()
