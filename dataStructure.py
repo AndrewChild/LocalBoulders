@@ -81,6 +81,8 @@ class Book(ModuleBaseClass):
         'topo_o': './maps/topos/',
         'subarea_i': './maps/subarea/',
         'subarea_o': './maps/subarea/',
+        'area_i': './maps/area/',
+        'area_o': './maps/area/',
         'photos': './images/'
     }
     def __init__(self, name, description='', repo='', dl='', collaborators=[], subarea_numbering=True, paths={}):
@@ -144,6 +146,7 @@ class Area(ModuleBaseClass):
         super().__init__(name, parent, description)
         self.ref = 'a'
         self.photos = []
+        self.areaMaps = []
         self.paths = parent.paths
         if gps:
             self.gps = gps.replace(' ','')
@@ -291,6 +294,33 @@ class Topo():
         parent.topos.append(self)
         for route in routes.values():
             route.hasTopo = True
+
+
+class AreaMap():
+    """class object for sub area maps"""
+
+    def __init__(self, name, parent, fileName, description='', size='h', path_i=None, path_o=None):
+        self.name = name
+        self.parent = parent
+        self.fileName = fileName
+        self.description = description
+        self.size = size
+
+        if path_i:
+            self.path_i = path_i
+        else:
+            self.path_i = parent.paths['area_i']
+        if path_o:
+            self.path_o = path_o
+        else:
+            self.path_o = parent.paths['area_o']
+
+        if self.size == 'f':
+            self.scale = 1.0
+        else:
+            self.scale = 2.0
+
+        parent.areaMaps.append(self)
 
 
 class SubAreaMap():

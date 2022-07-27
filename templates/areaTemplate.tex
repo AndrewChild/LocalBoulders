@@ -2,6 +2,13 @@
 \chapter{\VAR{area.name}}\label{a:\VAR{area.name}}
 \markboth{\color{white}\VAR{area.name} \protect\thepage \hspace{4pt}}{}
 \lhead{\textcolor{\chapterColor}{\rule[-2pt]{\textwidth}{15pt}}}
+%% for map in area.areaMaps
+%% if map.size == 'f'
+\fullPic{}{\VAR{map.path_o}\VAR{map.fileName}}{\VAR{map.description}}
+%% else
+\halfPic{}{\VAR{map.path_o}\VAR{map.fileName}}{\VAR{map.description}}
+%% endif
+%% endfor
 %% if area.gps
 \qrcode{./maps/qr/\VAR{area.name}_qr.png}{http://maps.google.com/maps?q=\VAR{area.gps}}{Navigate to this area}
 %% endif
@@ -21,7 +28,7 @@
 \VAR{subArea.description or "\\"}
 %% for map in subArea.subAreaMaps
 %% if map.size == 'f'
-\fullPic{}}{\VAR{map.path_o}\VAR{map.outFileName}}{\VAR{map.description}}
+\fullPic{}{\VAR{map.path_o}\VAR{map.outFileName}}{\VAR{map.description}}
 %% else
 \halfPic{}{\VAR{map.path_o}\VAR{map.outFileName}}{\VAR{map.description}}
 %% endif

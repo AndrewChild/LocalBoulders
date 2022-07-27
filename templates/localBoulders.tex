@@ -16,6 +16,10 @@
 \usepackage{amssymb}
 \usepackage[section]{placeins}
 \graphicspath{ {../} }
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd{\chapter}{\if@openright\cleardoublepage\else\clearpage\fi}{}{}{}
+\makeatother
 
 
 \usepackage{fancyhdr}
