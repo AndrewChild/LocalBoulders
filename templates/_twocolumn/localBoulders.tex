@@ -16,8 +16,10 @@
 \usepackage{amssymb}
 \usepackage[section]{placeins}
 \graphicspath{ {../} }
-\usepackage{multicol}
-\usepackage{wrapfig}
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd{\chapter}{\if@openright\cleardoublepage\else\clearpage\fi}{}{}{}
+\makeatother
 
 
 \usepackage{fancyhdr}
@@ -42,30 +44,32 @@
 \lhead{\textcolor{\chapterColor}{\rule[-2pt]{\textwidth}{15pt}}}
 }
 \newcommand{\halfPic}[2]{
-  \begin{center}
-  \includegraphics[width=0.9\linewidth]{#1}
-  \end{center}
+  \begin{figure}[h]
+    \centering
+      \captionsetup{singlelinecheck=false, labelformat=empty}
+      \includegraphics[width=0.8\linewidth]{#1}
+      \caption{\textbf{#2}}
+  \end{figure}
 }
 \newcommand{\fullPic}[2]{
-\end{multicols*}
-    \begin{figure*}[htb]
-      \centering
-        \captionsetup{singlelinecheck=false, labelformat=empty}
-        \includegraphics[width=\textwidth]{#1}
-        \caption{\textbf{#2}}
-    \end{figure*}
-  \begin{multicols*}{2}
+  \begin{figure*}[htb]
+    \centering
+      \captionsetup{singlelinecheck=false, labelformat=empty}
+      \includegraphics[width=0.8\textwidth]{#1}
+      \caption{\textbf{#2}}
+  \end{figure*}
 }
 \newcommand{\warn}{\ooalign{$\bigtriangleup$\cr\hidewidth!\hidewidth}}
 \newcommand{\hlink}[2]{
 \underline{\textcolor{blue}{\href{#1}{#2}}}
 }
 \newcommand{\qrcode}[3]{
-  \begin{center}
-  \includegraphics[width=0.45\linewidth]{#1}
-  \newline
-  \hlink{#2}{#3}
-  \end{center}
+  \begin{figure}[h]
+    \centering
+      \captionsetup{labelformat=empty}
+      \includegraphics[width=0.45\linewidth]{#1}
+      \caption{\hlink{#2}{#3}}
+  \end{figure}
 }
 
 \begin{document}
@@ -74,6 +78,7 @@
 \maketitle
 
 \newcommand\chapterColor{MidnightBlue}
+\twocolumn
 \input{acknowledgements}
 \input{intro}
 \renewcommand\chapterColor{BrickRed}

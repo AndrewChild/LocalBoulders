@@ -8,7 +8,6 @@
 
 
 \formatChapter{\VAR{area.name}}
-\begin{multicols*}{2}
 %% for map in area.areaMaps
 	\VAR{image(map.path_o+map.fileName, map.description, map.size)}
 %% endfor
@@ -16,7 +15,10 @@
 	\qrcode{\VAR{area.paths['qr_o']}/\VAR{area.name}_qr.png}{http://maps.google.com/maps?q=\VAR{area.gps}}{Navigate to this area}
 %% endif
 \VAR{area.description or "\\"}
-\halfPic{\VAR{area.paths['histogram_o']}/\VAR{area.name}.png}{}
+\begin{figure}[h]
+  \centering
+    \includegraphics[width=\linewidth]{\VAR{area.paths['histogram_o']}/\VAR{area.name}.png}
+\end{figure}
 
 %% for subArea in area.subareas.values()
 	%% if subArea.name
@@ -76,5 +78,4 @@
 %% endfor
 
 
-\end{multicols*}
 \clearpage
