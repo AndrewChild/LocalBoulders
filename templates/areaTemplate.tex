@@ -1,86 +1,80 @@
-\colorlet{shadecolor}{\chapterColor}
-\chapter{\VAR{area.name}}\label{a:\VAR{area.name}}
-\markboth{\color{white}\VAR{area.name} \protect\thepage \hspace{4pt}}{}
-\lhead{\textcolor{\chapterColor}{\rule[-2pt]{\textwidth}{15pt}}}
+%% macro image(filePath, description=None, size='h')
+	%% if size == 'f'
+		\fullPic{\VAR{filePath}}{\VAR{description}}
+	%% else
+		\halfPic{\VAR{filePath}}{\VAR{description}}
+	%% endif
+%% endmacro
+
+
+\formatChapter{\VAR{area.name}}
 %% for map in area.areaMaps
-%% if map.size == 'f'
-\fullPic{}{\VAR{map.path_o}\VAR{map.fileName}}{\VAR{map.description}}
-%% else
-\halfPic{}{\VAR{map.path_o}\VAR{map.fileName}}{\VAR{map.description}}
-%% endif
+	\VAR{image(map.path_o+map.fileName, map.description, map.size)}
 %% endfor
 %% if area.gps
-\qrcode{./maps/qr/\VAR{area.name}_qr.png}{http://maps.google.com/maps?q=\VAR{area.gps}}{Navigate to this area}
+	\qrcode{\VAR{area.paths['qr_o']}/\VAR{area.name}_qr.png}{http://maps.google.com/maps?q=\VAR{area.gps}}{Navigate to this area}
 %% endif
 \VAR{area.description or "\\"}
 \begin{figure}[h]
   \centering
-    \includegraphics[width=\linewidth]{./maps/plots/\VAR{area.name}.png}
+    \includegraphics[width=\linewidth]{\VAR{area.paths['histogram_o']}/\VAR{area.name}.png}
 \end{figure}
 
 %% for subArea in area.subareas.values()
-%% if subArea.name
-\section{\VAR{subArea.name}}\label{sa:\VAR{subArea.name}}
-%% endif
-%% if subArea.gps
-\qrcode{./maps/qr/\VAR{subArea.name}_qr.png}{http://maps.google.com/maps?q=\VAR{subArea.gps}}{Navigate to this sub area}
-%% endif
-\VAR{subArea.description or "\\"}
-%% for map in subArea.subAreaMaps
-%% if map.size == 'f'
-\fullPic{}{\VAR{map.path_o}\VAR{map.outFileName}}{\VAR{map.description}}
-%% else
-\halfPic{}{\VAR{map.path_o}\VAR{map.outFileName}}{\VAR{map.description}}
-%% endif
-%% endfor
-
-%% for photo in subArea.photos
-\halfPic{\VAR{photo.latexRef}}{\VAR{photo.path}\VAR{photo.fileName}}{\VAR{photo.description}}\label{pt:\VAR{photo.name}}
-%% endfor
-
-%% if subArea.boulders
-%% for boulder in subArea.boulders.values()
-%% for topo in boulder.topos
-%% if topo.size == 'f'
-\fullPic{}{\VAR{topo.path_o}\VAR{topo.outFileName}}{\VAR{topo.description}}
-%% else
-\halfPic{}{\VAR{topo.path_o}\VAR{topo.outFileName}}{\VAR{topo.description}}
-%% endif
-%% endfor
-\subsection*{\VAR{boulder.name}}\label{bf:\VAR{boulder.name}}
-\VAR{boulder.description or "\\"}
-
-%% for photo in boulder.photos
-\halfPic{\VAR{photo.latexRef}}{\VAR{photo.path}\VAR{photo.fileName}}{\VAR{photo.description}}\label{pt:\VAR{photo.name}}
-%% endfor
-
-%% if boulder.routes
-\begin{enumerate}[]
-%% for route in boulder.routes.values()
-	\setcounter{enumi}{\VAR{route.getRtNum(as_int=True)-1}}
-	\item\label{rt:\VAR{route.name}} \colorbox{\VAR{route.color_LaTeX}}{\textbf{\VAR{route.name} V\VAR{route.grade} \VAR{route.rating_LaTeX} \VAR{route.serious_LaTeX}} }
-	%% if not route.hasTopo
-	\newline (No Topo) 
+	%% if subArea.name
+		\section{\VAR{subArea.name}}\label{sa:\VAR{subArea.name}}
 	%% endif
-	\newline \VAR{route.description}\
-%% if route.variations.values()
-	\newline \textbf{Variations:}
-	\begin{enumerate}
-%% for variation in route.variations.values()
-		\item\label{vr:\VAR{variation.name}} \colorbox{\VAR{variation.color_LaTeX}}{\emph{\VAR{variation.name} V\VAR{variation.grade} \VAR{variation.rating_LaTeX} \VAR{variation.serious_LaTeX}}  }
-		%% if not variation.hasTopo
-		\newline (No Topo) 
-		%% endif
-		\newline \VAR{variation.description}\
-%% endfor
-	\end{enumerate}
-%% endif
-%% endfor 
-\end{enumerate}
-%% endif
-
-%% endfor 
-%% endif
+	%% if subArea.gps
+		\qrcode{\VAR{area.paths['qr_o']}\VAR{subArea.name}_qr.png}{http://maps.google.com/maps?q=\VAR{subArea.gps}}{Navigate to this sub area}
+	%% endif
+	\VAR{subArea.description or "\\"}
+	%% for map in subArea.subAreaMaps
+		\VAR{image(map.path_o+map.outFileName, map.description, map.size)}
+	%% endfor
+	
+	%% for photo in subArea.photos
+		\VAR{image(photo.path+photo.fileName, photo.description, photo.size)}\label{pt:\VAR{photo.name}}
+	%% endfor
+	
+	%% if subArea.boulders
+		%% for boulder in subArea.boulders.values()
+			%% for topo in boulder.topos
+				\VAR{image(topo.path_o+topo.outFileName, topo.description, topo.size)}
+			%% endfor
+			\subsection*{\VAR{boulder.name}}\label{bf:\VAR{boulder.name}}
+			\VAR{boulder.description or "\\"}
+			
+			%% for photo in boulder.photos
+				\VAR{image(photo.path+photo.fileName, photo.description, photo.size)}\label{pt:\VAR{photo.name}}
+			%% endfor
+			
+			%% if boulder.routes
+				\begin{enumerate}[]
+				%% for route in boulder.routes.values()
+					\setcounter{enumi}{\VAR{route.getRtNum(as_int=True)-1}}
+					\item\label{rt:\VAR{route.name}} \colorbox{\VAR{route.color_LaTeX}}{\textbf{\VAR{route.name} V\VAR{route.grade} \VAR{route.rating_LaTeX} \VAR{route.serious_LaTeX}} }
+					%% if not route.hasTopo
+						\newline (No Topo) 
+					%% endif
+					\newline \VAR{route.description}\
+				%% if route.variations.values()
+					\newline \textbf{Variations:}
+					\begin{enumerate}
+				%% for variation in route.variations.values()
+						\item\label{vr:\VAR{variation.name}} \colorbox{\VAR{variation.color_LaTeX}}{\emph{\VAR{variation.name} V\VAR{variation.grade} \VAR{variation.rating_LaTeX} \VAR{variation.serious_LaTeX}}  }
+						%% if not variation.hasTopo
+							\newline (No Topo) 
+						%% endif
+						\newline \VAR{variation.description}\
+				%% endfor
+					\end{enumerate}
+				%% endif
+				%% endfor 
+				\end{enumerate}
+			%% endif
+			
+		%% endfor 
+	%% endif
 %% endfor
 
 
