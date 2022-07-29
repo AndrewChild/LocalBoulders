@@ -53,47 +53,47 @@ def update_svg(data_input):
     xmlFile = data_input.path_i + data_input.fileName
     tree = ET.parse(xmlFile)
     root = tree.getroot()
-    subTree = root.find('./svg:g', namespaces)
 
     width = root.attrib['width']
     scale = round(data_input.scale*float(width)/1920, 2)
 
-    #loop through all "paths" and format them
-    elements = root.findall('./svg:g/svg:path', namespaces)
-    for elm in elements:
-        elm_id = elm.attrib['id']
-        if elm_id in data_input.routes:
-            dashlineAttributes = {
-                'id': elm_id + '_clone',
-                'style': f'fill:none;stroke:#FFFFFF;stroke-width:{5*scale};stroke-dasharray:{20*scale}, {20*scale}',
-                'd': elm.attrib['d']
-            }
-            lineAttributes = {
-                'id': elm_id,
-                'style': f'fill:none;stroke:{data_input.routes[elm_id].color_hex};stroke-width:{5*scale};stroke-dasharray:none',
-                'd': elm.attrib['d']
-            }
-            if 'marker' in elm.attrib['style']:
-                markerStrings = [x for x in elm.attrib['style'] if 'marker' in x]
-                lineAttributes['style'] = lineAttributes['style'] + ';' + ';'.join(markerStrings)
-            elm.attrib['id'] = lineAttributes['id']
-            elm.attrib['style'] = lineAttributes['style']
-            elm.attrib['d'] = lineAttributes['d']
-            ET.SubElement(subTree, f'{n}path', dashlineAttributes)
+    for subTree in root.findall('./svg:g', namespaces):
+        #loop through all "paths" and format them
+        elements = subTree.findall('./svg:path', namespaces)
+        for elm in elements:
+            elm_id = elm.attrib['id']
+            if elm_id in data_input.routes:
+                dashlineAttributes = {
+                    'id': elm_id + '_clone',
+                    'style': f'fill:none;stroke:#FFFFFF;stroke-width:{5*scale};stroke-dasharray:{20*scale}, {20*scale}',
+                    'd': elm.attrib['d']
+                }
+                lineAttributes = {
+                    'id': elm_id,
+                    'style': f'fill:none;stroke:{data_input.routes[elm_id].color_hex};stroke-width:{5*scale};stroke-dasharray:none',
+                    'd': elm.attrib['d']
+                }
+                if 'marker' in elm.attrib['style']:
+                    markerStrings = [x for x in elm.attrib['style'] if 'marker' in x]
+                    lineAttributes['style'] = lineAttributes['style'] + ';' + ';'.join(markerStrings)
+                elm.attrib['id'] = lineAttributes['id']
+                elm.attrib['style'] = lineAttributes['style']
+                elm.attrib['d'] = lineAttributes['d']
+                ET.SubElement(subTree, f'{n}path', dashlineAttributes)
 
-    #loop through all "ellipses" and format them
-    elements = root.findall('./svg:g/svg:ellipse', namespaces) + root.findall('./svg:g/svg:circle', namespaces)
-    for elm in elements:
-        elm_id = elm.attrib['id']
-        if elm_id in data_input.routes:
+        #loop through all "ellipses" and format them
+        elements = subTree.findall('./svg:ellipse', namespaces) + subTree.findall('./svg:circle', namespaces)
+        for elm in elements:
+            elm_id = elm.attrib['id']
+            if elm_id in data_input.routes:
 
-            circleAttributes, labelAttributes, textAttributes, label = _get_route_label(elm, data_input.routes, scale)
-            subTree.remove(elm)
-            ET.SubElement(subTree, f'{n}circle', circleAttributes)
-            ET.SubElement(subTree, f'{n}text', labelAttributes)
-            for elm2 in root.findall('./svg:g/svg:text', namespaces):
-                if elm2.attrib['id'] == labelAttributes['id']:
-                    t = ET.SubElement(elm2, f'{n}text', textAttributes).text = str(label)
+                circleAttributes, labelAttributes, textAttributes, label = _get_route_label(elm, data_input.routes, scale)
+                elm.clear()
+                ET.SubElement(subTree, f'{n}circle', circleAttributes)
+                ET.SubElement(subTree, f'{n}text', labelAttributes)
+                for elm2 in root.findall('./svg:g/svg:text', namespaces):
+                    if elm2.attrib['id'] == labelAttributes['id']:
+                        t = ET.SubElement(elm2, f'{n}text', textAttributes).text = str(label)
 
     # write to file
     newSVG = data_input.path_o + data_input.fileName.split('.')[0] + '_c.' + data_input.fileName.split('.')[1]
