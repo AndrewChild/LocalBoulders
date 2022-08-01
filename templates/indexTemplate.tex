@@ -1,5 +1,6 @@
+\twocolumn
 \formatChapter{Index}
-\begin{multicols*}{2}
+\begin{flushleft}
 \section{Routes Alphabetical}
 \begin{center}
 \begin{supertabular}{p{0.65\linewidth}r}
@@ -10,21 +11,21 @@
 \end{center}
 \section{Routes by grade}
 \begin{center}
-\begin{supertabular}{lp{0.5\linewidth}ll}
+\begin{supertabular}{p{0.08\linewidth}p{0.5\linewidth}p{0.18\linewidth}p{0.08\linewidth}}
 %% for route in book.all_routes | sort(reverse=true, attribute="rating") | sort(attribute="gradeNum")
-$\square$ V\VAR{route.grade}&\VAR{route.name} &\VAR{route.rating_LaTeX}\VAR{route.serious_LaTeX}& \pageref{\VAR{route.ref}:\VAR{route.name}} \\
+V\VAR{route.grade}&\VAR{route.name} &\VAR{route.rating_LaTeX}\VAR{route.serious_LaTeX}& \pageref{\VAR{route.ref}:\VAR{route.name}} \\
 %% endfor
 \end{supertabular}
 \end{center}
 \section{GPS Coordinates}
 \section{Photo Credits}
-\begin{supertabular}{p{0.3\linewidth}lp{0.4\linewidth}}
+\begin{supertabular}{p{0.3\linewidth}p{0.2\linewidth}p{0.4\linewidth}}
 %% for photo in book.all_photos
 %% if photo.credit
 \VAR{photo.name}&Page \pageref{pt:\VAR{photo.name}}&Credit: \VAR{photo.credit}\\
 %% endif
 %% endfor
 \end{supertabular}
-
-\end{multicols*}
+\end{flushleft}
+\onecolumn
 \clearpage
