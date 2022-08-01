@@ -85,7 +85,11 @@ class Book(ModuleBaseClass):
         'area_o': './maps/area/',
         'photos': './images/'
     }
-    def __init__(self, name, description='', repo='', dl='', collaborators=[], subarea_numbering=True, paths={}):
+    __option_defaults = {
+        'subarea_numbering': True,
+        'topos_attached_to_routes': False,
+    }
+    def __init__(self, name, description='', repo='', dl='', collaborators=[], subarea_numbering=True, paths={}, options={}):
         super().__init__(name, None, description)
         self.date = datetime.today().strftime('%Y-%m-%d')
         self.ref = 'bk'
@@ -94,6 +98,7 @@ class Book(ModuleBaseClass):
         self.collaborators = collaborators
         self.subarea_numbering = subarea_numbering
         self.paths = {**self.__path_defaults, **paths}
+        self.options = {**self.__option_defaults, **options}
 
         if dl:
             create_qr(self.paths['qr_o'] ,dl, f'{self.name}')
@@ -148,6 +153,7 @@ class Area(ModuleBaseClass):
         self.photos = []
         self.areaMaps = []
         self.paths = parent.paths
+        self.options = parent.options
         if gps:
             self.gps = gps.replace(' ','')
             create_qr(self.paths['qr_o'], 'http://maps.google.com/maps?q='+self.gps, f'{self.name}')
@@ -166,6 +172,7 @@ class Subarea(ModuleBaseClass):
         self.photos = []
         self.subAreaMaps = []
         self.paths = parent.paths
+        self.options = parent.options
         if gps:
             self.gps = gps.replace(' ','')
             create_qr(self.paths['qr_o'], r'http://maps.google.com/maps?q='+self.gps, f'{self.name}')
@@ -181,6 +188,7 @@ class Boulder(ModuleBaseClass):
         self.topos = []
         self.photos = []
         self.paths = parent.paths
+        self.options = parent.options
         assert self._parent_class == Subarea
 
 
@@ -193,17 +201,21 @@ class Route(ModuleBaseClass):
         self.grade = grade
         self.rating = int(rating)
         self.serious = serious
+        self.paths = parent.paths
+        self.options = parent.options
 
         self.ref = 'rt'
         self.color, self.color_hex, self.gradeNum = get_grade_atts(grade)
         self.hasTopo = False
+        if self.options['topos_attached_to_routes']:
+            self.topos = []
 
         assert self._parent_class == Boulder
 
     def getRtNum(self, as_int=False):
         """returns the guidebook route number of the route"""
         ct = 1
-        if self._parent._parent._parent._parent.subarea_numbering:
+        if self.options['subarea_numbering']:
             subAreas = [self._parent._parent]
         else:
             subAreas = self._parent._parent._parent.subareas.values()
@@ -227,10 +239,14 @@ class Variation(ModuleBaseClass):
         self.grade = grade
         self.rating = rating
         self.serious = serious
+        self.paths = parent.paths
+        self.options = parent.options
 
         self.ref = 'vr'
         self.color, self.color_hex, self.gradeNum = get_grade_atts(grade)
         self.hasTopo = False
+        if self.options['topos_attached_to_routes']:
+            self.topos = []
 
         assert self._parent_class == Route
 
@@ -254,6 +270,8 @@ class Photo():
         self.size = size
         self.credit = credit
         self.route = route
+        self.paths = parent.paths
+        self.options = parent.options
 
         if path:
             self.path = path
@@ -274,6 +292,8 @@ class Topo():
         self.description = description
         self.routes = routes.copy()  # not sure if this is necessary
         self.size = size
+        self.paths = parent.paths
+        self.options = parent.options
 
         if path_i:
             self.path_i = path_i
@@ -291,6 +311,12 @@ class Topo():
         else:
             self.scale = 2.0
 
+
+        if self.options['topos_attached_to_routes']:
+            for route in self.routes.values():
+                route.topos.append(self)
+                break
+
         parent.topos.append(self)
         for route in routes.values():
             route.hasTopo = True
@@ -305,6 +331,8 @@ class AreaMap():
         self.fileName = fileName
         self.description = description
         self.size = size
+        self.paths = parent.paths
+        self.options = parent.options
 
         if path_i:
             self.path_i = path_i
@@ -333,6 +361,8 @@ class SubAreaMap():
         self.description = description
         self.routes = routes.copy()  # not sure if this is necessary
         self.size = size
+        self.paths = parent.paths
+        self.options = parent.options
 
         if path_i:
             self.path_i = path_i

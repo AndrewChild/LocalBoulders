@@ -4,20 +4,42 @@ import cairosvg
 import sys
 
 
+def _getApproximateArialStringWidth(st, min_size=False):
+    '''
+    Inputs a string and returns the width of the string when renedered in 12 pt arial font in picas. (1pica=12pt)
+    '''
+    #https://stackoverflow.com/questions/16007743/roughly-approximate-the-width-of-a-string-of-text-in-python
+    size = 0 # in milinches
+    for s in st:
+        if s in 'lij|\' ': size += 37
+        elif s in '![]fI.,:;/\\t': size += 50
+        elif s in '`-(){}r"': size += 60
+        elif s in '*^zcsJkvxy': size += 85
+        elif s in 'aebdhnopqug#$L+<>=?_~FZT1234567890': size += 95
+        elif s in 'BSPEAKVXY&UwNRCHD': size += 112
+        elif s in 'QGOMm%W@': size += 135
+        else: size += 50
+    if min_size: size = max(size, 190)
+    return size * 6 / 1000.0 # Convert to picas
+
+
 def _mod_file_name(filePath, mod):
     file_bn = os.path.basename(filePath)
     file_bn_list = file_bn.split('.')
     return filePath.replace(file_bn, file_bn_list[0] + mod + '.' + file_bn_list[1])
 
+
 def _get_route_label(elm, routes, scale):
+    base_font_size = 24
 
     elm_id = elm.attrib['id']
     label = routes[elm_id].getRtNum()
-    labellen = len(str(label))
-    if labellen < 3:
-        radius = str(20*scale)
-    else:
-        radius = str((labellen-2)*4*scale+20*scale)
+    font_size = base_font_size * scale
+
+    # these inputs don't make a ton of sense, but I found them to be effective via trial and error
+    radius = str(round(font_size*(0.5*_getApproximateArialStringWidth(label, min_size=True)+0.3), 4))
+    text_x_offset = round(0.5*font_size*_getApproximateArialStringWidth(label), 4)
+    text_y_offset = round(0.4*base_font_size*scale, 4)
 
     circleAttributes = {
         'id': elm_id,
@@ -29,14 +51,14 @@ def _get_route_label(elm, routes, scale):
     labelAttributes = {
         'id': elm_id + '_label',
         'style': f'font-size:37.3333px;fill:#ffffff;fill-opacity:1;stroke:#ff0000;stroke-width:{1*scale};stroke-dasharray:none;stroke-opacity:1',
-        'x': str(float(elm.attrib['cx'])-6*labellen*scale),
-        'y': str(float(elm.attrib['cy'])+7*scale),
+        'x': str(float(elm.attrib['cx'])-text_x_offset),
+        'y': str(float(elm.attrib['cy'])+text_y_offset),
     }
     textAttributes = {
         'id': elm_id + '_text',
         'x': labelAttributes['x'],
         'y': labelAttributes['y'],
-        'style':f'font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:{19*scale}px;font-family:Arial;-inkscape-font-specification:\'Arial Bold\';fill:#FFFFFF;fill-opacity:1;stroke:none',
+        'style':f'font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:{font_size}px;font-family:Arial;-inkscape-font-specification:\'Arial Bold\';fill:#FFFFFF;fill-opacity:1;stroke:none',
     }
     return circleAttributes, labelAttributes, textAttributes, label
 
@@ -53,47 +75,47 @@ def update_svg(data_input):
     xmlFile = data_input.path_i + data_input.fileName
     tree = ET.parse(xmlFile)
     root = tree.getroot()
-    subTree = root.find('./svg:g', namespaces)
 
     width = root.attrib['width']
     scale = round(data_input.scale*float(width)/1920, 2)
 
-    #loop through all "paths" and format them
-    elements = root.findall('./svg:g/svg:path', namespaces)
-    for elm in elements:
-        elm_id = elm.attrib['id']
-        if elm_id in data_input.routes:
-            dashlineAttributes = {
-                'id': elm_id + '_clone',
-                'style': f'fill:none;stroke:#FFFFFF;stroke-width:{5*scale};stroke-dasharray:{20*scale}, {20*scale}',
-                'd': elm.attrib['d']
-            }
-            lineAttributes = {
-                'id': elm_id,
-                'style': f'fill:none;stroke:{data_input.routes[elm_id].color_hex};stroke-width:{5*scale};stroke-dasharray:none',
-                'd': elm.attrib['d']
-            }
-            if 'marker' in elm.attrib['style']:
-                markerStrings = [x for x in elm.attrib['style'] if 'marker' in x]
-                lineAttributes['style'] = lineAttributes['style'] + ';' + ';'.join(markerStrings)
-            elm.attrib['id'] = lineAttributes['id']
-            elm.attrib['style'] = lineAttributes['style']
-            elm.attrib['d'] = lineAttributes['d']
-            ET.SubElement(subTree, f'{n}path', dashlineAttributes)
+    for subTree in root.findall('./svg:g', namespaces):
+        #loop through all "paths" and format them
+        elements = subTree.findall('./svg:path', namespaces)
+        for elm in elements:
+            elm_id = elm.attrib['id']
+            if elm_id in data_input.routes:
+                dashlineAttributes = {
+                    'id': elm_id + '_clone',
+                    'style': f'fill:none;stroke:#FFFFFF;stroke-width:{7*scale};stroke-dasharray:{30*scale}, {30*scale}',
+                    'd': elm.attrib['d']
+                }
+                lineAttributes = {
+                    'id': elm_id,
+                    'style': f'fill:none;stroke:{data_input.routes[elm_id].color_hex};stroke-width:{7*scale};stroke-dasharray:none',
+                    'd': elm.attrib['d']
+                }
+                if 'marker' in elm.attrib['style']:
+                    markerStrings = [x for x in elm.attrib['style'] if 'marker' in x]
+                    lineAttributes['style'] = lineAttributes['style'] + ';' + ';'.join(markerStrings)
+                elm.attrib['id'] = lineAttributes['id']
+                elm.attrib['style'] = lineAttributes['style']
+                elm.attrib['d'] = lineAttributes['d']
+                ET.SubElement(subTree, f'{n}path', dashlineAttributes)
 
-    #loop through all "ellipses" and format them
-    elements = root.findall('./svg:g/svg:ellipse', namespaces) + root.findall('./svg:g/svg:circle', namespaces)
-    for elm in elements:
-        elm_id = elm.attrib['id']
-        if elm_id in data_input.routes:
+        #loop through all "ellipses" and format them
+        elements = subTree.findall('./svg:ellipse', namespaces) + subTree.findall('./svg:circle', namespaces)
+        for elm in elements:
+            elm_id = elm.attrib['id']
+            if elm_id in data_input.routes:
 
-            circleAttributes, labelAttributes, textAttributes, label = _get_route_label(elm, data_input.routes, scale)
-            subTree.remove(elm)
-            ET.SubElement(subTree, f'{n}circle', circleAttributes)
-            ET.SubElement(subTree, f'{n}text', labelAttributes)
-            for elm2 in root.findall('./svg:g/svg:text', namespaces):
-                if elm2.attrib['id'] == labelAttributes['id']:
-                    t = ET.SubElement(elm2, f'{n}text', textAttributes).text = str(label)
+                circleAttributes, labelAttributes, textAttributes, label = _get_route_label(elm, data_input.routes, scale)
+                elm.clear()
+                ET.SubElement(subTree, f'{n}circle', circleAttributes)
+                ET.SubElement(subTree, f'{n}text', labelAttributes)
+                for elm2 in root.findall('./svg:g/svg:text', namespaces):
+                    if elm2.attrib['id'] == labelAttributes['id']:
+                        t = ET.SubElement(elm2, f'{n}text', textAttributes).text = str(label)
 
     # write to file
     newSVG = data_input.path_o + data_input.fileName.split('.')[0] + '_c.' + data_input.fileName.split('.')[1]

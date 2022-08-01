@@ -5,18 +5,20 @@
 		\halfPic{\VAR{filePath}}{\VAR{description}}
 	%% endif
 %% endmacro
+
+
 \formatChapter{\VAR{area.name}}
-\begin{multicols*}{2}
 %% for map in area.areaMaps
 	\VAR{image(map.path_o+map.fileName, map.description, map.size)}
 %% endfor
 %% if area.gps
 	\qrcode{\VAR{area.paths['qr_o']}/\VAR{area.name}_qr.png}{http://maps.google.com/maps?q=\VAR{area.gps}}{Navigate to this area}
 %% endif
-\begin{minipage}{\columnwidth}
 \VAR{area.description or "\\"}
-\end{minipage}
-\halfPic{\VAR{area.paths['histogram_o']}/\VAR{area.name}.png}{}
+\begin{figure}[h]
+  \centering
+    \includegraphics[width=\linewidth]{\VAR{area.paths['histogram_o']}/\VAR{area.name}.png}
+\end{figure}
 
 %% for subArea in area.subareas.values()
 	%% if subArea.name
@@ -25,9 +27,7 @@
 	%% if subArea.gps
 		\qrcode{\VAR{area.paths['qr_o']}\VAR{subArea.name}_qr.png}{http://maps.google.com/maps?q=\VAR{subArea.gps}}{Navigate to this sub area}
 	%% endif
-	\begin{minipage}{\columnwidth}
 	\VAR{subArea.description or "\\"}
-	\end{minipage}
 	%% for map in subArea.subAreaMaps
 		\VAR{image(map.path_o+map.outFileName, map.description, map.size)}
 	%% endfor
@@ -38,47 +38,39 @@
 	
 	%% if subArea.boulders
 		%% for boulder in subArea.boulders.values()
+			%% for topo in boulder.topos
+				\VAR{image(topo.path_o+topo.outFileName, topo.description, topo.size)}
+			%% endfor
 			\subsection*{\VAR{boulder.name}}\label{bf:\VAR{boulder.name}}
-			\begin{minipage}{\columnwidth}
 			\VAR{boulder.description or "\\"}
-			\end{minipage}
 			
 			%% for photo in boulder.photos
 				\VAR{image(photo.path+photo.fileName, photo.description, photo.size)}\label{pt:\VAR{photo.name}}
 			%% endfor
 			
 			%% if boulder.routes
+				\begin{enumerate}[]
 				%% for route in boulder.routes.values()
-					%% for topo in route.topos
-						\VAR{image(topo.path_o+topo.outFileName, topo.description, topo.size)}
-					%% endfor
-					\label{rt:\VAR{route.name}}\colorbox{\VAR{route.color_LaTeX}}{\textbf{\VAR{route.getRtNum()} \VAR{route.name} V\VAR{route.grade} \VAR{route.rating_LaTeX} \VAR{route.serious_LaTeX}}}
-					\begin{adjustwidth}{0.5cm}{}
-					\begin{minipage}{\linewidth}					
-					\VAR{route.description}
+					\setcounter{enumi}{\VAR{route.getRtNum(as_int=True)-1}}
+					\item\label{rt:\VAR{route.name}} \colorbox{\VAR{route.color_LaTeX}}{\textbf{\VAR{route.name} V\VAR{route.grade} \VAR{route.rating_LaTeX} \VAR{route.serious_LaTeX}} }
 					%% if not route.hasTopo
 						\newline (No Topo) 
 					%% endif
-					\end{minipage}
-					%% if route.variations.values()
-						\newline \textbf{Variations:} \newline
-						%% for variation in route.variations.values()
-							%% for topo in variation.topos
-								\VAR{image(topo.path_o+topo.outFileName, topo.description, topo.size)}
-							%% endfor
-							\label{vr:\VAR{variation.name}}\colorbox{\VAR{variation.color_LaTeX}}{\emph{\VAR{variation.getRtNum()} \VAR{variation.name} V\VAR{variation.grade} \VAR{variation.rating_LaTeX} \VAR{variation.serious_LaTeX}}}
-							\begin{adjustwidth}{0.5cm}{}
-							\begin{minipage}{\linewidth}					
-							\VAR{variation.description}
-							%% if not variation.hasTopo
-								\newline (No Topo) 
-							%% endif
-							\end{minipage}
-							\end{adjustwidth}
-						%% endfor
-					%% endif
-					\end{adjustwidth}
+					\newline \VAR{route.description}\
+				%% if route.variations.values()
+					\newline \textbf{Variations:}
+					\begin{enumerate}
+				%% for variation in route.variations.values()
+						\item\label{vr:\VAR{variation.name}} \colorbox{\VAR{variation.color_LaTeX}}{\emph{\VAR{variation.name} V\VAR{variation.grade} \VAR{variation.rating_LaTeX} \VAR{variation.serious_LaTeX}}  }
+						%% if not variation.hasTopo
+							\newline (No Topo) 
+						%% endif
+						\newline \VAR{variation.description}\
+				%% endfor
+					\end{enumerate}
+				%% endif
 				%% endfor 
+				\end{enumerate}
 			%% endif
 			
 		%% endfor 
@@ -86,5 +78,4 @@
 %% endfor
 
 
-\end{multicols*}
 \clearpage

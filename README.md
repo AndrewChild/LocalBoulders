@@ -13,15 +13,11 @@
         - maybe move class.ref to genLaTeX
 	- remove metaclasses
     - use itertools.count for indexing
-    - instead of assigning topos to boulders assign them to their lowest numbered route?
     - limit photo height
     - in contexts where both routes and variations are being refered to interchangably call them climbs
-	- resize topo annotations (30% bigger)
-		- calculate width of text string in label and resize label border perfectly
     LaTeX:
     - GPS index of boulders
     - arete shortcut
-	- increase font size?
     - support half and full page photo sizes
     - there seems to be no way to include a full page photo on the first page of a chapter
     - distribute photos (as in action shots, not topos and maps) evenly throughout an area instead of declaring them at the boulder level
