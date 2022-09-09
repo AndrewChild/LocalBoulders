@@ -5,6 +5,14 @@
 		\halfPic{\VAR{filePath}}{\VAR{description}}
 	%% endif
 %% endmacro
+%% macro climbLabel(climb)
+\label{\VAR{climb.ref}:\VAR{climb.name}}
+\colorbox{\VAR{climb.color_LaTeX}}{
+\textbf{
+\VAR{climb.getRtNum()} \VAR{climb.name}\VAR{climb.name_unconfirmed_LaTeX} V\VAR{climb.grade}\VAR{climb.grade_unconfirmed_LaTeX} \VAR{climb.rating_LaTeX} \VAR{climb.serious_LaTeX}
+}
+}
+%% endmacro
 \formatChapter{\VAR{area.name}}
 \begin{multicols}{2}
 %% for map in area.areaMaps
@@ -56,7 +64,7 @@
 						\VAR{image(topo.path_o+topo.outFileName, topo.description, topo.size)}
 					%% endfor
 					\begin{minipage}{\linewidth}	
-					\label{rt:\VAR{route.name}}\colorbox{\VAR{route.color_LaTeX}}{\textbf{\VAR{route.getRtNum()} \VAR{route.name} V\VAR{route.grade} \VAR{route.rating_LaTeX} \VAR{route.serious_LaTeX}}}
+					\VAR{climbLabel(route)}
 					\begin{adjustwidth}{0.5cm}{}				
 					\VAR{route.description}
 					%% if not route.hasTopo
@@ -72,7 +80,7 @@
 								\VAR{image(topo.path_o+topo.outFileName, topo.description, topo.size)}
 							%% endfor
 							\begin{minipage}{\linewidth}	
-							\label{vr:\VAR{variation.name}}\colorbox{\VAR{variation.color_LaTeX}}{\emph{\VAR{variation.getRtNum()} \VAR{variation.name} V\VAR{variation.grade} \VAR{variation.rating_LaTeX} \VAR{variation.serious_LaTeX}}}
+							\VAR{climbLabel(variation)}
 							\begin{adjustwidth}{0.5cm}{}				
 							\VAR{variation.description}
 							%% if not variation.hasTopo

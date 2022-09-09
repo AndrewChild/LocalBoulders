@@ -35,6 +35,14 @@ def gen_book_LaTeX(book):
             route.color_LaTeX = route.color + '!20'
         else:
             route.color_LaTeX = route.color + '!20'
+        if route.name_unconfirmed:
+            route.name_unconfirmed_LaTeX = '*'
+        else:
+            route.name_unconfirmed_LaTeX = ''
+        if route.grade_unconfirmed:
+            route.grade_unconfirmed_LaTeX = '*'
+        else:
+            route.grade_unconfirmed_LaTeX = ''
 
     for photo in book.all_photos:
         if photo.route:
