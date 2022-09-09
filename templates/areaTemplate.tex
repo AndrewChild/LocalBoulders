@@ -8,8 +8,10 @@
 %% macro climbLabel(climb)
 \label{\VAR{climb.ref}:\VAR{climb.name}}
 \colorbox{\VAR{climb.color_LaTeX}}{
+\parbox{0.95\textwidth}{
 \textbf{
 \VAR{climb.getRtNum()} \VAR{climb.name}\VAR{climb.name_unconfirmed_LaTeX} V\VAR{climb.grade}\VAR{climb.grade_unconfirmed_LaTeX} \VAR{climb.rating_LaTeX} \VAR{climb.serious_LaTeX}
+}
 }
 }
 %% endmacro
@@ -27,9 +29,7 @@
 \halfPic{\VAR{area.paths['histogram_o']}/\VAR{area.name}.png}{}
 
 %% for subArea in area.subareas.values()
-\end{multicols}
-\rule{\textwidth}{1pt}
-\begin{multicols}{2}
+\newpage
 	%% if subArea.name
 		\section{\VAR{subArea.name}}\label{sa:\VAR{subArea.name}}
 	%% endif
