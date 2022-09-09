@@ -30,6 +30,9 @@
 
 %% for subArea in area.subareas.values()
 \newpage
+	%% for map in subArea.subAreaMaps
+		\VAR{image(map.path_o+map.outFileName, map.description, map.size)}
+	%% endfor
 	%% if subArea.name
 		\section{\VAR{subArea.name}}\label{sa:\VAR{subArea.name}}
 	%% endif
@@ -39,9 +42,6 @@
 	\begin{minipage}{\columnwidth}
 	\VAR{subArea.description or "\\"}
 	\end{minipage}
-	%% for map in subArea.subAreaMaps
-		\VAR{image(map.path_o+map.outFileName, map.description, map.size)}
-	%% endfor
 	
 	%% for photo in subArea.photos
 		\VAR{image(photo.path+photo.fileName, photo.description, photo.size)}\label{pt:\VAR{photo.name}}
@@ -49,19 +49,26 @@
 	
 	%% if subArea.boulders
 		%% for boulder in subArea.boulders.values()
-			\subsection*{\VAR{boulder.name}}\label{bf:\VAR{boulder.name}}
+			%% for topo in boulder.topos
+				%% if topo.size == 'f'
+				\VAR{image(topo.path_o+topo.outFileName, topo.description, topo.size)}
+				%% endif
+			%% endfor
 			\begin{minipage}{\columnwidth}
+			\subsection*{\VAR{boulder.name}}\label{bf:\VAR{boulder.name}}
 			\VAR{boulder.description or "\\"}
-			\end{minipage}
 			
 			%% for photo in boulder.photos
-				\VAR{image(photo.path+photo.fileName, photo.description, photo.size)}\label{pt:\VAR{photo.name}}
+				%\VAR{image(photo.path+photo.fileName, photo.description, photo.size)}\label{pt:\VAR{photo.name}}
 			%% endfor
+			\end{minipage}
 			
 			%% if boulder.routes
 				%% for route in boulder.routes.values()
 					%% for topo in route.topos
+						%% if topo.size == 'h'
 						\VAR{image(topo.path_o+topo.outFileName, topo.description, topo.size)}
+						%% endif
 					%% endfor
 					\begin{minipage}{\linewidth}	
 					\VAR{climbLabel(route)}

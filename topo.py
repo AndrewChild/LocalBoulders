@@ -30,7 +30,7 @@ def _mod_file_name(filePath, mod):
 
 
 def _get_route_label(elm, routes, scale):
-    base_font_size = 24
+    base_font_size = 36
 
     elm_id = elm.attrib['id']
     label = routes[elm_id].getRtNum()
