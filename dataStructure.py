@@ -196,11 +196,14 @@ class Route(ModuleBaseClass):
     """class object for an individual route or boulder"""
     _plural = 'routes'
 
-    def __init__(self, name, parent, description='PLACEHOLDER', grade='?', rating=-1, serious=0):
+    def __init__(self, name, parent, description='PLACEHOLDER', grade='?', rating=-1, serious=0,
+                 grade_unconfirmed = False, name_unconfirmed = False):
         super().__init__(name, parent, description)
         self.grade = grade
         self.rating = int(rating)
         self.serious = serious
+        self.grade_unconfirmed = grade_unconfirmed
+        self.name_unconfirmed = name_unconfirmed
         self.paths = parent.paths
         self.options = parent.options
 
@@ -234,11 +237,14 @@ class Variation(ModuleBaseClass):
     """class object for variations of routs"""
     _plural = 'variations'
 
-    def __init__(self, name, parent, description='PLACEHOLDER', grade='?', rating=-1, serious=0):
+    def __init__(self, name, parent, description='PLACEHOLDER', grade='?', rating=-1, serious=0,
+                 grade_unconfirmed=False, name_unconfirmed=False):
         super().__init__(name, parent, description)
         self.grade = grade
         self.rating = rating
         self.serious = serious
+        self.grade_unconfirmed = grade_unconfirmed
+        self.name_unconfirmed = name_unconfirmed
         self.paths = parent.paths
         self.options = parent.options
 

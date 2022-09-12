@@ -1,12 +1,23 @@
 %% macro image(filePath, description=None, size='h')
 	%% if size == 'f'
-		\fullPic{\VAR{filePath}}{\VAR{description}}
+		\fullPic{\VAR{filePath}}
 	%% else
 		\halfPic{\VAR{filePath}}{\VAR{description}}
 	%% endif
 %% endmacro
+%% macro climbLabel(climb)
+\label{\VAR{climb.ref}:\VAR{climb.name}}
+\colorbox{\VAR{climb.color_LaTeX}}{
+\parbox{0.95\textwidth}{
+\textbf{
+\VAR{climb.getRtNum()} \VAR{climb.name}\VAR{climb.name_unconfirmed_LaTeX} V\VAR{climb.grade}\VAR{climb.grade_unconfirmed_LaTeX} \VAR{climb.rating_LaTeX} \VAR{climb.serious_LaTeX}
+}
+}
+}
+%% endmacro
 \formatChapter{\VAR{area.name}}
-\begin{multicols*}{2}
+\raggedcolumns
+\begin{multicols}{2}
 %% for map in area.areaMaps
 	\VAR{image(map.path_o+map.fileName, map.description, map.size)}
 %% endfor
@@ -19,6 +30,10 @@
 \halfPic{\VAR{area.paths['histogram_o']}/\VAR{area.name}.png}{}
 
 %% for subArea in area.subareas.values()
+\newpage
+	%% for map in subArea.subAreaMaps
+		\VAR{image(map.path_o+map.outFileName, map.description, map.size)}
+	%% endfor
 	%% if subArea.name
 		\section{\VAR{subArea.name}}\label{sa:\VAR{subArea.name}}
 	%% endif
@@ -28,9 +43,6 @@
 	\begin{minipage}{\columnwidth}
 	\VAR{subArea.description or "\\"}
 	\end{minipage}
-	%% for map in subArea.subAreaMaps
-		\VAR{image(map.path_o+map.outFileName, map.description, map.size)}
-	%% endfor
 	
 	%% for photo in subArea.photos
 		\VAR{image(photo.path+photo.fileName, photo.description, photo.size)}\label{pt:\VAR{photo.name}}
@@ -38,46 +50,55 @@
 	
 	%% if subArea.boulders
 		%% for boulder in subArea.boulders.values()
-			\subsection*{\VAR{boulder.name}}\label{bf:\VAR{boulder.name}}
+			%% for topo in boulder.topos
+				%% if topo.size == 'f'
+				\VAR{image(topo.path_o+topo.outFileName, topo.description, topo.size)}
+				%% endif
+			%% endfor
 			\begin{minipage}{\columnwidth}
+			\subsection*{\VAR{boulder.name}}\label{bf:\VAR{boulder.name}}
 			\VAR{boulder.description or "\\"}
-			\end{minipage}
 			
 			%% for photo in boulder.photos
-				\VAR{image(photo.path+photo.fileName, photo.description, photo.size)}\label{pt:\VAR{photo.name}}
+				%\VAR{image(photo.path+photo.fileName, photo.description, photo.size)}\label{pt:\VAR{photo.name}}
 			%% endfor
+			\end{minipage}
 			
 			%% if boulder.routes
 				%% for route in boulder.routes.values()
 					%% for topo in route.topos
+						%% if topo.size == 'h'
 						\VAR{image(topo.path_o+topo.outFileName, topo.description, topo.size)}
+						%% endif
 					%% endfor
-					\label{rt:\VAR{route.name}}\colorbox{\VAR{route.color_LaTeX}}{\textbf{\VAR{route.getRtNum()} \VAR{route.name} V\VAR{route.grade} \VAR{route.rating_LaTeX} \VAR{route.serious_LaTeX}}}
-					\begin{adjustwidth}{0.5cm}{}
-					\begin{minipage}{\linewidth}					
+					\begin{minipage}{\linewidth}	
+					\VAR{climbLabel(route)}
+					\begin{adjustwidth}{0.5cm}{}				
 					\VAR{route.description}
 					%% if not route.hasTopo
 						\newline (No Topo) 
 					%% endif
+					\end{adjustwidth}
 					\end{minipage}
 					%% if route.variations.values()
-						\newline \textbf{Variations:} \newline
+						\begin{adjustwidth}{0.5cm}{}				
+						\textbf{Variations:} \newline
 						%% for variation in route.variations.values()
 							%% for topo in variation.topos
 								\VAR{image(topo.path_o+topo.outFileName, topo.description, topo.size)}
 							%% endfor
-							\label{vr:\VAR{variation.name}}\colorbox{\VAR{variation.color_LaTeX}}{\emph{\VAR{variation.getRtNum()} \VAR{variation.name} V\VAR{variation.grade} \VAR{variation.rating_LaTeX} \VAR{variation.serious_LaTeX}}}
-							\begin{adjustwidth}{0.5cm}{}
-							\begin{minipage}{\linewidth}					
+							\begin{minipage}{\linewidth}	
+							\VAR{climbLabel(variation)}
+							\begin{adjustwidth}{0.5cm}{}				
 							\VAR{variation.description}
 							%% if not variation.hasTopo
 								\newline (No Topo) 
 							%% endif
-							\end{minipage}
 							\end{adjustwidth}
+							\end{minipage}
 						%% endfor
+						\end{adjustwidth}
 					%% endif
-					\end{adjustwidth}
 				%% endfor 
 			%% endif
 			
@@ -86,5 +107,5 @@
 %% endfor
 
 
-\end{multicols*}
+\end{multicols}
 \clearpage
