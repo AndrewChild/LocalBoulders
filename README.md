@@ -21,6 +21,7 @@
     - support half and full page photo sizes
     - there seems to be no way to include a full page photo on the first page of a chapter
     - distribute photos (as in action shots, not topos and maps) evenly throughout an area instead of declaring them at the boulder level
+	- Possibly create a "photo stack system" where all photos for a boulder are collected and distributed according to rules (I.e. prioritize putting half page photos at the beginning and end, distribute others evenly).
     Other:
     - Consider alternatives to LaTeX. HTML?
     - documentation
