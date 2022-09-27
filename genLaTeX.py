@@ -18,6 +18,25 @@ def _get_rating_string(rating):
         rating_string = r'\ding{72} ' * rating
     return rating_string
 
+def _set_templateEnv(searchpath):
+    """
+    Tells JINJA2 how to read templates
+    """
+    templateLoader = jinja2.FileSystemLoader(searchpath=searchpath)
+    templateEnv = jinja2.Environment(
+        loader=templateLoader,
+        block_start_string='\BLOCK{',
+        block_end_string='}',
+        variable_start_string='\VAR{',
+        variable_end_string='}',
+        comment_start_string='\#{',
+        comment_end_string='}',
+        line_statement_prefix='%%',
+        line_comment_prefix='%#',
+        trim_blocks=True,
+        autoescape=False,
+    )
+    return templateEnv
 
 def gen_book_LaTeX(book):
     """
@@ -50,22 +69,7 @@ def gen_book_LaTeX(book):
         else:
             photo.latexRef = ''
 
-
-    # This stuff just tells JINJA2 how to read templates
-    templateLoader = jinja2.FileSystemLoader(searchpath=book.paths['LaTeXTemplates'])
-    templateEnv = jinja2.Environment(
-        loader=templateLoader,
-        block_start_string='\BLOCK{',
-        block_end_string='}',
-        variable_start_string='\VAR{',
-        variable_end_string='}',
-        comment_start_string='\#{',
-        comment_end_string='}',
-        line_statement_prefix='%%',
-        line_comment_prefix='%#',
-        trim_blocks=True,
-        autoescape=False,
-    )
+    templateEnv = _set_templateEnv(book.paths['LaTeXTemplates'])
     mainTemplate = templateEnv.get_template("localBoulders.tex")
     acknowledgementsTemplate = templateEnv.get_template("acknowledgements.tex")
     areaTemplate = templateEnv.get_template("areaTemplate.tex")

@@ -147,13 +147,14 @@ class Book(ModuleBaseClass):
 class Area(ModuleBaseClass):
     _plural = 'areas'
 
-    def __init__(self, name, parent, description='', gps=None):
+    def __init__(self, name, parent, description='', gps=None, incomplete=False):
         super().__init__(name, parent, description)
         self.ref = 'a'
         self.photos = []
         self.areaMaps = []
         self.paths = parent.paths
         self.options = parent.options
+        self.incomplete = incomplete
         if gps:
             self.gps = gps.replace(' ','')
             create_qr(self.paths['qr_o'], 'http://maps.google.com/maps?q='+self.gps, f'{self.name}')

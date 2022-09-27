@@ -26,6 +26,9 @@
 %% endif
 \begin{minipage}{\columnwidth}
 \VAR{area.description or "\\"}
+%% if area.incomplete
+\textbf{NOTE: This area is mostly incomplete. Look forward to more information in future revisions of this book or contribute your own knowledge on github.}
+%% endif
 \end{minipage}
 \halfPic{\VAR{area.paths['histogram_o']}/\VAR{area.name}.png}{}
 
