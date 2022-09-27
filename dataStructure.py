@@ -321,8 +321,9 @@ class Topo():
 
         if self.options['topos_attached_to_routes']:
             for route in self.routes.values():
-                route.topos.append(self)
-                break
+                if route._parent_class == Boulder:
+                    route.topos.append(self)
+                    break
 
         parent.topos.append(self)
         for route in routes.values():
