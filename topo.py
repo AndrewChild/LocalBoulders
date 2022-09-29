@@ -63,7 +63,7 @@ def _get_route_label(elm, routes, scale):
     return circleAttributes, labelAttributes, textAttributes, label
 
 
-def update_svg(data_input):
+def update_svg(data_input, layer_mode=False):
     namespaces = {
         'inkscape': "http://www.inkscape.org/namespaces/inkscape",
         'sodipodi': "http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd",
@@ -80,6 +80,12 @@ def update_svg(data_input):
     scale = round(data_input.scale*float(width)/1920, 2)
 
     for subTree in root.findall('./svg:g', namespaces):
+        #setting if specific layers are defined skip all other layers
+        if data_input.layers:
+            if subTree.attrib['id'] not in data_input.layers:
+                root.remove(subTree)
+                continue
+
         #loop through all "paths" and format them
         elements = subTree.findall('./svg:path', namespaces)
         for elm in elements:
@@ -116,6 +122,23 @@ def update_svg(data_input):
                 for elm2 in root.findall('./svg:g/svg:text', namespaces):
                     if elm2.attrib['id'] == labelAttributes['id']:
                         t = ET.SubElement(elm2, f'{n}text', textAttributes).text = str(label)
+
+        #if border is defined try to find the border rectangle and format it
+        if data_input.border:
+            elements = subTree.findall('./svg:rect', namespaces)
+            for elm in elements:
+                elm_id = elm.attrib['id']
+                if elm_id == data_input.border:
+                    borderAttributes = elm.attrib
+                    subTree.remove(elm)
+                    root['width'] = borderAttributes['width']
+                    root['height'] = borderAttributes['height']
+                    root['viewBox'] = '{} {} {} {}'.format(borderAttributes['x'],
+                                                           borderAttributes['y'],
+                                                           borderAttributes['width'],
+                                                           borderAttributes['height'])
+
+
 
     # write to file
     newSVG = data_input.path_o + data_input.fileName.split('.')[0] + '_c.' + data_input.fileName.split('.')[1]

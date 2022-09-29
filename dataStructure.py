@@ -292,12 +292,14 @@ class Photo():
 class Topo():
     """class object for route topos"""
 
-    def __init__(self, name, parent, fileName, description='', routes={}, size='h', path_i=None, path_o=None):
+    def __init__(self, name, parent, fileName, description='', routes={}, layers=[], border='', size='h', path_i=None, path_o=None):
         self.name = name
         self.parent = parent
         self.fileName = fileName
         self.description = description
         self.routes = routes.copy()  # not sure if this is necessary
+        self.layers = layers
+        self.border = border
         self.size = size
         self.paths = parent.paths
         self.options = parent.options
@@ -362,12 +364,14 @@ class AreaMap():
 class SubAreaMap():
     """class object for sub area maps"""
 
-    def __init__(self, name, parent, fileName, description='', routes={}, size='h', path_i=None, path_o=None):
+    def __init__(self, name, parent, fileName, description='', routes={}, layers=[], border='', size='h', path_i=None, path_o=None):
         self.name = name
         self.parent = parent
         self.fileName = fileName
         self.description = description
         self.routes = routes.copy()  # not sure if this is necessary
+        self.layers = layers
+        self.border = border
         self.size = size
         self.paths = parent.paths
         self.options = parent.options
