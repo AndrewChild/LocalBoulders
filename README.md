@@ -21,7 +21,6 @@
     - arete shortcut
     - distribute photos (as in action shots, not topos and maps) evenly throughout an area instead of declaring them at the boulder level
 	- minipages can overflow the bottom of a column
-	- update acknowledgements. Move to the garden boulders scope
     Other:
     - Consider alternatives to LaTeX. HTML?
     - documentation
