@@ -1,8 +1,18 @@
-%% macro image(filePath, description=None, size='h')
+%% macro image(filePath, description=None, size='h', im_scale=1.0)
 	%% if size == 'f'
-		\fullPic{\VAR{filePath}}
+		\end{multicols}
+		\begin{center}
+			\centering
+				\includegraphics[width=\VAR{im_scale}\textwidth]{\VAR{filePath}}
+		\end{center}
+		\raggedcolumns
+		\begin{multicols}{2}
 	%% else
-		\halfPic{\VAR{filePath}}{\VAR{description}}
+		\setbox0=\hbox{\includegraphics[width=\VAR{im_scale}\linewidth]{\VAR{filePath}}}% Store image in \box0
+		\needspace{\ht0}% Need at least the height of \box0
+		\begin{center}
+		\includegraphics[width=\VAR{im_scale}\linewidth]{\VAR{filePath}}
+		\end{center}
 	%% endif
 %% endmacro
 %% macro climbLabel(climb)
@@ -19,7 +29,7 @@
 \raggedcolumns
 \begin{multicols}{2}
 %% for map in area.areaMaps
-	\VAR{image(map.path_o+map.fileName, map.description, map.size)}
+	\VAR{image(map.path_o+map.fileName, map.description, map.size, map.im_scale)}
 %% endfor
 %% if area.gps
 	\qrcode{\VAR{area.paths['qr_o']}/\VAR{area.name}_qr.png}{http://maps.google.com/maps?q=\VAR{area.gps}}{Navigate to this area}
@@ -31,12 +41,12 @@
 \textbf{NOTE: This area is mostly incomplete. Look forward to more information in future revisions of this book or contribute your own knowledge on github.}
 %% endif
 \end{minipage}
-\halfPic{\VAR{area.paths['histogram_o']}/\VAR{area.name}.png}{}
+\halfPic{\VAR{area.paths['histogram_o']}/\VAR{area.name}.png}
 
 %% for subArea in area.subareas.values()
 \newpage
 	%% for map in subArea.subAreaMaps
-		\VAR{image(map.path_o+map.outFileName, map.description, map.size)}
+		\VAR{image(map.path_o+map.outFileName, map.description, map.size, map.im_scale)}
 	%% endfor
 	%% if subArea.name
 		\section{\VAR{subArea.name}}\label{sa:\VAR{subArea.name}}
@@ -49,14 +59,14 @@
 	\end{minipage}
 	
 	%% for photo in subArea.photos
-		\VAR{image(photo.path+photo.fileName, photo.description, photo.size)}\label{pt:\VAR{photo.name}}
+		%# \VAR{image(photo.path+photo.fileName, photo.description, photo.size, photo.im_scale)}\label{pt:\VAR{photo.name}}
 	%% endfor
 	
 	%% if subArea.boulders
 		%% for boulder in subArea.boulders.values()
 			%% for topo in boulder.topos
 				%% if topo.size == 'f'
-				\VAR{image(topo.path_o+topo.outFileName, topo.description, topo.size)}
+				\VAR{image(topo.path_o+topo.outFileName, topo.description, topo.size, topo.im_scale)}
 				%% endif
 			%% endfor
 			\begin{minipage}{\columnwidth}
@@ -64,7 +74,7 @@
 			\VAR{boulder.description or "\\"}
 			
 			%% for photo in boulder.photos
-				%\VAR{image(photo.path+photo.fileName, photo.description, photo.size)}\label{pt:\VAR{photo.name}}
+				%# \VAR{image(photo.path+photo.fileName, photo.description, photo.im_scale, photo.scale)}\label{pt:\VAR{photo.name}}
 			%% endfor
 			\end{minipage}
 			
@@ -72,7 +82,7 @@
 				%% for route in boulder.routes.values()
 					%% for topo in route.topos
 						%% if topo.size == 'h'
-						\VAR{image(topo.path_o+topo.outFileName, topo.description, topo.size)}
+						\VAR{image(topo.path_o+topo.outFileName, topo.description, topo.size, topo.im_scale)}
 						%% endif
 					%% endfor
 					\begin{minipage}{\linewidth}	
@@ -89,7 +99,7 @@
 						\textbf{Variations:} \newline
 						%% for variation in route.variations.values()
 							%% for topo in variation.topos
-								\VAR{image(topo.path_o+topo.outFileName, topo.description, topo.size)}
+								\VAR{image(topo.path_o+topo.outFileName, topo.description, topo.size, topo.im_scale)}
 							%% endfor
 							\begin{minipage}{\linewidth}	
 							\VAR{climbLabel(variation)}

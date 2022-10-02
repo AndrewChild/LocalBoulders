@@ -9,7 +9,7 @@ import sys
 from datetime import datetime
 from topo import update_svg
 from genLaTeX import gen_book_LaTeX
-from lbResources import genHistogram, get_grade_atts, create_qr
+from lbResources import genHistogram, get_grade_atts, create_qr, get_aspect_ratio
 
 # --------------------------------
 class ModuleMetaClass(type):
@@ -71,6 +71,14 @@ class ModuleBaseClass(metaclass=ModuleMetaClass):
         assert child.name not in self._children
         self._children[child.name] = child
 
+class ImageBaseClass():
+    def __init__(self, name, parent, fileName, description, size):
+        self.name = name
+        self.parent = parent
+        self.fileName = fileName
+        self.description = description
+        self.size = size
+
 
 # --------------------------------
 class Book(ModuleBaseClass):
@@ -131,8 +139,6 @@ class Book(ModuleBaseClass):
                     update_svg(map)
                 for boulder in subArea.boulders.values():
                     all_photos = all_photos + boulder.photos
-                    for topo in boulder.topos:
-                        update_svg(topo)
                     for route in boulder.routes.values():
                         all_routes.append(route)
                         route.num = route.getRtNum()
@@ -266,15 +272,11 @@ class Variation(ModuleBaseClass):
             ct = ct + 1
 
 
-class Photo():
+class Photo(ImageBaseClass):
     """class object for general photos (action, scenery, etc.)"""
 
     def __init__(self, name, parent, fileName, description='', size='h', path=None, credit=None, route=None):
-        self.name = name
-        self.parent = parent
-        self.fileName = fileName
-        self.description = description
-        self.size = size
+        super().__init__(name, parent, fileName, description, size)
         self.credit = credit
         self.route = route
         self.paths = parent.paths
@@ -286,19 +288,21 @@ class Photo():
             self.path = parent.paths['photos']
 
         self.ref = 'pt'
+        self.aspect = get_aspect_ratio(self.path+self.fileName)
+        if self.aspect < 1.1:
+            self.im_scale = max([0.7, self.aspect/1.1])
+        else:
+            self.im_scale = 1.0
+
         parent.photos.append(self)
 
 
-class Topo():
+class Topo(ImageBaseClass):
     """class object for route topos"""
 
-    def __init__(self, name, parent, fileName, description='', routes={}, size='h', path_i=None, path_o=None):
-        self.name = name
-        self.parent = parent
-        self.fileName = fileName
-        self.description = description
+    def __init__(self, name, parent, fileName, description='', size='h', routes={}, path_i=None, path_o=None):
+        super().__init__(name, parent, fileName, description, size)
         self.routes = routes.copy()  # not sure if this is necessary
-        self.size = size
         self.paths = parent.paths
         self.options = parent.options
 
@@ -311,13 +315,18 @@ class Topo():
         else:
             self.path_o = parent.paths['topo_o']
 
-        self.outFileName = fileName.split('.')[0] + '_c.png'
-
         if self.size == 'f':
             self.scale = 1.0
         else:
             self.scale = 2.0
 
+        self.outFileName = fileName.split('.')[0] + '_c.png'
+        update_svg(self)
+        self.aspect = get_aspect_ratio(self.path_o + self.outFileName)
+        if self.aspect < 1.1:
+            self.im_scale = max([0.7, self.aspect / 1.1])
+        else:
+            self.im_scale = 1.0
 
         if self.options['topos_attached_to_routes']:
             for route in self.routes.values():
@@ -330,15 +339,11 @@ class Topo():
             route.hasTopo = True
 
 
-class AreaMap():
+class AreaMap(ImageBaseClass):
     """class object for sub area maps"""
 
     def __init__(self, name, parent, fileName, description='', size='h', path_i=None, path_o=None):
-        self.name = name
-        self.parent = parent
-        self.fileName = fileName
-        self.description = description
-        self.size = size
+        super().__init__(name, parent, fileName, description, size)
         self.paths = parent.paths
         self.options = parent.options
 
@@ -356,19 +361,24 @@ class AreaMap():
         else:
             self.scale = 2.0
 
+        #self.outFileName = fileName.split('.')[0] + '_c.png'
+        #update_svg(self)
+        #self.aspect = get_aspect_ratio(self.path_o + self.outFileName)
+        self.aspect = get_aspect_ratio(self.path_i + self.fileName)
+        if self.aspect < 1.1:
+            self.im_scale = max([0.7, self.aspect / 1.1])
+        else:
+            self.im_scale = 1.0
+
         parent.areaMaps.append(self)
 
 
-class SubAreaMap():
+class SubAreaMap(ImageBaseClass):
     """class object for sub area maps"""
 
-    def __init__(self, name, parent, fileName, description='', routes={}, size='h', path_i=None, path_o=None):
-        self.name = name
-        self.parent = parent
-        self.fileName = fileName
-        self.description = description
+    def __init__(self, name, parent, fileName, description='', size='h', routes={}, path_i=None, path_o=None):
+        super().__init__(name, parent, fileName, description, size)
         self.routes = routes.copy()  # not sure if this is necessary
-        self.size = size
         self.paths = parent.paths
         self.options = parent.options
 
@@ -381,12 +391,18 @@ class SubAreaMap():
         else:
             self.path_o = parent.paths['subarea_o']
 
-        self.outFileName = fileName.split('.')[0] + '_c.png'
-
         if self.size == 'f':
             self.scale = 1.0
         else:
             self.scale = 2.0
+
+        self.outFileName = fileName.split('.')[0] + '_c.png'
+        update_svg(self)
+        self.aspect = get_aspect_ratio(self.path_o + self.outFileName)
+        if self.aspect < 1.2:
+            self.im_scale = round(max([0.7, self.aspect / 1.1]),2)
+        else:
+            self.im_scale = 1.0
 
         parent.subAreaMaps.append(self)
 

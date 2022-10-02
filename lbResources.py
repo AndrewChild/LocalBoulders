@@ -3,7 +3,7 @@ from matplotlib.ticker import MaxNLocator
 import numpy as np
 import webcolors
 import qrcode
-import PIL
+from PIL import Image
 
 
 def _get_grade_number(grade: str):
