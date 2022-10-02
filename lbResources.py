@@ -3,6 +3,7 @@ from matplotlib.ticker import MaxNLocator
 import numpy as np
 import webcolors
 import qrcode
+import PIL
 
 
 def _get_grade_number(grade: str):
@@ -99,3 +100,11 @@ def genHistogram(area):
 def create_qr(path, s, name):
     qr_code = qrcode.make(s)
     qr_code.save(f'{path}{name}_qr.png')
+
+def get_aspect_ratio(filePath):
+    """
+    inputs the file path of an image and returns the aspect ratio of the image
+    """
+    im = Image.open(filePath)
+    width, height = im.size
+    return width/height
