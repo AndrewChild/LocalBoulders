@@ -16,6 +16,8 @@
     - limit photo height
     - in contexts where both routes and variations are being refered to interchangably call them climbs
 	- rework topo map drawing. If possible draw all sub area topos from the area map using layers
+	  - if layer has transform preserve itertools
+	  - scale = base scale x aspect ration x normalized window width
     LaTeX:
     - GPS index of boulders
     - arete shortcut

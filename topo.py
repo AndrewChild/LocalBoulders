@@ -82,7 +82,11 @@ def update_svg(data_input, layer_mode=False):
     for subTree in root.findall('./svg:g', namespaces):
         #setting if specific layers are defined skip all other layers
         if data_input.layers:
-            if subTree.attrib['id'] not in data_input.layers:
+            if '{http://www.inkscape.org/namespaces/inkscape}label' in subTree.attrib.keys():
+                if subTree.attrib['{http://www.inkscape.org/namespaces/inkscape}label'] not in data_input.layers:
+                    root.remove(subTree)
+                    continue
+            elif subTree.attrib['id'] not in data_input.layers:
                 root.remove(subTree)
                 continue
 
@@ -131,9 +135,9 @@ def update_svg(data_input, layer_mode=False):
                 if elm_id == data_input.border:
                     borderAttributes = elm.attrib
                     subTree.remove(elm)
-                    root['width'] = borderAttributes['width']
-                    root['height'] = borderAttributes['height']
-                    root['viewBox'] = '{} {} {} {}'.format(borderAttributes['x'],
+                    root.attrib['width'] = borderAttributes['width']
+                    root.attrib['height'] = borderAttributes['height']
+                    root.attrib['viewBox'] = '{} {} {} {}'.format(borderAttributes['x'],
                                                            borderAttributes['y'],
                                                            borderAttributes['width'],
                                                            borderAttributes['height'])
@@ -141,7 +145,7 @@ def update_svg(data_input, layer_mode=False):
 
 
     # write to file
-    newSVG = data_input.path_o + data_input.fileName.split('.')[0] + '_c.' + data_input.fileName.split('.')[1]
+    newSVG = data_input.path_o + data_input.outFileName.split('.')[0] + '.svg'
 
     if os.path.exists(newSVG):
         old_root = ET.parse(newSVG).getroot()
