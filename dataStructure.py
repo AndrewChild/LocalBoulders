@@ -364,7 +364,7 @@ class AreaMap():
 class SubAreaMap():
     """class object for sub area maps"""
 
-    def __init__(self, name, parent, fileName, description='', routes={}, layers=[], border='', size='h', path_i=None, path_o=None):
+    def __init__(self, name, parent, fileName, description='', routes={}, layers=[], border='', size='h', path_i=None, path_o=None, inName=None):
         self.name = name
         self.parent = parent
         self.fileName = fileName
@@ -373,6 +373,7 @@ class SubAreaMap():
         self.layers = layers
         self.border = border
         self.size = size
+        self.inName = inName
         self.paths = parent.paths
         self.options = parent.options
 
@@ -384,6 +385,7 @@ class SubAreaMap():
             self.path_o = path_o
         else:
             self.path_o = parent.paths['subarea_o']
+        if not inName: self.inName = fileName
 
         self.outFileName = fileName.split('.')[0] + '_c.png'
 
