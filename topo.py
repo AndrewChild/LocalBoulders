@@ -155,6 +155,7 @@ def update_svg(data_input, layer_mode=False):
 
     print(f'writing {xmlFile} to png')
     newPNG = newSVG.replace('.svg', '.png')
+    ET.indent(tree)
     tree.write(newSVG)
     fileObj = open(newSVG)
     if data_input.size == 'h':
