@@ -41,6 +41,10 @@ def _get_route_label(elm, routes, scale):
     text_x_offset = round(0.5*font_size*_getApproximateArialStringWidth(label), 4)
     text_y_offset = round(0.4*base_font_size*scale, 4)
 
+    transform = False
+    if 'transform' in elm.keys():
+        transform = True
+
     circleAttributes = {
         'id': elm_id,
         'style': f'fill:{routes[elm_id].color_hex};fill-opacity:1;stroke:#FFFFFF;stroke-width:{3*scale};stroke-dasharray:none;stroke-opacity:1',
@@ -48,6 +52,9 @@ def _get_route_label(elm, routes, scale):
         'cy': elm.attrib['cy'],
         'r': radius
     }
+    if transform:
+        circleAttributes['transform'] = elm.attrib['transform']
+
     labelAttributes = {
         'id': elm_id + '_label',
         'style': f'font-size:37.3333px;fill:#ffffff;fill-opacity:1;stroke:#ff0000;stroke-width:{1*scale};stroke-dasharray:none;stroke-opacity:1',
@@ -60,6 +67,8 @@ def _get_route_label(elm, routes, scale):
         'y': labelAttributes['y'],
         'style':f'font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:{font_size}px;font-family:Arial;-inkscape-font-specification:\'Arial Bold\';fill:#FFFFFF;fill-opacity:1;stroke:none',
     }
+    if transform:
+        labelAttributes['transform'] = circleAttributes['transform']
     return circleAttributes, labelAttributes, textAttributes, label
 
 
@@ -75,6 +84,22 @@ def update_svg(data_input, layer_mode=False):
     xmlFile = data_input.path_i + data_input.fileName
     tree = ET.parse(xmlFile)
     root = tree.getroot()
+
+    for subTree in root.findall('./svg:g', namespaces):
+        #if border is defined try to find the border rectangle and format it
+        if data_input.border:
+            elements = subTree.findall('./svg:rect', namespaces)
+            for elm in elements:
+                elm_id = elm.attrib['id']
+                if elm_id == data_input.border:
+                    borderAttributes = elm.attrib
+                    subTree.remove(elm)
+                    root.attrib['width'] = borderAttributes['width']
+                    root.attrib['height'] = borderAttributes['height']
+                    root.attrib['viewBox'] = '{} {} {} {}'.format(borderAttributes['x'],
+                                                           borderAttributes['y'],
+                                                           borderAttributes['width'],
+                                                           borderAttributes['height'])
 
     width = root.attrib['width']
     scale = round(data_input.scale*float(width)/1920, 2)
@@ -126,23 +151,6 @@ def update_svg(data_input, layer_mode=False):
                 for elm2 in root.findall('./svg:g/svg:text', namespaces):
                     if elm2.attrib['id'] == labelAttributes['id']:
                         t = ET.SubElement(elm2, f'{n}text', textAttributes).text = str(label)
-
-        #if border is defined try to find the border rectangle and format it
-        if data_input.border:
-            elements = subTree.findall('./svg:rect', namespaces)
-            for elm in elements:
-                elm_id = elm.attrib['id']
-                if elm_id == data_input.border:
-                    borderAttributes = elm.attrib
-                    subTree.remove(elm)
-                    root.attrib['width'] = borderAttributes['width']
-                    root.attrib['height'] = borderAttributes['height']
-                    root.attrib['viewBox'] = '{} {} {} {}'.format(borderAttributes['x'],
-                                                           borderAttributes['y'],
-                                                           borderAttributes['width'],
-                                                           borderAttributes['height'])
-
-
 
     # write to file
     newSVG = data_input.path_o + data_input.outFileName.split('.')[0] + '.svg'
