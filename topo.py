@@ -29,11 +29,10 @@ def _mod_file_name(filePath, mod):
     return filePath.replace(file_bn, file_bn_list[0] + mod + '.' + file_bn_list[1])
 
 
-def _get_route_label(elm, routes, scale):
+def _gen_label(elm, label, color, scale):
     base_font_size = 36
 
     elm_id = elm.attrib['id']
-    label = routes[elm_id].getRtNum()
     font_size = base_font_size * scale
 
     # these inputs don't make a ton of sense, but I found them to be effective via trial and error
@@ -47,7 +46,7 @@ def _get_route_label(elm, routes, scale):
 
     circleAttributes = {
         'id': elm_id,
-        'style': f'fill:{routes[elm_id].color_hex};fill-opacity:1;stroke:#FFFFFF;stroke-width:{3*scale};stroke-dasharray:none;stroke-opacity:1',
+        'style': f'fill:{color};fill-opacity:1;stroke:#FFFFFF;stroke-width:{3*scale};stroke-dasharray:none;stroke-opacity:1',
         'cx': elm.attrib['cx'],
         'cy': elm.attrib['cy'],
         'r': radius
@@ -69,22 +68,10 @@ def _get_route_label(elm, routes, scale):
     }
     if transform:
         labelAttributes['transform'] = circleAttributes['transform']
-    return circleAttributes, labelAttributes, textAttributes, label
+    return circleAttributes, labelAttributes, textAttributes
 
 
-def update_svg(data_input, layer_mode=False):
-    namespaces = {
-        'inkscape': "http://www.inkscape.org/namespaces/inkscape",
-        'sodipodi': "http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd",
-        'xlink': "http://www.w3.org/1999/xlink",
-        'svg': "http://www.w3.org/2000/svg",
-    }
-    n = r'{http://www.w3.org/2000/svg}'
-
-    xmlFile = data_input.path_i + data_input.fileName
-    tree = ET.parse(xmlFile)
-    root = tree.getroot()
-
+def _update_border(root, data_input, namespaces):
     for subTree in root.findall('./svg:g', namespaces):
         #if border is defined try to find the border rectangle and format it
         if data_input.border:
@@ -100,22 +87,59 @@ def update_svg(data_input, layer_mode=False):
                                                            borderAttributes['y'],
                                                            borderAttributes['width'],
                                                            borderAttributes['height'])
+    scale = round(data_input.scale*float(root.attrib['width'])/1920, 2)
+    return scale
 
-    width = root.attrib['width']
-    scale = round(data_input.scale*float(width)/1920, 2)
+def update_svg(data_input, layer_mode=False):
+    namespaces = {
+        'inkscape': "http://www.inkscape.org/namespaces/inkscape",
+        'sodipodi': "http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd",
+        'xlink': "http://www.w3.org/1999/xlink",
+        'svg': "http://www.w3.org/2000/svg",
+    }
+    n = r'{http://www.w3.org/2000/svg}'
+
+    xmlFile = data_input.path_i + data_input.fileName
+    tree = ET.parse(xmlFile)
+    root = tree.getroot()
+
+    scale = _update_border(root, data_input, namespaces)
 
     for subTree in root.findall('./svg:g', namespaces):
-        #setting if specific layers are defined skip all other layers
-        if data_input.layers:
+        sub_area_elemets = []
+        if hasattr(data_input, 'sub_areas'):
+            for elm in subTree.findall('./svg:rect', namespaces):
+                if elm.attrib['id'] in data_input.sub_areas:
+                    sub_area_elemets.append(elm)
+
+        #if specific layers are defined skip (empty) all other layers
+        if hasattr(data_input, 'layers') and data_input.layers:
             if '{http://www.inkscape.org/namespaces/inkscape}label' in subTree.attrib.keys():
                 if subTree.attrib['{http://www.inkscape.org/namespaces/inkscape}label'] not in data_input.layers:
-                    root.remove(subTree)
-                    continue
+                    #clear all elements from subtree
+                    attributes = subTree.attrib
+                    subTree.clear()
+                    subTree.attrib = attributes
             elif subTree.attrib['id'] not in data_input.layers:
-                root.remove(subTree)
-                continue
+                #clear all elements from subtree
+                attributes = subTree.attrib
+                subTree.clear()
+                subTree.attrib = attributes
 
-        #loop through all "paths" and format them
+        if sub_area_elemets:
+            for elm in sub_area_elemets:
+                sub_area = data_input.sub_areas[elm.attrib['id']]
+                label = sub_area.getSubAreaLtr()
+                elm.attrib['cx'] = str(float(elm.attrib['x']) + 0.5 * float(elm.attrib['width']))
+                elm.attrib['cy'] = str(float(elm.attrib['y']) + 0.5 * float(elm.attrib['height']))
+                circleAttributes, labelAttributes, textAttributes = _gen_label(elm, label, 'purple', scale)
+                ET.SubElement(subTree, f'{n}circle', circleAttributes)
+                ET.SubElement(subTree, f'{n}text', labelAttributes)
+                for elm2 in root.findall('./svg:g/svg:text', namespaces):
+                    if elm2.attrib['id'] == labelAttributes['id']:
+                        t = ET.SubElement(elm2, f'{n}text', textAttributes).text = str(label)
+
+                #loop through all "paths" and format them
         elements = subTree.findall('./svg:path', namespaces)
         for elm in elements:
             elm_id = elm.attrib['id']
@@ -144,8 +168,11 @@ def update_svg(data_input, layer_mode=False):
             elm_id = elm.attrib['id']
             if elm_id in data_input.routes:
 
-                circleAttributes, labelAttributes, textAttributes, label = _get_route_label(elm, data_input.routes, scale)
-                elm.clear()
+                label = data_input.routes[elm_id].getRtNum()
+                color = data_input.routes[elm_id].color_hex
+
+                circleAttributes, labelAttributes, textAttributes = _gen_label(elm, label, color, scale)
+                subTree.remove(elm)
                 ET.SubElement(subTree, f'{n}circle', circleAttributes)
                 ET.SubElement(subTree, f'{n}text', labelAttributes)
                 for elm2 in root.findall('./svg:g/svg:text', namespaces):

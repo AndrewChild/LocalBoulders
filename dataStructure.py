@@ -124,6 +124,8 @@ class Book(ModuleBaseClass):
         all_routes = []
         all_photos = []
         for area in self.areas.values():
+            for map in area.areaMaps:
+                update_svg(map)
             all_photos = all_photos + area.photos
             for subArea in area.subareas.values():
                 all_photos = all_photos + subArea.photos
@@ -178,6 +180,14 @@ class Subarea(ModuleBaseClass):
             self.gps = gps.replace(' ','')
             create_qr(self.paths['qr_o'], r'http://maps.google.com/maps?q='+self.gps, f'{self.name}')
         assert self._parent_class == Area
+
+    def getSubAreaLtr(self):
+        """returns the guidebook letter id of sub area"""
+        ct = 65  # start counter on the unicode number encoding for the 'A' character
+        for sub_area in self._parent.subareas.values():
+            if sub_area.name == self.name:
+                return chr(ct)
+            ct = ct + 1
 
 
 class Boulder(ModuleBaseClass):
@@ -335,14 +345,18 @@ class Topo():
 class AreaMap():
     """class object for sub area maps"""
 
-    def __init__(self, name, parent, fileName, description='', size='h', path_i=None, path_o=None):
+    def __init__(self, name, parent, fileName, description='', sub_areas={}, layers=[], border='', size='h', path_i=None, path_o=None, outFileName=None):
         self.name = name
         self.parent = parent
         self.fileName = fileName
         self.description = description
+        self.sub_areas = sub_areas.copy()  # not sure if this is necessary
+        self.layers = layers
+        self.border = border
         self.size = size
         self.paths = parent.paths
         self.options = parent.options
+        self.routes = []
 
         if path_i:
             self.path_i = path_i
@@ -352,6 +366,9 @@ class AreaMap():
             self.path_o = path_o
         else:
             self.path_o = parent.paths['area_o']
+
+        if not outFileName:
+            self.outFileName = fileName.split('.')[0] + '_c.png'
 
         if self.size == 'f':
             self.scale = 1.0
