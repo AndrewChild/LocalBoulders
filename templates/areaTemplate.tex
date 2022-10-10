@@ -19,7 +19,7 @@
 \raggedcolumns
 \begin{multicols}{2}
 %% for map in area.areaMaps
-	\VAR{image(map.path_o+map.fileName, map.description, map.size)}
+	\VAR{image(map.path_o+map.outFileName, map.description, map.size)}
 %% endfor
 %% if area.gps
 	\qrcode{\VAR{area.paths['qr_o']}/\VAR{area.name}_qr.png}{http://maps.google.com/maps?q=\VAR{area.gps}}{Navigate to this area}
