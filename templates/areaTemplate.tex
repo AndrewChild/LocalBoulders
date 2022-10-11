@@ -24,13 +24,11 @@
 %% if area.gps
 	\qrcode{\VAR{area.paths['qr_o']}/\VAR{area.name}_qr.png}{http://maps.google.com/maps?q=\VAR{area.gps}}{Navigate to this area}
 %% endif
-\begin{minipage}{\columnwidth}
 \VAR{area.description or "\\"}
 %% if area.incomplete
 \newline
 \textbf{NOTE: This area is mostly incomplete. Look forward to more information in future revisions of this book or contribute your own knowledge on github.}
 %% endif
-\end{minipage}
 \halfPic{\VAR{area.paths['histogram_o']}/\VAR{area.name}.png}{}
 
 %% for subArea in area.subareas.values()
@@ -39,7 +37,7 @@
 		\VAR{image(map.path_o+map.outFileName, map.description, map.size)}
 	%% endfor
 	%% if subArea.name
-		\section{\VAR{subArea.name}}\label{sa:\VAR{subArea.name}}
+		\section{\VAR{subArea.getSubAreaLtr()} - \VAR{subArea.name}}\label{sa:\VAR{subArea.name}}
 	%% endif
 	%% if subArea.gps
 		\qrcode{\VAR{area.paths['qr_o']}\VAR{subArea.name}_qr.png}{http://maps.google.com/maps?q=\VAR{subArea.gps}}{Navigate to this sub area}

@@ -130,9 +130,10 @@ def update_svg(data_input, layer_mode=False):
             for elm in sub_area_elemets:
                 sub_area = data_input.sub_areas[elm.attrib['id']]
                 label = sub_area.getSubAreaLtr()
+                color = data_input.parent.color_hex
                 elm.attrib['cx'] = str(float(elm.attrib['x']) + 0.5 * float(elm.attrib['width']))
                 elm.attrib['cy'] = str(float(elm.attrib['y']) + 0.5 * float(elm.attrib['height']))
-                circleAttributes, labelAttributes, textAttributes = _gen_label(elm, label, 'purple', scale)
+                circleAttributes, labelAttributes, textAttributes = _gen_label(elm, label, color, scale)
                 ET.SubElement(subTree, f'{n}circle', circleAttributes)
                 ET.SubElement(subTree, f'{n}text', labelAttributes)
                 for elm2 in root.findall('./svg:g/svg:text', namespaces):
@@ -181,6 +182,7 @@ def update_svg(data_input, layer_mode=False):
 
     # write to file
     newSVG = data_input.path_o + data_input.outFileName.split('.')[0] + '.svg'
+    ET.indent(tree)
 
     if os.path.exists(newSVG):
         old_root = ET.parse(newSVG).getroot()
@@ -190,7 +192,6 @@ def update_svg(data_input, layer_mode=False):
 
     print(f'writing {xmlFile} to png')
     newPNG = newSVG.replace('.svg', '.png')
-    ET.indent(tree)
     tree.write(newSVG)
     fileObj = open(newSVG)
     if data_input.size == 'h':

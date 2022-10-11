@@ -99,6 +99,8 @@ class Book(ModuleBaseClass):
         self.subarea_numbering = subarea_numbering
         self.paths = {**self.__path_defaults, **paths}
         self.options = {**self.__option_defaults, **options}
+        self.area_colors = ['BrickRed', 'RoyalPurple', 'BurntOrange','Aquamarine', 'Ruby', 'PineGreen']
+        self.area_colors_hex = ['#CB4154', '#7851A9', '#CC5500', '#7FFFD0', '#E0115F', '#01796F']
 
         if dl:
             create_qr(self.paths['qr_o'] ,dl, f'{self.name}')
@@ -124,8 +126,7 @@ class Book(ModuleBaseClass):
         all_routes = []
         all_photos = []
         for area in self.areas.values():
-            for map in area.areaMaps:
-                update_svg(map)
+            area.update()
             all_photos = all_photos + area.photos
             for subArea in area.subareas.values():
                 all_photos = all_photos + subArea.photos
@@ -152,6 +153,8 @@ class Area(ModuleBaseClass):
     def __init__(self, name, parent, description='', gps=None, incomplete=False):
         super().__init__(name, parent, description)
         self.ref = 'a'
+        self.color = ''
+        self.color_hex = ''
         self.photos = []
         self.areaMaps = []
         self.paths = parent.paths
@@ -165,6 +168,19 @@ class Area(ModuleBaseClass):
 
     def histogram(self):
         genHistogram(self)
+
+    def update(self):
+        ct = 0
+        for area in self._parent.areas.values():
+            if area.name == self.name:
+                area_colors = self._parent.area_colors
+                area_colors_hex = self._parent.area_colors_hex
+                self.color = area_colors[ct % len(area_colors)]
+                self.color_hex = area_colors_hex[ct % len(area_colors_hex)]
+            ct = ct + 1
+
+        for map in self.areaMaps:
+            update_svg(map)
 
 class Subarea(ModuleBaseClass):
     _plural = 'subareas'

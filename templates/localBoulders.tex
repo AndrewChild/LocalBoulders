@@ -83,10 +83,9 @@
 
 \newcommand\chapterColor{MidnightBlue}
 \input{acknowledgements}
-\renewcommand\chapterColor{BrickRed}
 %% for area in book.areas.values()
+\renewcommand\chapterColor{\VAR{area.color}}
 \input{\VAR{area.name}}
-\renewcommand\chapterColor{\VAR{loop.cycle('BurntOrange','PineGreen','RoyalPurple','Aquamarine','RubineRed','BrickRed')}}
 %% endfor 
 \renewcommand\chapterColor{MidnightBlue}
 \input{index}
