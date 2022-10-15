@@ -8,12 +8,17 @@
 %% macro climbLabel(climb)
 \label{\VAR{climb.ref}:\VAR{climb.name}}
 \colorbox{\VAR{climb.color_LaTeX}}{
-\parbox{0.95\textwidth}{
+\parbox{0.95\linewidth}{
 \textbf{
 \VAR{climb.getRtNum()} \VAR{climb.name}\VAR{climb.name_unconfirmed_LaTeX} V\VAR{climb.grade}\VAR{climb.grade_unconfirmed_LaTeX} \VAR{climb.rating_LaTeX} \VAR{climb.serious_LaTeX}
 }
 }
 }
+%% endmacro
+%% macro description(description)
+%% if description != ''
+\VAR{description}\\
+%% endif
 %% endmacro
 \formatChapter{\VAR{area.name}}
 \raggedcolumns
@@ -24,10 +29,9 @@
 %% if area.gps
 	\qrcode{\VAR{area.paths['qr_o']}/\VAR{area.name}_qr.png}{http://maps.google.com/maps?q=\VAR{area.gps}}{Navigate to this area}
 %% endif
-\VAR{area.description or "\\"}
+\VAR{description(area.description)}
 %% if area.incomplete
-\newline
-\textbf{NOTE: This area is mostly incomplete. Look forward to more information in future revisions of this book or contribute your own knowledge on github.}
+\textbf{NOTE: This area is mostly incomplete. Look forward to more information in future revisions of this book or contribute your own knowledge on github.}\\
 %% endif
 \halfPic{\VAR{area.paths['histogram_o']}/\VAR{area.name}.png}{}
 
@@ -42,9 +46,7 @@
 	%% if subArea.gps
 		\qrcode{\VAR{area.paths['qr_o']}\VAR{subArea.name}_qr.png}{http://maps.google.com/maps?q=\VAR{subArea.gps}}{Navigate to this sub area}
 	%% endif
-	\begin{minipage}{\columnwidth}
-	\VAR{subArea.description or "\\"}
-	\end{minipage}
+	\VAR{description(subArea.description)}
 	
 	%% for photo in subArea.photos
 		\VAR{image(photo.path+photo.fileName, photo.description, photo.size)}\label{pt:\VAR{photo.name}}
@@ -57,15 +59,8 @@
 				\VAR{image(topo.path_o+topo.outFileName, topo.description, topo.size)}
 				%% endif
 			%% endfor
-			\begin{minipage}{\columnwidth}
 			\subsection*{\VAR{boulder.name}}\label{bf:\VAR{boulder.name}}
-			\VAR{boulder.description or "\\"}
-			
-			%% for photo in boulder.photos
-				%\VAR{image(photo.path+photo.fileName, photo.description, photo.size)}\label{pt:\VAR{photo.name}}
-			%% endfor
-			\end{minipage}
-			
+			\VAR{description(boulder.description)}			
 			%% if boulder.routes
 				%% for route in boulder.routes.values()
 					%% for topo in route.topos
@@ -73,7 +68,6 @@
 						\VAR{image(topo.path_o+topo.outFileName, topo.description, topo.size)}
 						%% endif
 					%% endfor
-					\begin{minipage}{\linewidth}	
 					\VAR{climbLabel(route)}
 					\begin{adjustwidth}{0.5cm}{}				
 					\VAR{route.description}
@@ -81,7 +75,6 @@
 						\newline (No Topo) 
 					%% endif
 					\end{adjustwidth}
-					\end{minipage}
 					%% if route.variations.values()
 						\begin{adjustwidth}{0.5cm}{}				
 						\textbf{Variations:} \newline
@@ -89,7 +82,6 @@
 							%% for topo in variation.topos
 								\VAR{image(topo.path_o+topo.outFileName, topo.description, topo.size)}
 							%% endfor
-							\begin{minipage}{\linewidth}	
 							\VAR{climbLabel(variation)}
 							\begin{adjustwidth}{0.5cm}{}				
 							\VAR{variation.description}
@@ -97,7 +89,6 @@
 								\newline (No Topo) 
 							%% endif
 							\end{adjustwidth}
-							\end{minipage}
 						%% endfor
 						\end{adjustwidth}
 					%% endif
