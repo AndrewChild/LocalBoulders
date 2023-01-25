@@ -8,9 +8,9 @@
 	- use of cammal case vs other conventions is inconsistent
 	- PEP8?
 	- is there a more elegant way to move through the data structure (e.g. reference grandchildren and grandparents in addition to parents and children, book.boulders or boulders.book)
+	    - partially implemented this, there is a bug where the dictionaries for grandchildren, etc are out of order due to connections being assigned at init
 	- move LaTeX specific stuff to its own folder/project
         - maybe move class.ref to genLaTeX
-	- remove metaclasses
     - use itertools.count for indexing
     - limit photo height
     - in contexts where both routes and variations are being refered to interchangably call them climbs
