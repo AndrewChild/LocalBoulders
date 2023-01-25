@@ -239,13 +239,14 @@ class Route(Item):
         else:
             query_subareas = self.area.subareas.values()
         for subArea in query_subareas:
-            for route in subArea.routes.values():
-                if route.name == self.name:
-                    if as_int:
-                        return ct
-                    else:
-                        return str(ct)
-                ct = ct + 1
+            for boulder in subArea.boulders.values():   #sub area also contains a dictionary of all routes but this has to be done in a multi step process in order to get the correct route numbering
+                for route in boulder.routes.values():
+                    if route.name == self.name:
+                        if as_int:
+                            return ct
+                        else:
+                            return str(ct)
+                    ct = ct + 1
 
 
 class Variation(Item):
