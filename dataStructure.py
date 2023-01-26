@@ -10,70 +10,27 @@ from datetime import datetime
 from topo import update_svg
 from genLaTeX import gen_book_LaTeX
 from lbResources import genHistogram, get_grade_atts, create_qr
+from collections import OrderedDict
+
 
 # --------------------------------
-class ModuleMetaClass(type):
-    """ Metaclass that is instantiated once for each class """
-    _metaclass_instances = None
-
-    def __init__(cls, name, bases, attrs):
-
-        if cls._metaclass_instances is None:
-            # First instance is ModuleBaseClass
-            cls._parent_class = None
-            cls._metaclass_instances = [type(None)]
-        else:
-            # parent class is the previously declared class
-            cls._parent_class = cls._metaclass_instances[-1]
-
-            # if not at the top of the tree, then we are our parent's child
-            if cls._parent_class != type(None):
-                cls._parent_class._child_class = cls
-
-            # store this class in the list of classes
-            cls._metaclass_instances.append(cls)
-
-        # no child class yet
-        cls._child_class = None
-
-        # call our base (meta) class init
-        super().__init__(name, bases, attrs)
-
-
-class ModuleBaseClass(metaclass=ModuleMetaClass):
-    """ Base class for each of the derived classes in our tree """
-
-    def __init__(self, name, parent, description=''):
-        assert isinstance(parent, self._parent_class)
+class Item():
+    def __init__(self, name, parent, description='', item_id=None):
         self.name = name
-        self._parent = parent
+        self.parent = parent
         self.description = description
+        self.item_id = item_id
+        if not self.item_id:
+            self.item_id = name
 
-        if self._child_class is not None:
-            self._children = {}
-
-            # child class variable plural is used to add a common name
-            plural = getattr(self._child_class, '_plural')
-            if plural is not None:
-                setattr(self, plural, self._children)
-
-        # add self to our parents collection
-        if parent is not None:
-            parent._add_child(self)
-
-        # add an access attribute for each of the nodes above us in the tree
-        while parent is not None:
-            setattr(self, type(parent).__name__.lower(), parent)
-            parent = parent._parent
-
-    def _add_child(self, child):
-        assert isinstance(child, self._child_class)
-        assert child.name not in self._children
-        self._children[child.name] = child
+    def assign_to_dic(self, container, connection):
+        if connection.item_id in getattr(self, container):
+            raise AttributeError(f'Item id "{connection.item_id}" is not unique')
+        getattr(self, container).update({connection.item_id: connection})
 
 
-# --------------------------------
-class Book(ModuleBaseClass):
+class Book(Item):
+    __class_id = 'books'
     __path_defaults = {
         'histogram_o': './maps/plots/',
         'qr_o': './maps/qr/',
@@ -89,8 +46,16 @@ class Book(ModuleBaseClass):
         'subarea_numbering': True,
         'topos_attached_to_routes': False,
     }
-    def __init__(self, name, description='', repo='', dl='', collaborators=[], subarea_numbering=True, paths={}, options={}):
-        super().__init__(name, None, description)
+
+    def __init__(self, name, description='', item_id=None, repo='', dl='', collaborators=[], subarea_numbering=True,
+                 paths={}, options={}):
+        super().__init__(name=name, parent=None, description=description, item_id=item_id)
+        self.areas = OrderedDict()
+        self.subareas = OrderedDict()
+        self.boulders = OrderedDict()
+        self.routes = OrderedDict()
+        self.variations = OrderedDict()
+
         self.date = datetime.today().strftime('%Y-%m-%d')
         self.ref = 'bk'
         self.repo = repo
@@ -99,11 +64,11 @@ class Book(ModuleBaseClass):
         self.subarea_numbering = subarea_numbering
         self.paths = {**self.__path_defaults, **paths}
         self.options = {**self.__option_defaults, **options}
-        self.area_colors = ['BrickRed', 'RoyalPurple', 'BurntOrange','Aquamarine', 'Ruby', 'PineGreen']
+        self.area_colors = ['BrickRed', 'RoyalPurple', 'BurntOrange', 'Aquamarine', 'Ruby', 'PineGreen']
         self.area_colors_hex = ['#CB4154', '#7851A9', '#CC5500', '#7FFFD0', '#E0115F', '#01796F']
 
         if dl:
-            create_qr(self.paths['qr_o'] ,dl, f'{self.name}')
+            create_qr(self.paths['qr_o'], dl, f'{self.name}')
 
     def gen(self):
         self._init_paths()
@@ -146,35 +111,38 @@ class Book(ModuleBaseClass):
         self.all_photos = all_photos
 
 
+class Area(Item):
+    __class_id = 'areas'
 
-class Area(ModuleBaseClass):
-    _plural = 'areas'
-
-    def __init__(self, name, parent, description='', gps=None, incomplete=False):
-        super().__init__(name, parent, description)
+    def __init__(self, name, parent, description='', item_id=None, gps=None, incomplete=False):
+        super().__init__(name=name, parent=parent, description=description, item_id=item_id)
         self.ref = 'a'
         self.color = ''
         self.color_hex = ''
-        self.photos = []
-        self.areaMaps = []
         self.paths = parent.paths
         self.options = parent.options
         self.incomplete = incomplete
+        self.book = parent
+        self.book.assign_to_dic(self.__class_id, self)
+        self.subareas = OrderedDict()
+        self.boulders = OrderedDict()
+        self.routes = OrderedDict()
+        self.variations = OrderedDict()
+        self.photos = []
+        self.areaMaps = []
         if gps:
-            self.gps = gps.replace(' ','')
-            create_qr(self.paths['qr_o'], 'http://maps.google.com/maps?q='+self.gps, f'{self.name}')
-
-        assert self._parent_class == Book
+            self.gps = gps.replace(' ', '')
+            create_qr(self.paths['qr_o'], 'http://maps.google.com/maps?q=' + self.gps, f'{self.name}')
 
     def histogram(self):
         genHistogram(self)
 
     def update(self):
         ct = 0
-        for area in self._parent.areas.values():
+        for area in self.parent.areas.values():
             if area.name == self.name:
-                area_colors = self._parent.area_colors
-                area_colors_hex = self._parent.area_colors_hex
+                area_colors = self.parent.area_colors
+                area_colors_hex = self.parent.area_colors_hex
                 self.color = area_colors[ct % len(area_colors)]
                 self.color_hex = area_colors_hex[ct % len(area_colors_hex)]
             ct = ct + 1
@@ -182,50 +150,64 @@ class Area(ModuleBaseClass):
         for map in self.areaMaps:
             update_svg(map)
 
-class Subarea(ModuleBaseClass):
-    _plural = 'subareas'
 
-    def __init__(self, name, parent, description='', gps=None):
-        super().__init__(name, parent, description)
+class Subarea(Item):
+    __class_id = 'subareas'
+
+    def __init__(self, name, parent, description='', item_id=None, gps=None):
+        super().__init__(name=name, parent=parent, description=description, item_id=item_id)
         self.ref = 'sa'
-        self.photos = []
-        self.subAreaMaps = []
         self.paths = parent.paths
         self.options = parent.options
+        self.area = parent
+        self.book = parent.book
+        self.book.assign_to_dic(self.__class_id, self)
+        self.area.assign_to_dic(self.__class_id, self)
+        self.boulders = OrderedDict()
+        self.routes = OrderedDict()
+        self.variations = OrderedDict()
+        self.photos = []
+        self.subAreaMaps = []
         if gps:
-            self.gps = gps.replace(' ','')
-            create_qr(self.paths['qr_o'], r'http://maps.google.com/maps?q='+self.gps, f'{self.name}')
-        assert self._parent_class == Area
+            self.gps = gps.replace(' ', '')
+            create_qr(self.paths['qr_o'], r'http://maps.google.com/maps?q=' + self.gps, f'{self.name}')
 
     def getSubAreaLtr(self):
         """returns the guidebook letter id of sub area"""
         ct = 65  # start counter on the unicode number encoding for the 'A' character
-        for sub_area in self._parent.subareas.values():
+        for sub_area in self.parent.subareas.values():
             if sub_area.name == self.name:
                 return chr(ct)
             ct = ct + 1
 
 
-class Boulder(ModuleBaseClass):
-    _plural = 'boulders'
+class Boulder(Item):
+    __class_id = 'boulders'
 
-    def __init__(self, name, parent, description=''):
-        super().__init__(name, parent, description)
+    def __init__(self, name, parent, description='', item_id=None):
+        super().__init__(name=name, parent=parent, description=description, item_id=item_id)
         self.ref = 'bd'
+        self.subarea = parent
+        self.book = parent.book
+        self.area = parent.area
+        self.book.assign_to_dic(self.__class_id, self)
+        self.area.assign_to_dic(self.__class_id, self)
+        self.subarea.assign_to_dic(self.__class_id, self)
+        self.routes = OrderedDict()
+        self.variations = OrderedDict()
         self.topos = []
         self.photos = []
         self.paths = parent.paths
         self.options = parent.options
-        assert self._parent_class == Subarea
 
 
-class Route(ModuleBaseClass):
+class Route(Item):
     """class object for an individual route or boulder"""
-    _plural = 'routes'
+    __class_id = 'routes'
 
-    def __init__(self, name, parent, description='PLACEHOLDER', grade='?', rating=-1, serious=0,
-                 grade_unconfirmed = False, name_unconfirmed = False):
-        super().__init__(name, parent, description)
+    def __init__(self, name, parent, description='PLACEHOLDER', item_id=None, grade='?', rating=-1, serious=0,
+                 grade_unconfirmed=False, name_unconfirmed=False):
+        super().__init__(name=name, parent=parent, description=description, item_id=item_id)
         self.grade = grade
         self.rating = int(rating)
         self.serious = serious
@@ -235,22 +217,29 @@ class Route(ModuleBaseClass):
         self.options = parent.options
 
         self.ref = 'rt'
+        self.boulder = parent
+        self.book = parent.book
+        self.area = parent.area
+        self.subarea = parent.subarea
+        self.book.assign_to_dic(self.__class_id, self)
+        self.area.assign_to_dic(self.__class_id, self)
+        self.subarea.assign_to_dic(self.__class_id, self)
+        self.boulder.assign_to_dic(self.__class_id, self)
+        self.variations = OrderedDict()
         self.color, self.color_hex, self.gradeNum = get_grade_atts(grade)
         self.hasTopo = False
         if self.options['topos_attached_to_routes']:
             self.topos = []
 
-        assert self._parent_class == Boulder
-
     def getRtNum(self, as_int=False):
         """returns the guidebook route number of the route"""
         ct = 1
         if self.options['subarea_numbering']:
-            subAreas = [self._parent._parent]
+            query_subareas = [self.subarea]
         else:
-            subAreas = self._parent._parent._parent.subareas.values()
-        for subArea in subAreas:
-            for boulder in subArea.boulders.values():
+            query_subareas = self.area.subareas.values()
+        for subArea in query_subareas:
+            for boulder in subArea.boulders.values():   #sub area also contains a dictionary of all routes but this has to be done in a multi step process in order to get the correct route numbering
                 for route in boulder.routes.values():
                     if route.name == self.name:
                         if as_int:
@@ -260,13 +249,13 @@ class Route(ModuleBaseClass):
                     ct = ct + 1
 
 
-class Variation(ModuleBaseClass):
+class Variation(Item):
     """class object for variations of routs"""
-    _plural = 'variations'
+    __class_id = 'variations'
 
-    def __init__(self, name, parent, description='PLACEHOLDER', grade='?', rating=-1, serious=0,
+    def __init__(self, name, parent, description='PLACEHOLDER', item_id=None, grade='?', rating=-1, serious=0,
                  grade_unconfirmed=False, name_unconfirmed=False):
-        super().__init__(name, parent, description)
+        super().__init__(name=name, parent=parent, description=description, item_id=item_id)
         self.grade = grade
         self.rating = rating
         self.serious = serious
@@ -276,19 +265,27 @@ class Variation(ModuleBaseClass):
         self.options = parent.options
 
         self.ref = 'vr'
+        self.route = parent
+        self.book = parent.book
+        self.area = parent.area
+        self.subarea = parent.subarea
+        self.boulder = parent.boulder
+        self.book.assign_to_dic(self.__class_id, self)
+        self.area.assign_to_dic(self.__class_id, self)
+        self.subarea.assign_to_dic(self.__class_id, self)
+        self.boulder.assign_to_dic(self.__class_id, self)
+        self.route.assign_to_dic(self.__class_id, self)
         self.color, self.color_hex, self.gradeNum = get_grade_atts(grade)
         self.hasTopo = False
         if self.options['topos_attached_to_routes']:
             self.topos = []
 
-        assert self._parent_class == Route
-
     def getRtNum(self):
         """returns the guidebook route number of the variation"""
         ct = 97  # start counter on the unicode number encoding for the 'a' character
-        for variation in self._parent.variations.values():
+        for variation in self.parent.variations.values():
             if variation.name == self.name:
-                return self._parent.getRtNum() + chr(ct)
+                return self.parent.getRtNum() + chr(ct)
             ct = ct + 1
 
 
@@ -318,7 +315,8 @@ class Photo():
 class Topo():
     """class object for route topos"""
 
-    def __init__(self, name, parent, fileName, description='', routes={}, layers=[], border='', size='h', path_i=None, path_o=None):
+    def __init__(self, name, parent, fileName, description='', routes={}, layers=[], border='', size='h', path_i=None,
+                 path_o=None):
         self.name = name
         self.parent = parent
         self.fileName = fileName
@@ -346,12 +344,10 @@ class Topo():
         else:
             self.scale = 2.0
 
-
         if self.options['topos_attached_to_routes']:
             for route in self.routes.values():
-                if route._parent_class == Boulder:
-                    route.topos.append(self)
-                    break
+                route.topos.append(self)
+                break
 
         parent.topos.append(self)
         for route in routes.values():
@@ -361,7 +357,8 @@ class Topo():
 class AreaMap():
     """class object for sub area maps"""
 
-    def __init__(self, name, parent, fileName, description='', sub_areas={}, layers=[], border='', size='h', path_i=None, path_o=None, outFileName=None):
+    def __init__(self, name, parent, fileName, description='', sub_areas={}, layers=[], border='', size='h',
+                 path_i=None, path_o=None, outFileName=None):
         self.name = name
         self.parent = parent
         self.fileName = fileName
@@ -397,7 +394,8 @@ class AreaMap():
 class SubAreaMap():
     """class object for sub area maps"""
 
-    def __init__(self, name, parent, fileName, description='', routes={}, layers=[], border='', size='h', path_i=None, path_o=None, outFileName=None):
+    def __init__(self, name, parent, fileName, description='', routes={}, layers=[], border='', size='h', path_i=None,
+                 path_o=None, outFileName=None):
         self.name = name
         self.parent = parent
         self.fileName = fileName

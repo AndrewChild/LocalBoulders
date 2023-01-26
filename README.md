@@ -7,12 +7,11 @@
 	- gps coords for boulders
 	- use of cammal case vs other conventions is inconsistent
 	- PEP8?
-	- is there a more elegant way to move through the data structure (e.g. reference grandchildren and grandparents in addition to parents and children, book.boulders or boulders.book)
 	- move LaTeX specific stuff to its own folder/project
         - maybe move class.ref to genLaTeX
-	- remove metaclasses
-    - use itertools.count for indexing
+    - use itertools.count for indexing?
     - limit photo height
+	- seems like annotations are smaller in full width images
     - in contexts where both routes and variations are being refered to interchangably call them climbs
 	- when assigning topos to boulders the code just assigns the topo to the first boulder declared in the routes attribute (not the first boulder in the book order). This is kind of useful but its not intended behaviour.
     LaTeX:
