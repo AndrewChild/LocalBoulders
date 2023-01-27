@@ -30,7 +30,7 @@ def _get_grade_number(grade: str):
         elif grade[-1] == '-':
             grade_number = int(grade[:-1])-0.1
         else:
-            grade_number= np.average([int(x) for x in grade.split('/')])
+            grade_number = np.average([int(x) for x in grade.split('/')])
 
     return grade_number
 

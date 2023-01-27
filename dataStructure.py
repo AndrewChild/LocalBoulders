@@ -14,7 +14,10 @@ from collections import OrderedDict
 
 
 # --------------------------------
-class Item():
+class Item:
+    """
+    Base class for all items in the book hierarchy (book, area, subarea, etc.)
+    """
     def __init__(self, name, parent, description='', item_id=None):
         self.name = name
         self.parent = parent
@@ -27,6 +30,20 @@ class Item():
         if connection.item_id in getattr(self, container):
             raise AttributeError(f'Item id "{connection.item_id}" is not unique')
         getattr(self, container).update({connection.item_id: connection})
+
+
+class Climb:
+    """
+    Base class for all items that contain route information (e.g. boulder problem, rope route, boulder vaiation)  
+    """
+    def __init__(self, grade='?', rating=-1, serious=0, grade_unconfirmed=False, name_unconfirmed=False):
+        self.grade = grade
+        self.rating = int(rating)
+        self.serious = serious
+        self.grade_unconfirmed = grade_unconfirmed
+        self.name_unconfirmed = name_unconfirmed
+        self.color, self.color_hex, self.gradeNum = get_grade_atts(grade)
+        self.hasTopo = False
 
 
 class Book(Item):
@@ -201,21 +218,16 @@ class Boulder(Item):
         self.options = parent.options
 
 
-class Route(Item):
+class Problem(Item, Climb):
     """class object for an individual route or boulder"""
     __class_id = 'routes'
 
     def __init__(self, name, parent, description='PLACEHOLDER', item_id=None, grade='?', rating=-1, serious=0,
                  grade_unconfirmed=False, name_unconfirmed=False):
-        super().__init__(name=name, parent=parent, description=description, item_id=item_id)
-        self.grade = grade
-        self.rating = int(rating)
-        self.serious = serious
-        self.grade_unconfirmed = grade_unconfirmed
-        self.name_unconfirmed = name_unconfirmed
+        Item.__init__(self, name=name, parent=parent, description=description, item_id=item_id)
+        Climb.__init__(self, grade=grade, rating=rating, serious=serious, grade_unconfirmed=grade_unconfirmed, name_unconfirmed=name_unconfirmed)
         self.paths = parent.paths
         self.options = parent.options
-
         self.ref = 'rt'
         self.boulder = parent
         self.book = parent.book
@@ -226,8 +238,6 @@ class Route(Item):
         self.subarea.assign_to_dic(self.__class_id, self)
         self.boulder.assign_to_dic(self.__class_id, self)
         self.variations = OrderedDict()
-        self.color, self.color_hex, self.gradeNum = get_grade_atts(grade)
-        self.hasTopo = False
         if self.options['topos_attached_to_routes']:
             self.topos = []
 
@@ -249,21 +259,16 @@ class Route(Item):
                     ct = ct + 1
 
 
-class Variation(Item):
+class Variation(Item, Climb):
     """class object for variations of routs"""
     __class_id = 'variations'
 
     def __init__(self, name, parent, description='PLACEHOLDER', item_id=None, grade='?', rating=-1, serious=0,
                  grade_unconfirmed=False, name_unconfirmed=False):
-        super().__init__(name=name, parent=parent, description=description, item_id=item_id)
-        self.grade = grade
-        self.rating = rating
-        self.serious = serious
-        self.grade_unconfirmed = grade_unconfirmed
-        self.name_unconfirmed = name_unconfirmed
+        Item.__init__(self, name=name, parent=parent, description=description, item_id=item_id)
+        Climb.__init__(self, grade=grade, rating=rating, serious=serious, grade_unconfirmed=grade_unconfirmed, name_unconfirmed=name_unconfirmed)
         self.paths = parent.paths
         self.options = parent.options
-
         self.ref = 'vr'
         self.route = parent
         self.book = parent.book
@@ -275,8 +280,6 @@ class Variation(Item):
         self.subarea.assign_to_dic(self.__class_id, self)
         self.boulder.assign_to_dic(self.__class_id, self)
         self.route.assign_to_dic(self.__class_id, self)
-        self.color, self.color_hex, self.gradeNum = get_grade_atts(grade)
-        self.hasTopo = False
         if self.options['topos_attached_to_routes']:
             self.topos = []
 
