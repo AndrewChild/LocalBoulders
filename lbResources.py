@@ -5,19 +5,48 @@ import webcolors
 import qrcode
 
 
-def _get_grade_number(grade: str):
-    """ Takes the grade string and converts it to a number. 
-    In the case of non numeric values specific negative numbers will be used.
-    ? = -2
-    B = -1
-    in the case of +/- a .1 will be added or subtracted accordingly
-    in the case of split grade a .5 will be added to the lower number.
+def _is_int(object):
     """
-
+    Checks if an object (string or number) can be cast as an integer
+    """
     try:
-        grade_number = int(grade)
-
+        int(object)
+        return True
     except ValueError:
+        return False
+
+
+def _get_grade_number_YDS(grade):
+    # iterate through each character is the grade
+    grade = str(grade).replace(' ','')[2:]
+    grade_number = []
+    for i in grade:
+        if _is_int(i):
+            grade_number.append(i)
+        elif i == '?':
+            base_number.append('-502.5')
+        else:
+            break
+    grade = grade[len(grade_number):]
+    grade_number = int(''.join(grade_number)) + 500.5
+
+    grade = [0.3 if i == '+' else i for i in grade]
+    grade = [-0.3 if i == '-' else i for i in grade]
+    grade = [-0.2 if i == 'a' else i for i in grade]
+    grade = [-0.1 if i == 'b' else i for i in grade]
+    grade = [0.1 if i == 'c' else i for i in grade]
+    grade = [0.2 if i == 'd' else i for i in grade]
+    if len(grade) > 1:
+        grade = [np.average([grade[0], grade[2]])]
+    if len(grade) > 0:
+        grade_number = grade_number + grade[0]
+    return grade_number
+
+
+def _get_grade_number_Hueco(grade):
+    if _is_int(grade):
+        return grade
+    else:
         if grade == '?':
             grade_number = -2
         elif grade == 'B':
@@ -31,27 +60,59 @@ def _get_grade_number(grade: str):
             grade_number = int(grade[:-1])-0.1
         else:
             grade_number = np.average([int(x) for x in grade.split('/')])
-
     return grade_number
+
+
+def _get_grade_number(grade: str):
+    """
+    Takes the grade string and converts it to a number.
+    In the case of non numeric values specific negative numbers will be used.
+    ? = -2
+    B = -1
+    in the case of +/- a .1 will be added or subtracted accordingly
+    in the case of split grade a .5 will be added to the lower number.
+    """
+
+    # Check if the grade is YDS or Hueco V
+    if str(grade)[1] == '.':
+        scale = 'YDS'
+        return _get_grade_number_YDS(grade), scale
+    else:
+        scale = 'Hueco'
+        return _get_grade_number_Hueco(grade), scale
 
 
 def get_grade_atts(grade):
     """ generate the grade attributes
     """
-    grade_number = _get_grade_number(grade)
+    grade_number, scale = _get_grade_number(grade)
+    colors = ['black', 'green', 'RoyalBlue', 'DarkGoldenrod', 'DarkRed']
 
-    if grade_number == -2:
-        color = 'black'
-    elif grade_number <= 3:
-        color = 'green'
-    elif grade_number <= 6:
-        color = 'RoyalBlue'
-    elif grade_number <= 9:
-        color = 'DarkGoldenrod'
+    if scale == 'Hueco':
+        if grade_number == -2:
+            color = colors[0]
+        elif grade_number <= 3:
+            color = colors[1]
+        elif grade_number <= 6:
+            color = colors[2]
+        elif grade_number <= 9:
+            color = colors[3]
+        else:
+            color = colors[4]
     else:
-        color = 'DarkRed'
+        if grade_number == -2:
+            color = colors[0]
+        elif grade_number <= 510:
+            color = colors[1]
+        elif grade_number <= 512:
+            color = colors[2]
+        elif grade_number <= 514:
+            color = colors[3]
+        else:
+            color = colors[4]
+
     color_hex = webcolors.name_to_hex(color)
-    return color, color_hex, grade_number
+    return color, color_hex, grade_number, scale
 
 
 def genHistogram(area):

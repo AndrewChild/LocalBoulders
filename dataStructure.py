@@ -218,7 +218,7 @@ class Boulder(Item):
         self.options = parent.options
 
 
-class Problem(Item, Climb):
+class Route(Item, Climb):
     """class object for an individual route or boulder"""
     __class_id = 'routes'
 
