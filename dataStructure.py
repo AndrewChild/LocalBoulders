@@ -81,7 +81,7 @@ class Book(Item):
         self.subarea_numbering = subarea_numbering
         self.paths = {**self.__path_defaults, **paths}
         self.options = {**self.__option_defaults, **options}
-        self.area_colors = ['BrickRed', 'RoyalPurple', 'BurntOrange', 'Aquamarine', 'Ruby', 'PineGreen']
+        self.area_colors = ['BrickRed', 'RoyalPurple', 'BurntOrange', 'Aquamarine', 'RubineRed', 'PineGreen']
         self.area_colors_hex = ['#CB4154', '#7851A9', '#CC5500', '#7FFFD0', '#E0115F', '#01796F']
 
         if dl:
