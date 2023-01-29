@@ -42,7 +42,7 @@ class Climb:
         self.serious = serious
         self.grade_unconfirmed = grade_unconfirmed
         self.name_unconfirmed = name_unconfirmed
-        self.color, self.color_hex, self.gradeNum = get_grade_atts(grade)
+        self.color, self.color_hex, self.gradeNum, self.grade_scale = get_grade_atts(grade)
         self.hasTopo = False
 
 
@@ -69,7 +69,7 @@ class Book(Item):
         super().__init__(name=name, parent=None, description=description, item_id=item_id)
         self.areas = OrderedDict()
         self.subareas = OrderedDict()
-        self.boulders = OrderedDict()
+        self.formations = OrderedDict()
         self.routes = OrderedDict()
         self.variations = OrderedDict()
 
@@ -114,11 +114,11 @@ class Book(Item):
                 all_photos = all_photos + subArea.photos
                 for map in subArea.subAreaMaps:
                     update_svg(map)
-                for boulder in subArea.boulders.values():
-                    all_photos = all_photos + boulder.photos
-                    for topo in boulder.topos:
+                for formation in subArea.formations.values():
+                    all_photos = all_photos + formation.photos
+                    for topo in formation.topos:
                         update_svg(topo)
-                    for route in boulder.routes.values():
+                    for route in formation.routes.values():
                         all_routes.append(route)
                         route.num = route.getRtNum()
                         for variation in route.variations.values():
@@ -142,7 +142,7 @@ class Area(Item):
         self.book = parent
         self.book.assign_to_dic(self.__class_id, self)
         self.subareas = OrderedDict()
-        self.boulders = OrderedDict()
+        self.formations = OrderedDict()
         self.routes = OrderedDict()
         self.variations = OrderedDict()
         self.photos = []
@@ -180,7 +180,7 @@ class Subarea(Item):
         self.book = parent.book
         self.book.assign_to_dic(self.__class_id, self)
         self.area.assign_to_dic(self.__class_id, self)
-        self.boulders = OrderedDict()
+        self.formations = OrderedDict()
         self.routes = OrderedDict()
         self.variations = OrderedDict()
         self.photos = []
@@ -198,8 +198,8 @@ class Subarea(Item):
             ct = ct + 1
 
 
-class Boulder(Item):
-    __class_id = 'boulders'
+class Formation(Item):
+    __class_id = 'formations'
 
     def __init__(self, name, parent, description='', item_id=None):
         super().__init__(name=name, parent=parent, description=description, item_id=item_id)
@@ -249,7 +249,7 @@ class Route(Item, Climb):
         else:
             query_subareas = self.area.subareas.values()
         for subArea in query_subareas:
-            for boulder in subArea.boulders.values():   #sub area also contains a dictionary of all routes but this has to be done in a multi step process in order to get the correct route numbering
+            for boulder in subArea.formations.values():   #sub area also contains a dictionary of all routes but this has to be done in a multi step process in order to get the correct route numbering
                 for route in boulder.routes.values():
                     if route.name == self.name:
                         if as_int:

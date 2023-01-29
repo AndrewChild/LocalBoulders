@@ -1,3 +1,4 @@
+%# ------------Macros---------------
 %% macro image(filePath, description=None, size='h')
 	%% if size == 'f'
 		\fullPic{\VAR{filePath}}
@@ -10,7 +11,11 @@
 \colorbox{\VAR{climb.color_LaTeX}}{
 \parbox{0.95\linewidth}{
 \textbf{
+%% if climb.grade_scale == 'Hueco'
 \VAR{climb.getRtNum()} \VAR{climb.name}\VAR{climb.name_unconfirmed_LaTeX} V\VAR{climb.grade}\VAR{climb.grade_unconfirmed_LaTeX} \VAR{climb.rating_LaTeX} \VAR{climb.serious_LaTeX}
+%% else
+\VAR{climb.getRtNum()} \VAR{climb.name}\VAR{climb.name_unconfirmed_LaTeX} \VAR{climb.grade}\VAR{climb.grade_unconfirmed_LaTeX} \VAR{climb.rating_LaTeX} \VAR{climb.serious}
+%% endif
 }
 }
 }
@@ -20,6 +25,7 @@
 \VAR{description}\\
 %% endif
 %% endmacro
+%# ------------Body-----------------
 \formatChapter{\VAR{area.name}}
 \raggedcolumns
 \begin{multicols}{2}
@@ -52,17 +58,17 @@
 		\VAR{image(photo.path+photo.fileName, photo.description, photo.size)}\label{pt:\VAR{photo.name}}
 	%% endfor
 	
-	%% if subArea.boulders
-		%% for boulder in subArea.boulders.values()
-			%% for topo in boulder.topos
+	%% if subArea.formations
+		%% for formation in subArea.formations.values()
+			%% for topo in formation.topos
 				%% if topo.size == 'f'
 				\VAR{image(topo.path_o+topo.outFileName, topo.description, topo.size)}
 				%% endif
 			%% endfor
-			\subsection*{\VAR{boulder.name}}\label{bf:\VAR{boulder.name}}
-			\VAR{description(boulder.description)}			
-			%% if boulder.routes
-				%% for route in boulder.routes.values()
+			\subsection*{\VAR{formation.name}}\label{bf:\VAR{formation.name}}
+			\VAR{description(formation.description)}			
+			%% if formation.routes
+				%% for route in formation.routes.values()
 					%% for topo in route.topos
 						%% if topo.size == 'h'
 						\VAR{image(topo.path_o+topo.outFileName, topo.description, topo.size)}

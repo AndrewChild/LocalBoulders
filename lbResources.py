@@ -24,11 +24,11 @@ def _get_grade_number_YDS(grade):
         if _is_int(i):
             grade_number.append(i)
         elif i == '?':
-            base_number.append('-502.5')
+            grade_number.append('-2.5')
         else:
             break
     grade = grade[len(grade_number):]
-    grade_number = int(''.join(grade_number)) + 500.5
+    grade_number = float(''.join(grade_number)) + .5
 
     grade = [0.3 if i == '+' else i for i in grade]
     grade = [-0.3 if i == '-' else i for i in grade]
@@ -45,7 +45,7 @@ def _get_grade_number_YDS(grade):
 
 def _get_grade_number_Hueco(grade):
     if _is_int(grade):
-        return grade
+        return int(grade)
     else:
         if grade == '?':
             grade_number = -2
@@ -74,21 +74,21 @@ def _get_grade_number(grade: str):
     """
 
     # Check if the grade is YDS or Hueco V
-    if str(grade)[1] == '.':
-        scale = 'YDS'
-        return _get_grade_number_YDS(grade), scale
+    if len(str(grade)) > 1 and str(grade)[1] == '.':
+        grade_scale = 'YDS'
+        return _get_grade_number_YDS(grade), grade_scale
     else:
-        scale = 'Hueco'
-        return _get_grade_number_Hueco(grade), scale
+        grade_scale = 'Hueco'
+        return _get_grade_number_Hueco(grade), grade_scale
 
 
 def get_grade_atts(grade):
     """ generate the grade attributes
     """
-    grade_number, scale = _get_grade_number(grade)
+    grade_number, grade_scale = _get_grade_number(grade)
     colors = ['black', 'green', 'RoyalBlue', 'DarkGoldenrod', 'DarkRed']
 
-    if scale == 'Hueco':
+    if grade_scale == 'Hueco':
         if grade_number == -2:
             color = colors[0]
         elif grade_number <= 3:
@@ -102,32 +102,33 @@ def get_grade_atts(grade):
     else:
         if grade_number == -2:
             color = colors[0]
-        elif grade_number <= 510:
+        elif grade_number <= 10:
             color = colors[1]
-        elif grade_number <= 512:
+        elif grade_number <= 12:
             color = colors[2]
-        elif grade_number <= 514:
+        elif grade_number <= 14:
             color = colors[3]
         else:
             color = colors[4]
 
     color_hex = webcolors.name_to_hex(color)
-    return color, color_hex, grade_number, scale
+    return color, color_hex, grade_number, grade_scale
 
 
 def genHistogram(area):
     print(f'Creating Route Histogram for {area.name}')
     areaRoutes = []
     for subArea in area.subareas.values():
-        for boudler in subArea.boulders.values():
-            for route in boudler.routes.values():
+        for formation in subArea.formations.values():
+            for route in formation.routes.values():
                 areaRoutes.append(route)
                 for variation in route.variations.values():
                     areaRoutes.append(variation)
 
     instances = np.zeros(20)
     for route in areaRoutes:
-        instances[int(round(route.gradeNum))+2] += 1
+        if route.grade_scale == 'Hueco':
+            instances[int(round(route.gradeNum))+2] += 1
 
     while instances[-1] == 0 and len(instances) != 1:
         instances = instances[:-1]
