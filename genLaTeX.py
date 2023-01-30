@@ -19,7 +19,7 @@ def _get_rating_string(rating):
     elif rating < 1:
         rating_string = r'\ding{73}'
     else:
-        rating_string = r'\ding{72} ' * rating
+        rating_string = r'\ding{72}' * rating
     return rating_string
 
 def _set_templateEnv(searchpath):
@@ -49,7 +49,7 @@ def gen_book_LaTeX(book):
 
     for climb in book.climbs.values():
         climb.rating_LaTeX = _get_rating_string(climb.rating)
-        climb.serious_LaTeX = r'\warn ' * climb.serious
+        climb.serious_LaTeX = r'\warn' * climb.serious
         if climb.color == 'DarkGoldenrod':
             climb.color = 'Goldenrod' #LaTeX does not know what Goldenrod is
             climb.color_LaTeX = climb.color + '!50'

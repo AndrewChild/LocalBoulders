@@ -4,16 +4,25 @@
 \section{Routes Alphabetical}
 \begin{center}
 \begin{supertabular}{p{0.65\linewidth}r}
-%% for route in book.climbs.values() | sort(attribute="name")
-\VAR{route.name} V\VAR{route.grade} & \pageref{\VAR{route.ref}:\VAR{route.name}} \\
+%% for climb in book.climbs.values() | sort(attribute="name")
+\VAR{climb.name} V\VAR{climb.grade} & \pageref{\VAR{climb.ref}:\VAR{climb.name}} \\
 %% endfor
 \end{supertabular}
 \end{center}
 \section{Routes by grade}
 \begin{center}
 \begin{supertabular}{p{0.18\linewidth}p{0.13\linewidth}p{0.45\linewidth}p{0.08\linewidth}}
-%% for route in book.climbs.values() | sort(reverse=true, attribute="rating") | sort(attribute="gradeNum")
-\VAR{route.rating_LaTeX}\VAR{route.serious_LaTeX}&V\VAR{route.grade}&\VAR{route.name} & \pageref{\VAR{route.ref}:\VAR{route.name}} \\
+%% for climb in book.climbs.values() | sort(reverse=true, attribute="rating") | sort(attribute="gradeNum")
+%% if climb.grade_scale == 'Hueco'
+\VAR{climb.rating_LaTeX} \VAR{climb.serious_LaTeX}&V\VAR{climb.grade}&\VAR{climb.name} & \pageref{\VAR{climb.ref}:\VAR{climb.name}} \\
+%% endif
+%% endfor
+\end{supertabular}
+\begin{supertabular}{p{0.13\linewidth}p{0.18\linewidth}p{0.45\linewidth}p{0.08\linewidth}}
+%% for climb in book.climbs.values() | sort(reverse=true, attribute="rating") | sort(attribute="gradeNum")
+%% if climb.grade_scale == 'YDS'
+\VAR{climb.rating_LaTeX}\VAR{climb.serious_LaTeX}&V\VAR{climb.grade}&\VAR{climb.name} & \pageref{\VAR{climb.ref}:\VAR{climb.name}} \\
+%% endif
 %% endfor
 \end{supertabular}
 \end{center}
