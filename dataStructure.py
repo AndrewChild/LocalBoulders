@@ -18,6 +18,7 @@ class Item:
     """
     Base class for all items in the book hierarchy (book, area, subarea, etc.)
     """
+
     def __init__(self, name, parent, description='', item_id=None):
         self.name = name
         self.parent = parent
@@ -36,6 +37,7 @@ class Climb:
     """
     Base class for all items that contain route information (e.g. boulder problem, rope route, boulder vaiation)  
     """
+
     def __init__(self, grade='?', rating=-1, serious=0, grade_unconfirmed=False, name_unconfirmed=False):
         self.grade = grade
         self.rating = int(rating)
@@ -48,6 +50,9 @@ class Climb:
 
 class Book(Item):
     __class_id = 'books'
+    ref = 'bk'
+    area_colors = ['BrickRed', 'RoyalPurple', 'BurntOrange', 'Aquamarine', 'RubineRed', 'PineGreen']
+    area_colors_hex = ['#CB4154', '#7851A9', '#CC5500', '#7FFFD0', '#E0115F', '#01796F']
     __path_defaults = {
         'histogram_o': './maps/plots/',
         'qr_o': './maps/qr/',
@@ -72,17 +77,16 @@ class Book(Item):
         self.formations = OrderedDict()
         self.routes = OrderedDict()
         self.variations = OrderedDict()
+        self.climbs = OrderedDict()  # container for routes and variations
+        self.photos = []  # container for all photos in book
 
         self.date = datetime.today().strftime('%Y-%m-%d')
-        self.ref = 'bk'
         self.repo = repo
         self.dl = dl
         self.collaborators = collaborators
         self.subarea_numbering = subarea_numbering
         self.paths = {**self.__path_defaults, **paths}
         self.options = {**self.__option_defaults, **options}
-        self.area_colors = ['BrickRed', 'RoyalPurple', 'BurntOrange', 'Aquamarine', 'RubineRed', 'PineGreen']
-        self.area_colors_hex = ['#CB4154', '#7851A9', '#CC5500', '#7FFFD0', '#E0115F', '#01796F']
 
         if dl:
             create_qr(self.paths['qr_o'], dl, f'{self.name}')
@@ -102,38 +106,23 @@ class Book(Item):
                 os.makedirs(path)
 
     def _update(self):
-        """
-        Crawls through all classes contained in book and update variables with runtime information
-        """
-        all_routes = []
-        all_photos = []
         for area in self.areas.values():
             area.update()
-            all_photos = all_photos + area.photos
-            for subArea in area.subareas.values():
-                all_photos = all_photos + subArea.photos
-                for map in subArea.subAreaMaps:
-                    update_svg(map)
-                for formation in subArea.formations.values():
-                    all_photos = all_photos + formation.photos
-                    for topo in formation.topos:
-                        update_svg(topo)
-                    for route in formation.routes.values():
-                        all_routes.append(route)
-                        route.num = route.getRtNum()
-                        for variation in route.variations.values():
-                            all_routes.append(variation)
+        for subArea in self.subareas.values():
+            for subAreaMap in subArea.subAreaMaps:
+                update_svg(subAreaMap)
+        for formation in self.formations.values():
+            for topo in formation.topos:
+                update_svg(topo)
 
-        self.all_routes = all_routes
-        self.all_photos = all_photos
 
 
 class Area(Item):
     __class_id = 'areas'
+    ref = 'a'
 
     def __init__(self, name, parent, description='', item_id=None, gps=None, incomplete=False):
         super().__init__(name=name, parent=parent, description=description, item_id=item_id)
-        self.ref = 'a'
         self.color = ''
         self.color_hex = ''
         self.paths = parent.paths
@@ -164,16 +153,16 @@ class Area(Item):
                 self.color_hex = area_colors_hex[ct % len(area_colors_hex)]
             ct = ct + 1
 
-        for map in self.areaMaps:
-            update_svg(map)
+        for areaMap in self.areaMaps:
+            update_svg(areaMap)
 
 
 class Subarea(Item):
     __class_id = 'subareas'
+    ref = 'sa'
 
     def __init__(self, name, parent, description='', item_id=None, gps=None):
         super().__init__(name=name, parent=parent, description=description, item_id=item_id)
-        self.ref = 'sa'
         self.paths = parent.paths
         self.options = parent.options
         self.area = parent
@@ -200,10 +189,10 @@ class Subarea(Item):
 
 class Formation(Item):
     __class_id = 'formations'
+    ref = 'bd'
 
     def __init__(self, name, parent, description='', item_id=None):
         super().__init__(name=name, parent=parent, description=description, item_id=item_id)
-        self.ref = 'bd'
         self.subarea = parent
         self.book = parent.book
         self.area = parent.area
@@ -221,19 +210,21 @@ class Formation(Item):
 class Route(Item, Climb):
     """class object for an individual route or boulder"""
     __class_id = 'routes'
+    ref = 'rt'
 
     def __init__(self, name, parent, description='PLACEHOLDER', item_id=None, grade='?', rating=-1, serious=0,
                  grade_unconfirmed=False, name_unconfirmed=False):
         Item.__init__(self, name=name, parent=parent, description=description, item_id=item_id)
-        Climb.__init__(self, grade=grade, rating=rating, serious=serious, grade_unconfirmed=grade_unconfirmed, name_unconfirmed=name_unconfirmed)
+        Climb.__init__(self, grade=grade, rating=rating, serious=serious, grade_unconfirmed=grade_unconfirmed,
+                       name_unconfirmed=name_unconfirmed)
         self.paths = parent.paths
         self.options = parent.options
-        self.ref = 'rt'
         self.boulder = parent
         self.book = parent.book
         self.area = parent.area
         self.subarea = parent.subarea
         self.book.assign_to_dic(self.__class_id, self)
+        self.book.assign_to_dic('climbs', self)
         self.area.assign_to_dic(self.__class_id, self)
         self.subarea.assign_to_dic(self.__class_id, self)
         self.boulder.assign_to_dic(self.__class_id, self)
@@ -249,7 +240,7 @@ class Route(Item, Climb):
         else:
             query_subareas = self.area.subareas.values()
         for subArea in query_subareas:
-            for boulder in subArea.formations.values():   #sub area also contains a dictionary of all routes but this has to be done in a multi step process in order to get the correct route numbering
+            for boulder in subArea.formations.values():  # sub area also contains a dictionary of all routes but this has to be done in a multi step process in order to get the correct route numbering
                 for route in boulder.routes.values():
                     if route.name == self.name:
                         if as_int:
@@ -262,20 +253,22 @@ class Route(Item, Climb):
 class Variation(Item, Climb):
     """class object for variations of routs"""
     __class_id = 'variations'
+    ref = 'vr'
 
     def __init__(self, name, parent, description='PLACEHOLDER', item_id=None, grade='?', rating=-1, serious=0,
                  grade_unconfirmed=False, name_unconfirmed=False):
         Item.__init__(self, name=name, parent=parent, description=description, item_id=item_id)
-        Climb.__init__(self, grade=grade, rating=rating, serious=serious, grade_unconfirmed=grade_unconfirmed, name_unconfirmed=name_unconfirmed)
+        Climb.__init__(self, grade=grade, rating=rating, serious=serious, grade_unconfirmed=grade_unconfirmed,
+                       name_unconfirmed=name_unconfirmed)
         self.paths = parent.paths
         self.options = parent.options
-        self.ref = 'vr'
         self.route = parent
         self.book = parent.book
         self.area = parent.area
         self.subarea = parent.subarea
         self.boulder = parent.boulder
         self.book.assign_to_dic(self.__class_id, self)
+        self.book.assign_to_dic('climbs', self)
         self.area.assign_to_dic(self.__class_id, self)
         self.subarea.assign_to_dic(self.__class_id, self)
         self.boulder.assign_to_dic(self.__class_id, self)
@@ -292,44 +285,47 @@ class Variation(Item, Climb):
             ct = ct + 1
 
 
-class Photo():
+class Photo(Item):
     """class object for general photos (action, scenery, etc.)"""
+    __class_id = 'photos'
+    ref = 'pt'
 
-    def __init__(self, name, parent, fileName, description='', size='h', path=None, credit=None, route=None):
-        self.name = name
-        self.parent = parent
+    def __init__(self, name, parent, fileName, description='', item_id=None, size='h', path=None, credit=None,
+                 route=None):
+        super().__init__(name=name, parent=parent, description=description, item_id=item_id)
         self.fileName = fileName
-        self.description = description
         self.size = size
         self.credit = credit
         self.route = route
         self.paths = parent.paths
         self.options = parent.options
+        self.book = parent.book
+        self.book.photos.append(self)
+        self.parent.photos.append(self)
 
         if path:
             self.path = path
         else:
             self.path = parent.paths['photos']
 
-        self.ref = 'pt'
-        parent.photos.append(self)
 
-
-class Topo():
+class Topo(Item):
     """class object for route topos"""
+    __class_id = 'topos'
+    ref = 'tp'
 
-    def __init__(self, name, parent, fileName, description='', routes={}, layers=[], border='', size='h', path_i=None,
+    def __init__(self, name, parent, fileName, description='', item_id=None, routes={}, layers=[], border='', size='h',
+                 path_i=None,
                  path_o=None):
-        self.name = name
-        self.parent = parent
+        super().__init__(name=name, parent=parent, description=description, item_id=item_id)
         self.fileName = fileName
-        self.description = description
         self.routes = routes.copy()  # not sure if this is necessary
         self.layers = layers
         self.border = border
         self.size = size
         self.paths = parent.paths
         self.options = parent.options
+        self.parent.topos.append(self)
 
         if path_i:
             self.path_i = path_i
@@ -352,20 +348,20 @@ class Topo():
                 route.topos.append(self)
                 break
 
-        parent.topos.append(self)
         for route in routes.values():
             route.hasTopo = True
 
 
-class AreaMap():
+class AreaMap(Item):
     """class object for sub area maps"""
+    __class_id = 'areaMaps'
+    ref = 'am'
 
-    def __init__(self, name, parent, fileName, description='', sub_areas={}, layers=[], border='', size='h',
+    def __init__(self, name, parent, fileName, description='', item_id=None, sub_areas={}, layers=[], border='',
+                 size='h',
                  path_i=None, path_o=None, outFileName=None):
-        self.name = name
-        self.parent = parent
+        super().__init__(name=name, parent=parent, description=description, item_id=item_id)
         self.fileName = fileName
-        self.description = description
         self.sub_areas = sub_areas.copy()  # not sure if this is necessary
         self.layers = layers
         self.border = border
@@ -373,6 +369,7 @@ class AreaMap():
         self.paths = parent.paths
         self.options = parent.options
         self.routes = []
+        self.parent.areaMaps.append(self)
 
         if path_i:
             self.path_i = path_i
@@ -391,18 +388,17 @@ class AreaMap():
         else:
             self.scale = 2.0
 
-        parent.areaMaps.append(self)
 
-
-class SubAreaMap():
+class SubAreaMap(Item):
     """class object for sub area maps"""
+    __class_id = 'subAreaMaps'
+    ref = 'sm'
 
-    def __init__(self, name, parent, fileName, description='', routes={}, layers=[], border='', size='h', path_i=None,
+    def __init__(self, name, parent, fileName, description='', item_id=None, routes={}, layers=[], border='', size='h',
+                 path_i=None,
                  path_o=None, outFileName=None):
-        self.name = name
-        self.parent = parent
+        super().__init__(name=name, parent=parent, description=description, item_id=item_id)
         self.fileName = fileName
-        self.description = description
         self.routes = routes.copy()  # not sure if this is necessary
         self.layers = layers
         self.border = border
@@ -410,6 +406,7 @@ class SubAreaMap():
         self.outFileName = outFileName
         self.paths = parent.paths
         self.options = parent.options
+        self.parent.subAreaMaps.append(self)
 
         if path_i:
             self.path_i = path_i
@@ -427,8 +424,6 @@ class SubAreaMap():
             self.scale = 1.0
         else:
             self.scale = 2.0
-
-        parent.subAreaMaps.append(self)
 
 
 if __name__ == '__main__':

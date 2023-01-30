@@ -47,27 +47,27 @@ def gen_book_LaTeX(book):
     Updates book data structure with LaTeX specific variables then generates a book from templates
     """
 
-    for route in book.all_routes:
-        route.rating_LaTeX = _get_rating_string(route.rating)
-        route.serious_LaTeX = r'\warn ' * route.serious
-        if route.color == 'DarkGoldenrod':
-            route.color = 'Goldenrod' #LaTeX does not know what Goldenrod is
-            route.color_LaTeX = route.color + '!50'
-        elif route.color == 'DarkRed':
-            route.color = 'red' #LaTeX does not know what DarkRed is
-            route.color_LaTeX = route.color + '!20'
+    for climb in book.climbs.values():
+        climb.rating_LaTeX = _get_rating_string(climb.rating)
+        climb.serious_LaTeX = r'\warn ' * climb.serious
+        if climb.color == 'DarkGoldenrod':
+            climb.color = 'Goldenrod' #LaTeX does not know what Goldenrod is
+            climb.color_LaTeX = climb.color + '!50'
+        elif climb.color == 'DarkRed':
+            climb.color = 'red' #LaTeX does not know what DarkRed is
+            climb.color_LaTeX = climb.color + '!20'
         else:
-            route.color_LaTeX = route.color + '!20'
-        if route.name_unconfirmed:
-            route.name_unconfirmed_LaTeX = '*'
+            climb.color_LaTeX = climb.color + '!20'
+        if climb.name_unconfirmed:
+            climb.name_unconfirmed_LaTeX = '*'
         else:
-            route.name_unconfirmed_LaTeX = ''
-        if route.grade_unconfirmed:
-            route.grade_unconfirmed_LaTeX = '*'
+            climb.name_unconfirmed_LaTeX = ''
+        if climb.grade_unconfirmed:
+            climb.grade_unconfirmed_LaTeX = '*'
         else:
-            route.grade_unconfirmed_LaTeX = ''
+            climb.grade_unconfirmed_LaTeX = ''
 
-    for photo in book.all_photos:
+    for photo in book.photos:
         if photo.route:
             photo.latexRef = ' (See Page \\pageref{{{}:{}}})'.format(photo.route.ref, photo.route.name)
         else:
