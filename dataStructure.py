@@ -142,6 +142,7 @@ class Area(Item):
 
     def histogram(self):
         genHistogram(self)
+        genHistogram(self)
 
     def update(self):
         ct = 0

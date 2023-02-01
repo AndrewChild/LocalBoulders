@@ -14,7 +14,7 @@
 	- when assigning topos to boulders the code just assigns the topo to the first boulder declared in the routes attribute (not the first boulder in the book order). This is kind of useful but its not intended behaviour.
 	- add support for YDS routes
 	  - started this implementaion need to add new attributes to climb to track things link number of bolts routre height and pitches
-	  - right now the grades go into the same histogram should probably change or expand that
+	- histograms are small and hard to read. Might be good to group routes by color instead of V grade to save some space
     LaTeX:
     - GPS index of boulders
     - arete shortcut

@@ -24,7 +24,7 @@ def _get_grade_number_YDS(grade):
         if _is_int(i):
             grade_number.append(i)
         elif i == '?':
-            grade_number.append('-2.5')
+            grade_number.append('-1.5')
         else:
             break
     grade = grade[len(grade_number):]
@@ -100,7 +100,7 @@ def get_grade_atts(grade):
         else:
             color = colors[4]
     else:
-        if grade_number == -2:
+        if grade_number == -1:
             color = colors[0]
         elif grade_number <= 10:
             color = colors[1]
@@ -117,32 +117,67 @@ def get_grade_atts(grade):
 
 def genHistogram(area):
     print(f'Creating Route Histogram for {area.name}')
-    areaRoutes = []
-    for subArea in area.subareas.values():
-        for formation in subArea.formations.values():
-            for route in formation.routes.values():
-                areaRoutes.append(route)
-                for variation in route.variations.values():
-                    areaRoutes.append(variation)
 
-    instances = np.zeros(20)
-    for route in areaRoutes:
+    # Count how many instances of a climb ther are at each grade.
+    # Boulder list has form [?, B, 0, 1, ...]
+    # Route list has form [?, 5.0, 5.1, ..., 5.10, 5.11, ...]
+    boulder_instances = [0]*20
+    route_instances = [0]*17
+    for route in area.routes.values():
         if route.grade_scale == 'Hueco':
-            instances[int(round(route.gradeNum))+2] += 1
-
-    while instances[-1] == 0 and len(instances) != 1:
-        instances = instances[:-1]
-
-    colors = []
-    labels = []
-    for i in range(len(instances)):
-        colors.append(get_grade_atts(i-2)[1])
-        if i == 0:
-            labels.append('?')
-        elif i == 1:
-            labels.append('B')
+            boulder_instances[int(round(route.gradeNum))+2] += 1
         else:
-            labels.append(f'V{i-2}')
+            route_instances[int(round(route.gradeNum))+1] += 1
+    for route in area.variations.values():
+        if route.grade_scale == 'Hueco':
+            boulder_instances[int(round(route.gradeNum))+2] += 1
+        else:
+            route_instances[int(round(route.gradeNum))+1] += 1
+
+
+#    while boulder_instances[-1] == 0 and len(boulder_instances) != 1:
+#        boulder_instances = boulder_instances[:-1]
+#    while route_instances[-1] == 0 and len(route_instances) != 1:
+#        route_instances = route_instances[:-1]
+
+    # assign color and label to each Boulder grade bin
+    boulder_colors = []
+    boulder_labels = []
+    for i in range(len(boulder_instances)):
+        boulder_colors.append(get_grade_atts(i-2)[1])
+        if i == 0:
+            boulder_labels.append('V?')
+        elif i == 1:
+            boulder_labels.append('VB')
+        else:
+            boulder_labels.append(f'V{i-2}')
+
+    # assign color and label to each Route grade bin
+    route_colors = []
+    route_labels = []
+    for i in range(len(route_instances)):
+        if i == 0:
+            route_colors.append(get_grade_atts(f'5.?')[1])
+            route_labels.append('5.?')
+        else:
+            route_colors.append(get_grade_atts(f'5.{i-1}')[1])
+            route_labels.append(f'5.{i-1}')
+
+    # combine boulders and routes into one list
+    instances = boulder_instances + route_instances
+    colors = boulder_colors + route_colors
+    labels = boulder_labels + route_labels
+
+    # search for bins that have zero climbs in them
+    zero_bin_indexes = []
+    for i, bin in enumerate(instances):
+        if bin == 0:
+            zero_bin_indexes.append(i)
+    # delete zero bins
+    for bin_index in reversed(zero_bin_indexes):
+        instances.pop(bin_index)
+        colors.pop(bin_index)
+        labels.pop(bin_index)
 
     ind = np.arange(len(instances))    # the x locations for the groups
     width = 0.8     # the width of the bars: can also be len(x) sequence
