@@ -35,11 +35,13 @@
 %% if area.gps
 	\qrcode{\VAR{area.paths['qr_o']}/\VAR{area.name}_qr.png}{http://maps.google.com/maps?q=\VAR{area.gps}}{Navigate to this area}
 %% endif
+\halfPic{\VAR{area.paths['histogram_o']}/\VAR{area.name}.png}{}
+\end{multicols}
+\begin{multicols}{2}
 \VAR{description(area.description)}
 %% if area.incomplete
 \textbf{NOTE: This area is mostly incomplete. Look forward to more information in future revisions of this book or contribute your own knowledge on github.}\\
 %% endif
-\halfPic{\VAR{area.paths['histogram_o']}/\VAR{area.name}.png}{}
 
 %% for subArea in area.subareas.values()
 \newpage
