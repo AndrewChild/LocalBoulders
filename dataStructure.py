@@ -26,6 +26,8 @@ class Item:
         self.item_id = item_id
         if not self.item_id:
             self.item_id = name
+        self.photos = []    # container for all action and scenery photos attached to an item
+        self.maps = []      # container for all layout maps and topos attached to an item
 
     def assign_to_dic(self, container, connection):
         if connection.item_id in getattr(self, container):
@@ -78,7 +80,8 @@ class Book(Item):
         self.routes = OrderedDict()
         self.variations = OrderedDict()
         self.climbs = OrderedDict()  # container for routes and variations
-        self.photos = []  # container for all photos in book
+        self.all_photos = []    # container for all action and scenery photos in book
+        self.all_maps = []      # container for all layout maps and topos in book
 
         self.date = datetime.today().strftime('%Y-%m-%d')
         self.repo = repo
@@ -108,12 +111,8 @@ class Book(Item):
     def _update(self):
         for area in self.areas.values():
             area.update()
-        for subArea in self.subareas.values():
-            for subAreaMap in subArea.subAreaMaps:
-                update_svg(subAreaMap)
-        for formation in self.formations.values():
-            for topo in formation.topos:
-                update_svg(topo)
+        for map_item in self.all_maps:
+            update_svg(map_item)
 
 
 class Area(Item):
@@ -133,14 +132,11 @@ class Area(Item):
         self.formations = OrderedDict()
         self.routes = OrderedDict()
         self.variations = OrderedDict()
-        self.photos = []
-        self.areaMaps = []
         if gps:
             self.gps = gps.replace(' ', '')
             create_qr(self.paths['qr_o'], 'http://maps.google.com/maps?q=' + self.gps, f'{self.name}')
 
     def histogram(self):
-        genHistogram(self)
         genHistogram(self)
 
     def update(self):
@@ -152,9 +148,6 @@ class Area(Item):
                 self.color = area_colors[ct % len(area_colors)]
                 self.color_hex = area_colors_hex[ct % len(area_colors_hex)]
             ct = ct + 1
-
-        for areaMap in self.areaMaps:
-            update_svg(areaMap)
 
 
 class Subarea(Item):
@@ -172,8 +165,6 @@ class Subarea(Item):
         self.formations = OrderedDict()
         self.routes = OrderedDict()
         self.variations = OrderedDict()
-        self.photos = []
-        self.subAreaMaps = []
         if gps:
             self.gps = gps.replace(' ', '')
             create_qr(self.paths['qr_o'], r'http://maps.google.com/maps?q=' + self.gps, f'{self.name}')
@@ -201,8 +192,6 @@ class Formation(Item):
         self.subarea.assign_to_dic(self.__class_id, self)
         self.routes = OrderedDict()
         self.variations = OrderedDict()
-        self.topos = []
-        self.photos = []
         self.paths = parent.paths
         self.options = parent.options
 
@@ -229,8 +218,6 @@ class Route(Item, Climb):
         self.subarea.assign_to_dic(self.__class_id, self)
         self.boulder.assign_to_dic(self.__class_id, self)
         self.variations = OrderedDict()
-        if self.options['topos_attached_to_routes']:
-            self.topos = []
 
     def getRtNum(self, as_int=False):
         """returns the guidebook route number of the route"""
@@ -273,8 +260,6 @@ class Variation(Item, Climb):
         self.subarea.assign_to_dic(self.__class_id, self)
         self.boulder.assign_to_dic(self.__class_id, self)
         self.route.assign_to_dic(self.__class_id, self)
-        if self.options['topos_attached_to_routes']:
-            self.topos = []
 
     def getRtNum(self):
         """returns the guidebook route number of the variation"""
@@ -295,13 +280,13 @@ class Photo(Item):
         super().__init__(name=name, parent=parent, description=description, item_id=item_id)
         self.fileName = fileName
         self.size = size
-        self.loc = 'b'
+        self.loc = loc
         self.credit = credit
         self.route = route
         self.paths = parent.paths
         self.options = parent.options
         self.book = parent.book
-        self.book.photos.append(self)
+        self.book.all_photos.append(self)
         self.parent.photos.append(self)
 
         if path:
@@ -316,17 +301,19 @@ class Topo(Item):
     ref = 'tp'
 
     def __init__(self, name, parent, fileName, description='', item_id=None, routes={}, layers=[], border='', size='h',
-                 path_i=None,
-                 path_o=None):
+                 loc='b', path_i=None, path_o=None):
         super().__init__(name=name, parent=parent, description=description, item_id=item_id)
         self.fileName = fileName
         self.routes = routes.copy()  # not sure if this is necessary
         self.layers = layers
         self.border = border
         self.size = size
+        self.loc = loc
         self.paths = parent.paths
         self.options = parent.options
-        self.parent.topos.append(self)
+        self.book = parent.book
+        self.book.all_maps.append(self)
+        self.parent.maps.append(self)
 
         if path_i:
             self.path_i = path_i
@@ -344,11 +331,6 @@ class Topo(Item):
         else:
             self.scale = 2.0
 
-        if self.options['topos_attached_to_routes']:
-            for route in self.routes.values():
-                route.topos.append(self)
-                break
-
         for route in routes.values():
             route.hasTopo = True
 
@@ -359,18 +341,20 @@ class AreaMap(Item):
     ref = 'am'
 
     def __init__(self, name, parent, fileName, description='', item_id=None, sub_areas={}, layers=[], border='',
-                 size='h',
-                 path_i=None, path_o=None, outFileName=None):
+                 size='h', loc='b', path_i=None, path_o=None, outFileName=None):
         super().__init__(name=name, parent=parent, description=description, item_id=item_id)
         self.fileName = fileName
         self.sub_areas = sub_areas.copy()  # not sure if this is necessary
         self.layers = layers
         self.border = border
         self.size = size
+        self.loc = loc
         self.paths = parent.paths
         self.options = parent.options
         self.routes = []
-        self.parent.areaMaps.append(self)
+        self.book = parent.book
+        self.book.all_maps.append(self)
+        self.parent.maps.append(self)
 
         if path_i:
             self.path_i = path_i
@@ -396,18 +380,20 @@ class SubAreaMap(Item):
     ref = 'sm'
 
     def __init__(self, name, parent, fileName, description='', item_id=None, routes={}, layers=[], border='', size='h',
-                 path_i=None,
-                 path_o=None, outFileName=None):
+                 loc='b', path_i=None, path_o=None, outFileName=None):
         super().__init__(name=name, parent=parent, description=description, item_id=item_id)
         self.fileName = fileName
         self.routes = routes.copy()  # not sure if this is necessary
         self.layers = layers
         self.border = border
         self.size = size
+        self.loc = loc
         self.outFileName = outFileName
         self.paths = parent.paths
         self.options = parent.options
-        self.parent.subAreaMaps.append(self)
+        self.book = parent.book
+        self.book.all_maps.append(self)
+        self.parent.maps.append(self)
 
         if path_i:
             self.path_i = path_i

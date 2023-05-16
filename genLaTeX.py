@@ -67,7 +67,7 @@ def gen_book_LaTeX(book):
         else:
             climb.grade_unconfirmed_LaTeX = ''
 
-    for photo in book.photos:
+    for photo in book.all_photos:
         if photo.route:
             photo.latexRef = ' (See Page \\pageref{{{}:{}}})'.format(photo.route.ref, photo.route.name)
         else:

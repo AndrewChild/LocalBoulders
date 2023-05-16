@@ -1,12 +1,28 @@
 %# ------------Macros---------------
-%% macro image(filePath, description=None, size='h')
-	%% if size == 'f'
-		\fullPic{\VAR{filePath}}
-	%% else
-		\halfPic{\VAR{filePath}}{\VAR{description}}
+%#
+%% macro resolve_images(item, loc='b')
+%% for map in item.maps
+	%% if map.loc == loc
+	\VAR{image(map.path_o+map.outFileName, map.description, map.size)}
 	%% endif
+%% endfor
+%% for photo in item.photos
+	%% if photo.loc == loc
+	\VAR{image(photo.path+photo.fileName, photo.description, photo.size)}\label{pt:\VAR{photo.name}}
+	%% endif
+%% endfor
 %% endmacro
+%#
+%% macro image(filePath, description=None, size='h')
+%% if size == 'f'
+	\fullPic{\VAR{filePath}}
+%% else
+	\halfPic{\VAR{filePath}}{\VAR{description}}
+%% endif
+%% endmacro
+%#
 %% macro climbLabel(climb)
+\needspace{1.5cm}
 \label{\VAR{climb.ref}:\VAR{climb.name}}
 \colorbox{\VAR{climb.color_LaTeX}}{
 \parbox{0.95\linewidth}{
@@ -16,22 +32,21 @@
 %% else
 \VAR{climb.getRtNum()} \VAR{climb.name}\VAR{climb.name_unconfirmed_LaTeX} \VAR{climb.grade}\VAR{climb.grade_unconfirmed_LaTeX} \VAR{climb.rating_LaTeX} \VAR{climb.serious_LaTeX}
 %% endif
-}
-}
-}
+}}}
 %% endmacro
+%#
 %% macro description(description)
 %% if description != ''
 \VAR{description}\\
 %% endif
 %% endmacro
+%#
 %# ------------Body-----------------
+%#
 \formatChapter{\VAR{area.name}}
 \raggedcolumns
 \begin{multicols}{2}
-%% for map in area.areaMaps
-	\VAR{image(map.path_o+map.outFileName, map.description, map.size)}
-%% endfor
+\VAR{resolve_images(area)}
 %% if area.gps
 	\qrcode{\VAR{area.paths['qr_o']}/\VAR{area.name}_qr.png}{http://maps.google.com/maps?q=\VAR{area.gps}}{Navigate to this area}
 %% endif
@@ -42,12 +57,11 @@
 %% if area.incomplete
 \textbf{NOTE: This area is mostly incomplete. Look forward to more information in future revisions of this book or contribute your own knowledge on github.}\\
 %% endif
+\VAR{resolve_images(area, 'a')}
 
 %% for subArea in area.subareas.values()
 \newpage
-	%% for map in subArea.subAreaMaps
-		\VAR{image(map.path_o+map.outFileName, map.description, map.size)}
-	%% endfor
+	\VAR{resolve_images(subArea)}
 	%% if subArea.name
 		\section{\VAR{subArea.getSubAreaLtr()} - \VAR{subArea.name}}\label{sa:\VAR{subArea.name}}
 	%% endif
@@ -55,51 +69,42 @@
 		\qrcode{\VAR{area.paths['qr_o']}\VAR{subArea.name}_qr.png}{http://maps.google.com/maps?q=\VAR{subArea.gps}}{Navigate to this sub area}
 	%% endif
 	\VAR{description(subArea.description)}
-	
-	%% for photo in subArea.photos
-		\VAR{image(photo.path+photo.fileName, photo.description, photo.size)}\label{pt:\VAR{photo.name}}
-	%% endfor
+	\VAR{resolve_images(subArea, 'a')}
 	
 	%% for formation in subArea.formations.values()
-		%% for topo in formation.topos
-			%% if topo.size == 'f'
-			\VAR{image(topo.path_o+topo.outFileName, topo.description, topo.size)}
-			%% endif
-		%% endfor
+		\VAR{resolve_images(formation)}
+		\needspace{1.5cm}
 		\subsection*{\VAR{formation.name}}\label{bf:\VAR{formation.name}}
 		\VAR{description(formation.description)}	
+		\VAR{resolve_images(formation, 'a')}
 		%% for route in formation.routes.values()
-			%% for topo in route.topos
-				%% if topo.size == 'h'
-				\VAR{image(topo.path_o+topo.outFileName, topo.description, topo.size)}
-				%% endif
-			%% endfor
+			\VAR{resolve_images(route)}
 			\VAR{climbLabel(route)}
-			\begin{adjustwidth}{0.5cm}{}				
-			\VAR{route.description}
-			%% if not route.hasTopo
-				\newline (No Topo) 
-			%% endif
+			\begin{adjustwidth}{0.5cm}{}			
+			\VAR{route.description}\VAR{' (No Topo)' if not route.hasTopo}
 			\end{adjustwidth}
+			\VAR{resolve_images(route, 'a')}
 			%% if route.variations.values()
 				\begin{adjustwidth}{0.5cm}{}				
+				\needspace{3cm}
 				\textbf{Variations:} \newline
 				%% for variation in route.variations.values()
-					%% for topo in variation.topos
-						\VAR{image(topo.path_o+topo.outFileName, topo.description, topo.size)}
-					%% endfor
+					\VAR{resolve_images(variation)}
 					\VAR{climbLabel(variation)}
-					\begin{adjustwidth}{0.5cm}{}				
-					\VAR{variation.description}
-					%% if not variation.hasTopo
-						\newline (No Topo) 
-					%% endif
+					\begin{adjustwidth}{0.5cm}{}			
+					\VAR{variation.description}\VAR{' (No Topo)' if not variation.hasTopo}
 					\end{adjustwidth}
+					\VAR{resolve_images(variation, 'a')}
+					\VAR{resolve_images(variation, 'e')}
 				%% endfor
 				\end{adjustwidth}
 			%% endif
+			\VAR{resolve_images(route, 'e')}
 		%% endfor 
+		\VAR{resolve_images(formation, 'e')}
 	%% endfor 
+	\VAR{resolve_images(subArea, 'e')}
 %% endfor
+\VAR{resolve_images(area, 'e')}
 \end{multicols}
 \clearpage
