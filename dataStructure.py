@@ -116,7 +116,6 @@ class Book(Item):
                 update_svg(topo)
 
 
-
 class Area(Item):
     __class_id = 'areas'
     ref = 'a'
@@ -291,11 +290,12 @@ class Photo(Item):
     __class_id = 'photos'
     ref = 'pt'
 
-    def __init__(self, name, parent, fileName, description='', item_id=None, size='h', path=None, credit=None,
+    def __init__(self, name, parent, fileName, description='', item_id=None, size='h', loc='b', path=None, credit=None,
                  route=None):
         super().__init__(name=name, parent=parent, description=description, item_id=item_id)
         self.fileName = fileName
         self.size = size
+        self.loc = 'b'
         self.credit = credit
         self.route = route
         self.paths = parent.paths

@@ -18,7 +18,17 @@
     LaTeX:
     - GPS index of boulders
     - arete shortcut
-    - distribute photos (as in action shots, not topos and maps) evenly throughout an area instead of declaring them at the boulder level
+    - distribute photos (as in action shots, not topos and maps) evenly throughout an area instead of declaring them at the boulder level?
     Other:
     - Consider alternatives to LaTeX. HTML?
     - documentation
+	- Action shots
+		- places a action shot should pe able to be placed:
+			full page or two page spread (p,s):
+			- at the beginning/end of the document, area, or sub area
+			full width (f):
+			- before a formation item
+			- at the end of a sub area
+			- after an area or sub area description
+			column (h):
+			- before or after a route item
