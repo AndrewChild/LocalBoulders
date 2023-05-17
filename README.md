@@ -13,6 +13,7 @@
 	  - started this implementaion need to add new attributes to climb to track things link number of bolts routre height and pitches
 	- histograms are small and hard to read. Might be good to group routes by color instead of V grade to save some space
 	- add list of photo creds to index
+	- rope routes in list of alphabetical routes in index incorrectly say "V5.{grade}"
     LaTeX:
     - GPS index of boulders
 	- Photo credit index
