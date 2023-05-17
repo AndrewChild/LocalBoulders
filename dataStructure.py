@@ -11,6 +11,7 @@ from topo import update_svg
 from genLaTeX import gen_book_LaTeX
 from lbResources import genHistogram, get_grade_atts, create_qr
 from collections import OrderedDict
+from PIL import Image
 
 
 # --------------------------------
@@ -28,6 +29,7 @@ class Item:
             self.item_id = name
         self.photos = []    # container for all action and scenery photos attached to an item
         self.maps = []      # container for all layout maps and topos attached to an item
+        self.images = []    # container for all images attached to item
 
     def assign_to_dic(self, container, connection):
         if connection.item_id in getattr(self, container):
@@ -46,7 +48,7 @@ class Climb:
         self.serious = serious
         self.grade_unconfirmed = grade_unconfirmed
         self.name_unconfirmed = name_unconfirmed
-        self.color, self.color_hex, self.gradeNum, self.grade_scale = get_grade_atts(grade)
+        self.color, self.color_hex, self.gradeNum, self.grade_scale, self.grade_str = get_grade_atts(grade)
         self.hasTopo = False
 
 
@@ -288,11 +290,24 @@ class Photo(Item):
         self.book = parent.book
         self.book.all_photos.append(self)
         self.parent.photos.append(self)
+        self.parent.images.append(self)
 
         if path:
             self.path = path
         else:
             self.path = parent.paths['photos']
+        self.path_o = self.path
+        self.outFileName = self.fileName
+        if size == 'p' or size == 's':
+            im = Image.open(self.path_o + self.fileName)
+            self.fileName = self.fileName + '.pdf'
+            if size == 's':
+                w, h = im.size
+                im1 = im.crop((0, 0, w/2, h))
+                im2 = im.crop((w/2, 0, w, h))
+                im1.save(self.path_o + self.fileName, 'PDF', resolution=100.0, save_all=True, append_images=[im2])
+            else:
+                im.save(self.path_o + self.fileName, 'PDF', resolution=100.0, save_all=True)
 
 
 class Topo(Item):
@@ -314,6 +329,7 @@ class Topo(Item):
         self.book = parent.book
         self.book.all_maps.append(self)
         self.parent.maps.append(self)
+        self.parent.images.append(self)
 
         if path_i:
             self.path_i = path_i
@@ -355,6 +371,7 @@ class AreaMap(Item):
         self.book = parent.book
         self.book.all_maps.append(self)
         self.parent.maps.append(self)
+        self.parent.images.append(self)
 
         if path_i:
             self.path_i = path_i
@@ -394,6 +411,7 @@ class SubAreaMap(Item):
         self.book = parent.book
         self.book.all_maps.append(self)
         self.parent.maps.append(self)
+        self.parent.images.append(self)
 
         if path_i:
             self.path_i = path_i

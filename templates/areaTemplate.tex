@@ -1,14 +1,11 @@
+%# ---------------------------------
 %# ------------Macros---------------
+%# ---------------------------------
 %#
 %% macro resolve_images(item, loc='b')
-%% for map in item.maps
-%% if map.loc == loc
-\VAR{image(map.path_o+map.outFileName, map.description, map.size)}
-%% endif
-%% endfor
-%% for photo in item.photos
-%% if photo.loc == loc
-\VAR{image(photo.path+photo.fileName, photo.description, photo.size)}\label{pt:\VAR{photo.name}}
+%% for im in item.images
+%% if im.loc == loc
+\VAR{image(im.path_o+im.outFileName, im.description, im.size)}\label{\VAR{im.ref}:\VAR{im.name}}
 %% endif
 %% endfor
 %% endmacro
@@ -16,42 +13,48 @@
 %% macro resolve_images_area_head(item, loc='b', size='f')
 %# --- this is sort of a hacky work around that prevents the template from starting and ending multicols immediately 
 %# --- if an area starts with a full width photo
-%% for map in item.maps
-%% if map.loc == loc
-%% if map.size == size
-\VAR{image(map.path_o+map.outFileName, map.description, 'h')}
-%% endif
-%% endif
-%% endfor
-%% for photo in item.photos
-%% if photo.loc == loc
-%% if photo.size == size
-\VAR{image(photo.path+photo.fileName, photo.description, 'h')}\label{pt:\VAR{photo.name}}
+%% for im in item.image
+%% if im.loc == loc
+%% if im.size == size
+\VAR{image(im.path_o+im.outFileName, im.description, size='h')}\label{\VAR{im.ref}:\VAR{im.name}}
 %% endif
 %% endif
 %% endfor
 %% endmacro
 %#
 %% macro image(filePath, description=None, size='h')
-%% if size == 'f'
-\end{multicols}
-%% endif
-\setbox0=\hbox{\begin{overpic}[width=0.8\linewidth]{\VAR{filePath}}\VAR{caption(description)}
-\end{overpic}}
-\needspace{\ht0}
-\begin{center}
-\begin{overpic}[width=0.9\linewidth]{\VAR{filePath}}\VAR{caption(description)}
-\end{overpic}
-\end{center}
-%% if size == 'f'
-\raggedcolumns
-\begin{multicols}{2}
+%% if size == 'f' or size == 'h'
+	%% if size == 'f'
+	\end{multicols}
+	%% endif
+	\setbox0=\hbox{\begin{overpic}[width=0.8\linewidth]{\VAR{filePath}}\VAR{caption1(description)}
+	\end{overpic}}
+	\needspace{\ht0}
+	\begin{center}
+	\begin{overpic}[width=0.9\linewidth]{\VAR{filePath}}\VAR{caption1(description)}
+	\end{overpic}
+	\end{center}
+	%% if size == 'f'
+	\raggedcolumns
+	\begin{multicols}{2}
+	%% endif
+%% elif size == 'p'
+	\includepdf[\VAR{caption2(description)}]{\VAR{filePath}}
+%% elif size == 's'
+	\cleardoublepage
+	\includepdf[pages=-, \VAR{caption2(description)}]{\VAR{filePath}}
 %% endif
 %% endmacro
 %#
-%% macro caption(description)
+%% macro caption1(description)
 %% if description
 \put (0,5) {\colorbox{\chapterColor}{\parbox{0.8\linewidth}{\textcolor{white}{\VAR{description}}}}}
+%% endif
+%% endmacro
+%#
+%% macro caption2(description)
+%% if description
+picturecommand*={\put (10,10) {\colorbox{\chapterColor}{\parbox{0.6\paperwidth}{\textcolor{white}{\VAR{description}}}}}}
 %% endif
 %% endmacro
 %#
@@ -61,11 +64,7 @@
 \colorbox{\VAR{climb.color_LaTeX}}{
 \parbox{0.95\linewidth}{
 \textbf{
-%% if climb.grade_scale == 'Hueco'
-\VAR{climb.getRtNum()} \VAR{climb.name}\VAR{climb.name_unconfirmed_LaTeX} V\VAR{climb.grade}\VAR{climb.grade_unconfirmed_LaTeX} \VAR{climb.rating_LaTeX} \VAR{climb.serious_LaTeX}
-%% else
-\VAR{climb.getRtNum()} \VAR{climb.name}\VAR{climb.name_unconfirmed_LaTeX} \VAR{climb.grade}\VAR{climb.grade_unconfirmed_LaTeX} \VAR{climb.rating_LaTeX} \VAR{climb.serious_LaTeX}
-%% endif
+\VAR{climb.getRtNum()} \VAR{climb.name}\VAR{climb.name_unconfirmed_LaTeX} \VAR{climb.grade_str}\VAR{climb.grade_unconfirmed_LaTeX} \VAR{climb.rating_LaTeX} \VAR{climb.serious_LaTeX}
 }}}
 %% endmacro
 %#
@@ -75,7 +74,9 @@
 %% endif
 %% endmacro
 %#
+%# ---------------------------------
 %# ------------Body-----------------
+%# ---------------------------------
 %#
 \formatChapter{\VAR{area.name}}
 \VAR{resolve_images_area_head(area, size='f')}

@@ -89,6 +89,7 @@ def get_grade_atts(grade):
     colors = ['black', 'green', 'RoyalBlue', 'DarkGoldenrod', 'DarkRed']
 
     if grade_scale == 'Hueco':
+        grade_str = 'V'+str(grade)
         if grade_number == -2:
             color = colors[0]
         elif grade_number <= 3:
@@ -100,6 +101,7 @@ def get_grade_atts(grade):
         else:
             color = colors[4]
     else:
+        grade_str = str(grade)
         if grade_number == -1:
             color = colors[0]
         elif grade_number <= 10:
@@ -112,7 +114,7 @@ def get_grade_atts(grade):
             color = colors[4]
 
     color_hex = webcolors.name_to_hex(color)
-    return color, color_hex, grade_number, grade_scale
+    return color, color_hex, grade_number, grade_scale, grade_str
 
 
 def genHistogram(area):
