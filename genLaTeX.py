@@ -69,9 +69,11 @@ def gen_book_LaTeX(book):
 
     for photo in book.all_photos:
         if photo.route:
-            photo.latexRef = ' (See Page \\pageref{{{}:{}}})'.format(photo.route.ref, photo.route.name)
+            photo.latexRef = ' (Page \\pageref{{{}:{}}})'.format(photo.route.ref, photo.route.name)
         else:
             photo.latexRef = ''
+        if photo.description:
+            photo.description = photo.description + photo.latexRef
 
     templateEnv = _set_templateEnv(book.paths['LaTeXTemplates'])
     mainTemplate = templateEnv.get_template("localBoulders.tex")

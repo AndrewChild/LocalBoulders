@@ -275,7 +275,7 @@ class Photo(Item):
     __class_id = 'photos'
     ref = 'pt'
 
-    def __init__(self, name, parent, fileName, description='', item_id=None, size='h', loc='b', path=None, credit=None,
+    def __init__(self, name, parent, fileName, description=None, item_id=None, size='h', loc='b', path=None, credit=None,
                  route=None):
         super().__init__(name=name, parent=parent, description=description, item_id=item_id)
         self.fileName = fileName
@@ -300,7 +300,7 @@ class Topo(Item):
     __class_id = 'topos'
     ref = 'tp'
 
-    def __init__(self, name, parent, fileName, description='', item_id=None, routes={}, layers=[], border='', size='h',
+    def __init__(self, name, parent, fileName, description=None, item_id=None, routes={}, layers=[], border='', size='h',
                  loc='b', path_i=None, path_o=None):
         super().__init__(name=name, parent=parent, description=description, item_id=item_id)
         self.fileName = fileName
@@ -340,7 +340,7 @@ class AreaMap(Item):
     __class_id = 'areaMaps'
     ref = 'am'
 
-    def __init__(self, name, parent, fileName, description='', item_id=None, sub_areas={}, layers=[], border='',
+    def __init__(self, name, parent, fileName, description=None, item_id=None, sub_areas={}, layers=[], border='',
                  size='h', loc='b', path_i=None, path_o=None, outFileName=None):
         super().__init__(name=name, parent=parent, description=description, item_id=item_id)
         self.fileName = fileName
@@ -379,7 +379,7 @@ class SubAreaMap(Item):
     __class_id = 'subAreaMaps'
     ref = 'sm'
 
-    def __init__(self, name, parent, fileName, description='', item_id=None, routes={}, layers=[], border='', size='h',
+    def __init__(self, name, parent, fileName, description=None, item_id=None, routes={}, layers=[], border='', size='h',
                  loc='b', path_i=None, path_o=None, outFileName=None):
         super().__init__(name=name, parent=parent, description=description, item_id=item_id)
         self.fileName = fileName

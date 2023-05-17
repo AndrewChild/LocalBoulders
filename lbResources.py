@@ -134,12 +134,6 @@ def genHistogram(area):
         else:
             route_instances[int(round(route.gradeNum))+1] += 1
 
-
-#    while boulder_instances[-1] == 0 and len(boulder_instances) != 1:
-#        boulder_instances = boulder_instances[:-1]
-#    while route_instances[-1] == 0 and len(route_instances) != 1:
-#        route_instances = route_instances[:-1]
-
     # assign color and label to each Boulder grade bin
     boulder_colors = []
     boulder_labels = []

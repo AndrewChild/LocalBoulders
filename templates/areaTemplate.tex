@@ -2,22 +2,56 @@
 %#
 %% macro resolve_images(item, loc='b')
 %% for map in item.maps
-	%% if map.loc == loc
-	\VAR{image(map.path_o+map.outFileName, map.description, map.size)}
-	%% endif
+%% if map.loc == loc
+\VAR{image(map.path_o+map.outFileName, map.description, map.size)}
+%% endif
 %% endfor
 %% for photo in item.photos
-	%% if photo.loc == loc
-	\VAR{image(photo.path+photo.fileName, photo.description, photo.size)}\label{pt:\VAR{photo.name}}
-	%% endif
+%% if photo.loc == loc
+\VAR{image(photo.path+photo.fileName, photo.description, photo.size)}\label{pt:\VAR{photo.name}}
+%% endif
+%% endfor
+%% endmacro
+%#
+%% macro resolve_images_area_head(item, loc='b', size='f')
+%# --- this is sort of a hacky work around that prevents the template from starting and ending multicols immediately 
+%# --- if an area starts with a full width photo
+%% for map in item.maps
+%% if map.loc == loc
+%% if map.size == size
+\VAR{image(map.path_o+map.outFileName, map.description, 'h')}
+%% endif
+%% endif
+%% endfor
+%% for photo in item.photos
+%% if photo.loc == loc
+%% if photo.size == size
+\VAR{image(photo.path+photo.fileName, photo.description, 'h')}\label{pt:\VAR{photo.name}}
+%% endif
+%% endif
 %% endfor
 %% endmacro
 %#
 %% macro image(filePath, description=None, size='h')
 %% if size == 'f'
-	\fullPic{\VAR{filePath}}
-%% else
-	\halfPic{\VAR{filePath}}{\VAR{description}}
+\end{multicols}
+%% endif
+\setbox0=\hbox{\begin{overpic}[width=0.8\linewidth]{\VAR{filePath}}\VAR{caption(description)}
+\end{overpic}}
+\needspace{\ht0}
+\begin{center}
+\begin{overpic}[width=0.9\linewidth]{\VAR{filePath}}\VAR{caption(description)}
+\end{overpic}
+\end{center}
+%% if size == 'f'
+\raggedcolumns
+\begin{multicols}{2}
+%% endif
+%% endmacro
+%#
+%% macro caption(description)
+%% if description
+\put (0,5) {\colorbox{\chapterColor}{\parbox{0.8\linewidth}{\textcolor{white}{\VAR{description}}}}}
 %% endif
 %% endmacro
 %#
@@ -44,13 +78,14 @@
 %# ------------Body-----------------
 %#
 \formatChapter{\VAR{area.name}}
+\VAR{resolve_images_area_head(area, size='f')}
 \raggedcolumns
 \begin{multicols}{2}
-\VAR{resolve_images(area)}
+\VAR{resolve_images_area_head(area, size='h')}
 %% if area.gps
-	\qrcode{\VAR{area.paths['qr_o']}/\VAR{area.name}_qr.png}{http://maps.google.com/maps?q=\VAR{area.gps}}{Navigate to this area}
+\qrcode{\VAR{area.paths['qr_o']}/\VAR{area.name}_qr.png}{http://maps.google.com/maps?q=\VAR{area.gps}}{Navigate to this area}
 %% endif
-\halfPic{\VAR{area.paths['histogram_o']}/\VAR{area.name}.png}{}
+\includegraphics[width=0.9\linewidth]{\VAR{area.paths['histogram_o']}/\VAR{area.name}.png}
 \end{multicols}
 \begin{multicols}{2}
 \VAR{description(area.description)}
@@ -61,49 +96,49 @@
 
 %% for subArea in area.subareas.values()
 \newpage
-	\VAR{resolve_images(subArea)}
-	%% if subArea.name
-		\section{\VAR{subArea.getSubAreaLtr()} - \VAR{subArea.name}}\label{sa:\VAR{subArea.name}}
-	%% endif
-	%% if subArea.gps
-		\qrcode{\VAR{area.paths['qr_o']}\VAR{subArea.name}_qr.png}{http://maps.google.com/maps?q=\VAR{subArea.gps}}{Navigate to this sub area}
-	%% endif
-	\VAR{description(subArea.description)}
-	\VAR{resolve_images(subArea, 'a')}
-	
-	%% for formation in subArea.formations.values()
-		\VAR{resolve_images(formation)}
-		\needspace{1.5cm}
-		\subsection*{\VAR{formation.name}}\label{bf:\VAR{formation.name}}
-		\VAR{description(formation.description)}	
-		\VAR{resolve_images(formation, 'a')}
-		%% for route in formation.routes.values()
-			\VAR{resolve_images(route)}
-			\VAR{climbLabel(route)}
-			\begin{adjustwidth}{0.5cm}{}			
-			\VAR{route.description}\VAR{' (No Topo)' if not route.hasTopo}
-			\end{adjustwidth}
-			\VAR{resolve_images(route, 'a')}
-			%% if route.variations.values()
-				\begin{adjustwidth}{0.5cm}{}				
-				\needspace{3cm}
-				\textbf{Variations:} \newline
-				%% for variation in route.variations.values()
-					\VAR{resolve_images(variation)}
-					\VAR{climbLabel(variation)}
-					\begin{adjustwidth}{0.5cm}{}			
-					\VAR{variation.description}\VAR{' (No Topo)' if not variation.hasTopo}
-					\end{adjustwidth}
-					\VAR{resolve_images(variation, 'a')}
-					\VAR{resolve_images(variation, 'e')}
-				%% endfor
-				\end{adjustwidth}
-			%% endif
-			\VAR{resolve_images(route, 'e')}
-		%% endfor 
-		\VAR{resolve_images(formation, 'e')}
-	%% endfor 
-	\VAR{resolve_images(subArea, 'e')}
+\VAR{resolve_images(subArea)}
+%% if subArea.name
+\section{\VAR{subArea.getSubAreaLtr()} - \VAR{subArea.name}}\label{sa:\VAR{subArea.name}}
+%% endif
+%% if subArea.gps
+\qrcode{\VAR{area.paths['qr_o']}\VAR{subArea.name}_qr.png}{http://maps.google.com/maps?q=\VAR{subArea.gps}}{Navigate to this sub area}
+%% endif
+\VAR{description(subArea.description)}
+\VAR{resolve_images(subArea, 'a')}
+
+%% for formation in subArea.formations.values()
+\VAR{resolve_images(formation)}
+\needspace{1.5cm}
+\subsection*{\VAR{formation.name}}\label{bf:\VAR{formation.name}}
+\VAR{description(formation.description)}	
+\VAR{resolve_images(formation, 'a')}
+%% for route in formation.routes.values()
+\VAR{resolve_images(route)}
+\VAR{climbLabel(route)}
+\begin{adjustwidth}{0.5cm}{}			
+\VAR{route.description}\VAR{' (No Topo)' if not route.hasTopo}
+\end{adjustwidth}
+\VAR{resolve_images(route, 'a')}
+%% if route.variations.values()
+\begin{adjustwidth}{0.5cm}{}				
+\needspace{3cm}
+\textbf{Variations:} \newline
+%% for variation in route.variations.values()
+\VAR{resolve_images(variation)}
+\VAR{climbLabel(variation)}
+\begin{adjustwidth}{0.5cm}{}			
+\VAR{variation.description}\VAR{' (No Topo)' if not variation.hasTopo}
+\end{adjustwidth}
+\VAR{resolve_images(variation, 'a')}
+\VAR{resolve_images(variation, 'e')}
+%% endfor
+\end{adjustwidth}
+%% endif
+\VAR{resolve_images(route, 'e')}
+%% endfor 
+\VAR{resolve_images(formation, 'e')}
+%% endfor 
+\VAR{resolve_images(subArea, 'e')}
 %% endfor
 \VAR{resolve_images(area, 'e')}
 \end{multicols}
