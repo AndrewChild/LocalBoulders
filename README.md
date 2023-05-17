@@ -12,6 +12,7 @@
 	- add support for YDS routes
 	  - started this implementaion need to add new attributes to climb to track things link number of bolts routre height and pitches
 	- histograms are small and hard to read. Might be good to group routes by color instead of V grade to save some space
+	- add list of photo creds to index
     LaTeX:
     - GPS index of boulders
 	- Photo credit index
