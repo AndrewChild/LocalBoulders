@@ -13,13 +13,19 @@
 %% macro resolve_images_area_head(item, loc='b', size='f')
 %# --- this is sort of a hacky work around that prevents the template from starting and ending multicols immediately 
 %# --- if an area starts with a full width photo
-%% for im in item.image
-%% if im.loc == loc
-%% if im.size == size
+%% if size == 'f' or size == 'h'
+%% for im in item.images
+%% if im.loc == loc and im.size == size
 \VAR{image(im.path_o+im.outFileName, im.description, size='h')}\label{\VAR{im.ref}:\VAR{im.name}}
 %% endif
+%% endfor
+%% else
+%% for im in item.images
+%% if im.loc == loc and im.size == size
+\VAR{image(im.path_o+im.outFileName, im.description, im.size)}\label{\VAR{im.ref}:\VAR{im.name}}
 %% endif
 %% endfor
+%% endif
 %% endmacro
 %#
 %% macro image(filePath, description=None, size='h')
@@ -41,7 +47,7 @@
 %% elif size == 'p'
 	\includepdf[\VAR{caption2(description)}]{\VAR{filePath}}
 %% elif size == 's'
-	\cleardoublepage
+	\cleartoleftpage
 	\includepdf[pages=-, \VAR{caption2(description)}]{\VAR{filePath}}
 %% endif
 %% endmacro

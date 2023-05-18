@@ -100,7 +100,10 @@ def gen_book_LaTeX(book):
     f.close()
 
     pdf_dir = os.path.relpath(book.paths['pdf'], start=book.paths['LaTeXOut'])
-    #this bit calls pdflatex to generate the PDF. Requires a pdflatex install
+    #this bit calls pdflatex to generate the PDF. Requires a pdflatex install.
+    process = subprocess.Popen(['pdflatex', '-output-directory', pdf_dir, 'guideBook.tex', ], cwd=book.paths['LaTeXOut'])
+    process.wait()
+    #PDF latex gets called twice to ensure that page number refs are correct
     process = subprocess.Popen(['pdflatex', '-output-directory', pdf_dir, 'guideBook.tex', ], cwd=book.paths['LaTeXOut'])
     process.wait()
 
