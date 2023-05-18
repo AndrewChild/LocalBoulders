@@ -5,7 +5,7 @@
 %% macro resolve_images(item, loc='b')
 %% for im in item.images
 %% if im.loc == loc
-\VAR{image(im.path_o+im.outFileName, im.description, im.size)}\label{\VAR{im.ref}:\VAR{im.name}}
+\VAR{image(im, im.size)}
 %% endif
 %% endfor
 %% endmacro
@@ -16,28 +16,28 @@
 %% if size == 'f' or size == 'h'
 %% for im in item.images
 %% if im.loc == loc and im.size == size
-\VAR{image(im.path_o+im.outFileName, im.description, size='h')}\label{\VAR{im.ref}:\VAR{im.name}}
+\VAR{image(im, size='h')}
 %% endif
 %% endfor
 %% else
 %% for im in item.images
 %% if im.loc == loc and im.size == size
-\VAR{image(im.path_o+im.outFileName, im.description, im.size)}\label{\VAR{im.ref}:\VAR{im.name}}
+\VAR{image(im, im.size)}
 %% endif
 %% endfor
 %% endif
 %% endmacro
 %#
-%% macro image(filePath, description=None, size='h')
+%% macro image(im, size='h')
 %% if size == 'f' or size == 'h'
 	%% if size == 'f'
 	\end{multicols}
 	%% endif
-	\setbox0=\hbox{\begin{overpic}[width=0.8\linewidth]{\VAR{filePath}}\VAR{caption1(description)}
+	\setbox0=\hbox{\begin{overpic}[width=0.8\linewidth]{\VAR{im.path_o+im.outFileName}}\VAR{caption1(im.description)}
 	\end{overpic}}
 	\needspace{\ht0}
 	\begin{center}
-	\begin{overpic}[width=0.9\linewidth]{\VAR{filePath}}\VAR{caption1(description)}
+	\begin{overpic}[width=0.9\linewidth]{\VAR{im.path_o+im.outFileName}}\VAR{caption1(im.description)}\label{\VAR{im.ref}:\VAR{im.name}}
 	\end{overpic}
 	\end{center}
 	%% if size == 'f'
@@ -45,10 +45,10 @@
 	\begin{multicols}{2}
 	%% endif
 %% elif size == 'p'
-	\includepdf[\VAR{caption2(description)}]{\VAR{filePath}}
+	\includepdf[picturecommand*={\label{\VAR{im.ref}:\VAR{im.name}}\VAR{caption2(im.description)}}]{\VAR{im.path_o+im.outFileName}}
 %% elif size == 's'
 	\cleartoleftpage
-	\includepdf[pages=-, \VAR{caption2(description)}]{\VAR{filePath}}
+	\includepdf[pages=-, picturecommand*={\label{\VAR{im.ref}:\VAR{im.name}}\VAR{caption2(im.description)}}]{\VAR{im.path_o+im.outFileName}}
 %% endif
 %% endmacro
 %#
@@ -60,7 +60,7 @@
 %#
 %% macro caption2(description)
 %% if description
-picturecommand*={\put (10,10) {\colorbox{\chapterColor}{\parbox{0.6\paperwidth}{\textcolor{white}{\VAR{description}}}}}}
+\put (10,10) {\colorbox{\chapterColor}{\parbox{0.6\paperwidth}{\textcolor{white}{\VAR{description}}}}}
 %% endif
 %% endmacro
 %#

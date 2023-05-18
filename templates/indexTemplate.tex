@@ -26,6 +26,14 @@
 %% endfor
 \end{supertabular}
 \end{center}
+\section{Photo Credits}
+\begin{center}
+\begin{supertabular}{p{0.65\linewidth}r}
+%% for photo in book.all_photos
+\VAR{photo.credit} & \pageref{\VAR{photo.ref}:\VAR{photo.name}} \\
+%% endfor
+\end{supertabular}
+\end{center}
 \end{flushleft}
 \onecolumn
 \clearpage

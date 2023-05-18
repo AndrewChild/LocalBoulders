@@ -101,10 +101,10 @@ def gen_book_LaTeX(book):
 
     pdf_dir = os.path.relpath(book.paths['pdf'], start=book.paths['LaTeXOut'])
     #this bit calls pdflatex to generate the PDF. Requires a pdflatex install.
-    process = subprocess.Popen(['pdflatex', '-output-directory', pdf_dir, 'guideBook.tex', ], cwd=book.paths['LaTeXOut'])
+    process = subprocess.Popen(['pdflatex', '-output-directory', pdf_dir, 'guideBook.tex', 'makeindex ' + pdf_dir + 'guideBook.tex'], cwd=book.paths['LaTeXOut'])
     process.wait()
     #PDF latex gets called twice to ensure that page number refs are correct
-    process = subprocess.Popen(['pdflatex', '-output-directory', pdf_dir, 'guideBook.tex', ], cwd=book.paths['LaTeXOut'])
+    process = subprocess.Popen(['pdflatex', '-output-directory', pdf_dir, 'guideBook.tex', 'makeindex ' + pdf_dir + 'guideBook.tex'], cwd=book.paths['LaTeXOut'])
     process.wait()
 
     #this bit calls ghost script to compress the PDF (this saves a lot of space and has no noticable effect on quality)
