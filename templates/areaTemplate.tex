@@ -54,7 +54,7 @@
 %#
 %% macro caption1(description)
 %% if description
-\put (0,5) {\colorbox{\chapterColor}{\parbox{0.8\linewidth}{\textcolor{white}{\VAR{description}}}}}
+\put (0,5) {\colorbox{\chapterColor}{\parbox{0.7\linewidth}{\textcolor{white}{\VAR{description}}}}}
 %% endif
 %% endmacro
 %#
@@ -88,13 +88,15 @@
 \VAR{resolve_images_area_head(area, size='f')}
 \raggedcolumns
 \begin{multicols}{2}
-\VAR{resolve_images_area_head(area, size='h')}
 %% if area.gps
 \qrcode{\VAR{area.paths['qr_o']}/\VAR{area.name}_qr.png}{http://maps.google.com/maps?q=\VAR{area.gps}}{Navigate to this area}
 %% endif
-\includegraphics[width=0.9\linewidth]{\VAR{area.paths['histogram_o']}/\VAR{area.name}.png}
+%% if area.routes.values()
+\includegraphics[width=\linewidth]{\VAR{area.paths['histogram_o']}/\VAR{area.name}.png}
 \end{multicols}
 \begin{multicols}{2}
+%% endif
+\VAR{resolve_images_area_head(area, size='h')}
 \VAR{description(area.description)}
 %% if area.incomplete
 \textbf{NOTE: This area is mostly incomplete. Look forward to more information in future revisions of this book or contribute your own knowledge on github.}\\
