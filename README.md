@@ -3,21 +3,13 @@
 
 # TODO:
 	Python:
-	- Intro?
 	- gps coords for boulders
-	- use of cammal case vs other conventions is inconsistent
-	- PEP8?
 	- move LaTeX specific stuff to its own folder/project
         - maybe move class.ref to genLaTeX
-    - use itertools.count for indexing?
-    - limit photo height
-	- seems like annotations are smaller in full width images
-    - in contexts where both routes and variations are being refered to interchangably call them climbs
-	- when assigning topos to boulders the code just assigns the topo to the first boulder declared in the routes attribute (not the first boulder in the book order). This is kind of useful but its not intended behaviour.
     LaTeX:
     - GPS index of boulders
-    - arete shortcut
-    - distribute photos (as in action shots, not topos and maps) evenly throughout an area instead of declaring them at the boulder level
+	- little bug where image links don't take you to the right page, but do display the right page
+	- add book options for index sections
     Other:
     - Consider alternatives to LaTeX. HTML?
     - documentation
