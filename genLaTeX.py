@@ -81,23 +81,28 @@ def gen_book_LaTeX(book):
     areaTemplate = templateEnv.get_template("areaTemplate.tex")
     indicesTemplate = templateEnv.get_template("indexTemplate.tex")
 
-    f = open(f"{book.paths['LaTeXOut']}guideBook.tex", 'w')
+    f = open(f"{book.paths['LaTeXOut']}guideBook.tex", 'w', encoding="utf-8")
     f.write(mainTemplate.render(book=book))
     f.close()
 
-    f = open(f"{book.paths['LaTeXOut']}acknowledgements.tex", 'w')
+    f = open(f"{book.paths['LaTeXOut']}acknowledgements.tex", 'w', encoding="utf-8")
     f.write(acknowledgementsTemplate.render(book=book))
     f.close()
 
     for area in book.areas.values():
         area.histogram()
-        f = open(f"{book.paths['LaTeXOut']}" + area.name + '.tex', 'w')
+        f = open(f"{book.paths['LaTeXOut']}" + area.name + '.tex', 'w', encoding="utf-8")
         f.write(areaTemplate.render(area=area))
         f.close()
 
-    f = open(f"{book.paths['LaTeXOut']}index.tex", 'w')
+    f = open(f"{book.paths['LaTeXOut']}index.tex", 'w', encoding="utf-8")
     f.write(indicesTemplate.render(book=book))
     f.close()
+
+    if os.path.exists("guideBook.aux"):
+        os.remove("guideBook.aux")
+    if os.path.exists("guideBook.log"):
+        os.remove("guideBook.log")
 
     pdf_dir = os.path.relpath(book.paths['pdf'], start=book.paths['LaTeXOut'])
     #this bit calls pdflatex to generate the PDF. Requires a pdflatex install.

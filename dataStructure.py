@@ -62,7 +62,7 @@ class Book(Item):
         'histogram_o': './maps/plots/',
         'qr_o': './maps/qr/',
         'topo_i': './maps/topos/',
-        'topo_o': './maps/topos/out/',
+        'topo_o': './maps/topos/',
         'subarea_i': './maps/area/',
         'subarea_o': './maps/area/out/',
         'area_i': './maps/area/',
