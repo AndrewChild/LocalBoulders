@@ -42,7 +42,7 @@ class Climb:
     Base class for all items that contain route information (e.g. boulder problem, rope route, boulder vaiation)  
     """
 
-    def __init__(self, grade='?', rating=-1, serious=0, grade_unconfirmed=False, name_unconfirmed=False):
+    def __init__(self, grade='?', rating=-1, serious=0, grade_unconfirmed=False, name_unconfirmed=False, FA=None):
         self.grade = grade
         self.rating = int(rating)
         self.serious = serious
@@ -50,6 +50,7 @@ class Climb:
         self.name_unconfirmed = name_unconfirmed
         self.color, self.color_hex, self.gradeNum, self.grade_scale, self.grade_str = get_grade_atts(grade)
         self.hasTopo = False
+        self.FA = FA
 
 
 class Book(Item):
@@ -61,16 +62,16 @@ class Book(Item):
         'histogram_o': './maps/plots/',
         'qr_o': './maps/qr/',
         'topo_i': './maps/topos/',
-        'topo_o': './maps/topos/',
-        'subarea_i': './maps/subarea/',
-        'subarea_o': './maps/subarea/',
+        'topo_o': './maps/topos/out/',
+        'subarea_i': './maps/area/',
+        'subarea_o': './maps/area/out/',
         'area_i': './maps/area/',
-        'area_o': './maps/area/',
+        'area_o': './maps/area/out/',
         'photos': './images/'
     }
     __option_defaults = {
-        'subarea_numbering': True,
-        'topos_attached_to_routes': False,
+        'subarea_numbering': True,  # if yes route numbering resets at zero for each sub area, if no it restarts for each area
+        'aspect_ratio': 'A5',       # controls cropping of p (page) and s (spread) action photos A5 is the only option right now
     }
 
     def __init__(self, name, description='', item_id=None, repo='', dl='', collaborators=[], subarea_numbering=True,
@@ -204,10 +205,10 @@ class Route(Item, Climb):
     ref = 'rt'
 
     def __init__(self, name, parent, description='PLACEHOLDER', item_id=None, grade='?', rating=-1, serious=0,
-                 grade_unconfirmed=False, name_unconfirmed=False):
+                 grade_unconfirmed=False, name_unconfirmed=False, FA=None):
         Item.__init__(self, name=name, parent=parent, description=description, item_id=item_id)
         Climb.__init__(self, grade=grade, rating=rating, serious=serious, grade_unconfirmed=grade_unconfirmed,
-                       name_unconfirmed=name_unconfirmed)
+                       name_unconfirmed=name_unconfirmed, FA=FA)
         self.paths = parent.paths
         self.options = parent.options
         self.boulder = parent
@@ -245,10 +246,10 @@ class Variation(Item, Climb):
     ref = 'vr'
 
     def __init__(self, name, parent, description='PLACEHOLDER', item_id=None, grade='?', rating=-1, serious=0,
-                 grade_unconfirmed=False, name_unconfirmed=False):
+                 grade_unconfirmed=False, name_unconfirmed=False, FA=None):
         Item.__init__(self, name=name, parent=parent, description=description, item_id=item_id)
         Climb.__init__(self, grade=grade, rating=rating, serious=serious, grade_unconfirmed=grade_unconfirmed,
-                       name_unconfirmed=name_unconfirmed)
+                       name_unconfirmed=name_unconfirmed, FA=FA)
         self.paths = parent.paths
         self.options = parent.options
         self.route = parent
@@ -298,9 +299,27 @@ class Photo(Item):
             self.path = parent.paths['photos']
         self.path_o = self.path
         self.outFileName = self.fileName
-        if size == 'p' or size == 's':
+        if self.size == 'p' or self.size == 's':
             im = Image.open(self.path_o + self.fileName)
             self.fileName = self.fileName + '.pdf'
+            if self.book.options['aspect_ratio'] == 'A5':
+                aspect_ratio_s = 1.4139
+                aspect_ratio_p = 1/aspect_ratio_s
+            if size == 's':
+                aspect_ratio = aspect_ratio_s
+            else:
+                aspect_ratio = aspect_ratio_p
+            w_i, h_i = im.size
+            aspect_ratio_i = w_i/h_i
+            if aspect_ratio_i < aspect_ratio:
+                h = w_i/aspect_ratio
+                h_adj = (h_i - h)/2
+                im = im.crop((0, 0+h_adj, w_i, h_i-h_adj))
+            else:
+                w = h_i*aspect_ratio
+                w_adj = (w_i - w)/2
+                im = im.crop((0+w_adj, 0, w_i-w_adj, h_i))
+
             if size == 's':
                 w, h = im.size
                 im1 = im.crop((0, 0, w/2, h))

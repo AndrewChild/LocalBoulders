@@ -1,24 +1,28 @@
 \twocolumn
 \formatChapter{Index}
 \begin{flushleft}
+
+\needspace{1.5cm}
 \section{Routes Alphabetical}
 \begin{center}
-\begin{supertabular}{p{0.65\linewidth}r}
+\rowcolors{2}{MidnightBlue!10}{white}
+\begin{supertabular}{p{0.76\linewidth}p{0.08\linewidth}}
 %% for climb in book.climbs.values() | sort(attribute="name")
 \VAR{climb.name} \VAR{climb.grade_str} & \pageref{\VAR{climb.ref}:\VAR{climb.name}} \\
 %% endfor
 \end{supertabular}
 \end{center}
+
+\needspace{1.5cm}
 \section{Routes by grade}
 \begin{center}
+\rowcolors{2}{MidnightBlue!10}{white}
 \begin{supertabular}{p{0.18\linewidth}p{0.13\linewidth}p{0.45\linewidth}p{0.08\linewidth}}
 %% for climb in book.climbs.values() | sort(reverse=true, attribute="rating") | sort(attribute="gradeNum")
 %% if climb.grade_scale == 'Hueco'
 \VAR{climb.rating_LaTeX} \VAR{climb.serious_LaTeX}&\VAR{climb.grade_str}&\VAR{climb.name} & \pageref{\VAR{climb.ref}:\VAR{climb.name}} \\
 %% endif
 %% endfor
-\end{supertabular}
-\begin{supertabular}{p{0.13\linewidth}p{0.18\linewidth}p{0.45\linewidth}p{0.08\linewidth}}
 %% for climb in book.climbs.values() | sort(reverse=true, attribute="rating") | sort(attribute="gradeNum")
 %% if climb.grade_scale == 'YDS'
 \VAR{climb.rating_LaTeX}\VAR{climb.serious_LaTeX}&\VAR{climb.grade_str}&\VAR{climb.name} & \pageref{\VAR{climb.ref}:\VAR{climb.name}} \\
@@ -26,14 +30,32 @@
 %% endfor
 \end{supertabular}
 \end{center}
+
+\needspace{1.5cm}
+\section{Known First Ascents}
+\begin{center}
+\rowcolors{2}{MidnightBlue!10}{white}
+\begin{supertabular}{p{0.42\linewidth}p{0.42\linewidth}}
+%% for climb in book.climbs.values() | sort(attribute="name")
+%% if climb.FA
+\VAR{climb.name} & \VAR{climb.FA}\\
+%% endif
+%% endfor
+\end{supertabular}
+\end{center}
+
+%% if book.all_photos
+\needspace{1.5cm}
 \section{Photo Credits}
 \begin{center}
-\begin{supertabular}{p{0.65\linewidth}r}
+\rowcolors{2}{MidnightBlue!10}{white}
+\begin{supertabular}{p{0.76\linewidth}p{0.08\linewidth}}
 %% for photo in book.all_photos
 \VAR{photo.credit} & \pageref{\VAR{photo.ref}:\VAR{photo.name}} \\
 %% endfor
 \end{supertabular}
 \end{center}
+%% endif
 \end{flushleft}
 \onecolumn
 \clearpage
