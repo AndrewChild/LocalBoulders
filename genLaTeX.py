@@ -110,7 +110,7 @@ def gen_book_LaTeX(book):
     #this bit calls ghost script to compress the PDF (this saves a lot of space and has no noticable effect on quality)
     #Requires a win 64 ghost script install
     process = subprocess.Popen([GS, '-sDEVICE=pdfwrite', '-dCompatibilityLevel=1.5', '-dNOPAUSE', '-dQUIET',
-                                '-dBATCH', '-dPrinted=false', '-sOutputFile=guideBook-compressed.pdf', 'guideBook.pdf', ])
+                                '-dBATCH', '-dPrinted=false', '-sOutputFile=guideBook-compressed.pdf', 'guideBook.pdf'])
     process.wait()
     os.remove('guideBook.pdf')
     os.rename('guideBook-compressed.pdf', 'guideBook.pdf')
