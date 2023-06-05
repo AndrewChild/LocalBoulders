@@ -57,7 +57,7 @@ class Book(Item):
     __class_id = 'books'
     ref = 'bk'
     area_colors = ['BrickRed', 'RoyalPurple', 'BurntOrange', 'Aquamarine', 'RubineRed', 'PineGreen']
-    area_colors_hex = ['#CB4154', '#7851A9', '#CC5500', '#7FFFD0', '#E0115F', '#01796F']
+    area_colors_hex = ['#CB4154', '#7851A9', '#CC5500', '#00B5BD', '#E0115F', '#01796F']
     __path_defaults = {
         'histogram_o': './maps/plots/',
         'qr_o': './maps/qr/',
