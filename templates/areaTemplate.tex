@@ -72,6 +72,12 @@
 \textbf{
 \VAR{climb.getRtNum()} \VAR{climb.name}\VAR{climb.name_unconfirmed_LaTeX} \VAR{climb.grade_str}\VAR{climb.grade_unconfirmed_LaTeX} \VAR{climb.rating_LaTeX} \VAR{climb.serious_LaTeX}
 }}}
+\begin{adjustwidth}{0.5cm}{}			
+\VAR{climb.description}
+%% if not climb.hasTopo
+  (No Topo)
+%% endif
+\end{adjustwidth}
 %% endmacro
 %#
 %% macro description(description)
@@ -124,9 +130,6 @@
 %% for route in formation.routes.values()
 \VAR{resolve_images(route)}
 \VAR{climbLabel(route)}
-\begin{adjustwidth}{0.5cm}{}			
-\VAR{route.description}\VAR{' (No Topo)' if not route.hasTopo}
-\end{adjustwidth}
 \VAR{resolve_images(route, 'a')}
 %% if route.variations.values()
 \begin{adjustwidth}{0.5cm}{}				
@@ -135,9 +138,6 @@
 %% for variation in route.variations.values()
 \VAR{resolve_images(variation)}
 \VAR{climbLabel(variation)}
-\begin{adjustwidth}{0.5cm}{}			
-\VAR{variation.description}\VAR{' (No Topo)' if not variation.hasTopo}
-\end{adjustwidth}
 \VAR{resolve_images(variation, 'a')}
 \VAR{resolve_images(variation, 'e')}
 %% endfor
