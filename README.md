@@ -10,6 +10,7 @@
     - GPS index of boulders
 	- little bug where image links don't take you to the right page, but do display the right page
 	- add book options for index sections
+	- Expand area inclomplete function to just allow any kind of bolded warning to be added at the end of the description
     Other:
     - Consider alternatives to LaTeX. HTML?
     - documentation
