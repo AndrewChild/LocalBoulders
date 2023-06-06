@@ -72,11 +72,13 @@ class Book(Item):
     __option_defaults = {
         'subarea_numbering': True,  # if yes route numbering resets at zero for each sub area, if no it restarts for each area
         'aspect_ratio': 'A5',       # controls cropping of p (page) and s (spread) action photos A5 is the only option right now
+        'include_action_photos': True,
     }
 
-    def __init__(self, name, description='', item_id=None, repo='', dl='', collaborators=[], subarea_numbering=True,
+    def __init__(self, name, filename='guideBook', description='', item_id=None, repo='', dl='', collaborators=[], subarea_numbering=True,
                  paths={}, options={}):
         super().__init__(name=name, parent=None, description=description, item_id=item_id)
+        self.filename = filename
         self.areas = OrderedDict()
         self.subareas = OrderedDict()
         self.formations = OrderedDict()

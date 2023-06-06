@@ -4,6 +4,9 @@
 %#
 %% macro resolve_images(item, loc='b')
 %% for im in item.images
+%% if im.ref == 'pt' and not item.options['include_action_photos']
+%% continue
+%% endif
 %% if im.loc == loc
 \VAR{image(im, im.size)}
 %% endif

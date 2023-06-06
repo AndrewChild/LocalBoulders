@@ -39,6 +39,7 @@ def _set_templateEnv(searchpath):
         line_comment_prefix='%#',
         trim_blocks=True,
         autoescape=False,
+        extensions=['jinja2.ext.loopcontrols']
     )
     return templateEnv
 
@@ -69,7 +70,7 @@ def gen_book_LaTeX(book):
 
     for photo in book.all_photos:
         if photo.route:
-            photo.latexRef = ' (Page \\pageref{{{}:{}}})'.format(photo.route.ref, photo.route.name)
+            photo.latexRef = ' \\vpageref[][Description]{{{}:{}}}'.format(photo.route.ref, photo.route.name)
         else:
             photo.latexRef = ''
         if photo.description:
@@ -99,10 +100,10 @@ def gen_book_LaTeX(book):
     f.write(indicesTemplate.render(book=book))
     f.close()
 
-    if os.path.exists("guideBook.aux"):
-        os.remove("guideBook.aux")
-    if os.path.exists("guideBook.log"):
-        os.remove("guideBook.log")
+    paths_to_srcub = [f'{book.filename}.pdf', 'guideBook.aux', 'guideBook.log']
+    for p in paths_to_srcub:
+        if os.path.exists(p):
+            os.remove(p)
 
     pdf_dir = os.path.relpath(book.paths['pdf'], start=book.paths['LaTeXOut'])
     #this bit calls pdflatex to generate the PDF. Requires a pdflatex install.
@@ -118,4 +119,4 @@ def gen_book_LaTeX(book):
                                 '-dBATCH', '-dPrinted=false', '-sOutputFile=guideBook-compressed.pdf', 'guideBook.pdf'])
     process.wait()
     os.remove('guideBook.pdf')
-    os.rename('guideBook-compressed.pdf', 'guideBook.pdf')
+    os.rename('guideBook-compressed.pdf', f'{book.filename}.pdf')
