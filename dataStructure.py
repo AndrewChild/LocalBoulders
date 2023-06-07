@@ -140,7 +140,7 @@ class Area(Item):
         self.variations = OrderedDict()
         if gps:
             self.gps = gps.replace(' ', '')
-            create_qr(self.paths['qr_o'], 'http://maps.google.com/maps?q=' + self.gps, f'{self.name}')
+            create_qr(self.paths['qr_o'], 'http://maps.google.com/maps?q=' + self.gps, f'{self.item_id}')
 
     def histogram(self):
         genHistogram(self)
@@ -173,7 +173,7 @@ class Subarea(Item):
         self.variations = OrderedDict()
         if gps:
             self.gps = gps.replace(' ', '')
-            create_qr(self.paths['qr_o'], r'http://maps.google.com/maps?q=' + self.gps, f'{self.name}')
+            create_qr(self.paths['qr_o'], r'http://maps.google.com/maps?q=' + self.gps, f'{self.item_id}')
 
     def getSubAreaLtr(self):
         """returns the guidebook letter id of sub area"""

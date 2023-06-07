@@ -113,7 +113,7 @@
 \raggedcolumns
 \begin{multicols}{2}
 %% if area.gps
-\qrcode{\VAR{area.paths['qr_o']}/\VAR{area.name}_qr.png}{http://maps.google.com/maps?q=\VAR{area.gps}}{Navigate to this area}
+\qrcode{\VAR{area.paths['qr_o']}/\VAR{area.item_id}_qr.png}{http://maps.google.com/maps?q=\VAR{area.gps}}{Navigate to this area}
 %% endif
 %% if area.routes.values()
 \includegraphics[width=\linewidth]{\VAR{area.paths['histogram_o']}/\VAR{area.name}.png}
@@ -138,7 +138,7 @@
 \section{\VAR{subArea.getSubAreaLtr()} - \VAR{subArea.name}}\label{sa:\VAR{subArea.name}}
 %% endif
 %% if subArea.gps
-\qrcode{\VAR{area.paths['qr_o']}\VAR{subArea.name}_qr.png}{http://maps.google.com/maps?q=\VAR{subArea.gps}}{Navigate to this sub area}
+\qrcode{\VAR{area.paths['qr_o']}\VAR{subArea.item_id}_qr.png}{http://maps.google.com/maps?q=\VAR{subArea.gps}}{Navigate to this sub area}
 %% endif
 \VAR{description(subArea.description)}
 \VAR{resolve_images(subArea, 'a')}
