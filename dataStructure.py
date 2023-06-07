@@ -20,11 +20,12 @@ class Item:
     Base class for all items in the book hierarchy (book, area, subarea, etc.)
     """
 
-    def __init__(self, name, parent, description='', item_id=None):
+    def __init__(self, name, parent, description='', item_id=None, format_options=[]):
         self.name = name
         self.parent = parent
         self.description = description
         self.item_id = item_id
+        self.format_options = format_options
         if not self.item_id:
             self.item_id = name
         self.photos = []    # container for all action and scenery photos attached to an item
@@ -76,8 +77,8 @@ class Book(Item):
     }
 
     def __init__(self, name, filename='guideBook', description='', item_id=None, repo='', dl='', collaborators=[], subarea_numbering=True,
-                 paths={}, options={}):
-        super().__init__(name=name, parent=None, description=description, item_id=item_id)
+                 paths={}, options={}, format_options=[]):
+        super().__init__(name=name, parent=None, description=description, item_id=item_id, format_options=format_options)
         self.filename = filename
         self.areas = OrderedDict()
         self.subareas = OrderedDict()
@@ -124,8 +125,8 @@ class Area(Item):
     __class_id = 'areas'
     ref = 'a'
 
-    def __init__(self, name, parent, description='', item_id=None, gps=None, incomplete=False):
-        super().__init__(name=name, parent=parent, description=description, item_id=item_id)
+    def __init__(self, name, parent, description='', item_id=None, gps=None, incomplete=False, format_options=[]):
+        super().__init__(name=name, parent=parent, description=description, item_id=item_id, format_options=format_options)
         self.color = ''
         self.color_hex = ''
         self.paths = parent.paths
@@ -159,8 +160,8 @@ class Subarea(Item):
     __class_id = 'subareas'
     ref = 'sa'
 
-    def __init__(self, name, parent, description='', item_id=None, gps=None):
-        super().__init__(name=name, parent=parent, description=description, item_id=item_id)
+    def __init__(self, name, parent, description='', item_id=None, gps=None, format_options=[]):
+        super().__init__(name=name, parent=parent, description=description, item_id=item_id, format_options=format_options)
         self.paths = parent.paths
         self.options = parent.options
         self.area = parent
@@ -187,8 +188,8 @@ class Formation(Item):
     __class_id = 'formations'
     ref = 'bd'
 
-    def __init__(self, name, parent, description='', item_id=None):
-        super().__init__(name=name, parent=parent, description=description, item_id=item_id)
+    def __init__(self, name, parent, description='', item_id=None, format_options=[]):
+        super().__init__(name=name, parent=parent, description=description, item_id=item_id, format_options=format_options)
         self.subarea = parent
         self.book = parent.book
         self.area = parent.area
@@ -207,8 +208,8 @@ class Route(Item, Climb):
     ref = 'rt'
 
     def __init__(self, name, parent, description='PLACEHOLDER', item_id=None, grade='?', rating=-1, serious=0,
-                 grade_unconfirmed=False, name_unconfirmed=False, FA=None):
-        Item.__init__(self, name=name, parent=parent, description=description, item_id=item_id)
+                 grade_unconfirmed=False, name_unconfirmed=False, FA=None, format_options=[]):
+        Item.__init__(self, name=name, parent=parent, description=description, item_id=item_id, format_options=format_options)
         Climb.__init__(self, grade=grade, rating=rating, serious=serious, grade_unconfirmed=grade_unconfirmed,
                        name_unconfirmed=name_unconfirmed, FA=FA)
         self.paths = parent.paths
@@ -248,8 +249,8 @@ class Variation(Item, Climb):
     ref = 'vr'
 
     def __init__(self, name, parent, description='PLACEHOLDER', item_id=None, grade='?', rating=-1, serious=0,
-                 grade_unconfirmed=False, name_unconfirmed=False, FA=None):
-        Item.__init__(self, name=name, parent=parent, description=description, item_id=item_id)
+                 grade_unconfirmed=False, name_unconfirmed=False, FA=None, format_options=[]):
+        Item.__init__(self, name=name, parent=parent, description=description, item_id=item_id, format_options=format_options)
         Climb.__init__(self, grade=grade, rating=rating, serious=serious, grade_unconfirmed=grade_unconfirmed,
                        name_unconfirmed=name_unconfirmed, FA=FA)
         self.paths = parent.paths
@@ -281,8 +282,8 @@ class Photo(Item):
     ref = 'pt'
 
     def __init__(self, name, parent, fileName, description=None, item_id=None, size='h', loc='b', path=None, credit=None,
-                 route=None):
-        super().__init__(name=name, parent=parent, description=description, item_id=item_id)
+                 route=None, format_options=[]):
+        super().__init__(name=name, parent=parent, description=description, item_id=item_id, format_options=format_options)
         self.fileName = fileName
         self.size = size
         self.loc = loc
@@ -337,8 +338,8 @@ class Topo(Item):
     ref = 'tp'
 
     def __init__(self, name, parent, fileName, description=None, item_id=None, routes={}, layers=[], border='', size='h',
-                 loc='b', path_i=None, path_o=None):
-        super().__init__(name=name, parent=parent, description=description, item_id=item_id)
+                 loc='b', path_i=None, path_o=None, format_options=[]):
+        super().__init__(name=name, parent=parent, description=description, item_id=item_id, format_options=format_options)
         self.fileName = fileName
         self.routes = routes.copy()  # not sure if this is necessary
         self.layers = layers
@@ -378,8 +379,8 @@ class AreaMap(Item):
     ref = 'am'
 
     def __init__(self, name, parent, fileName, description=None, item_id=None, sub_areas={}, layers=[], border='',
-                 size='h', loc='b', path_i=None, path_o=None, outFileName=None):
-        super().__init__(name=name, parent=parent, description=description, item_id=item_id)
+                 size='h', loc='b', path_i=None, path_o=None, outFileName=None, format_options=[]):
+        super().__init__(name=name, parent=parent, description=description, item_id=item_id, format_options=format_options)
         self.fileName = fileName
         self.sub_areas = sub_areas.copy()  # not sure if this is necessary
         self.layers = layers
@@ -418,8 +419,8 @@ class SubAreaMap(Item):
     ref = 'sm'
 
     def __init__(self, name, parent, fileName, description=None, item_id=None, routes={}, layers=[], border='', size='h',
-                 loc='b', path_i=None, path_o=None, outFileName=None):
-        super().__init__(name=name, parent=parent, description=description, item_id=item_id)
+                 loc='b', path_i=None, path_o=None, outFileName=None, format_options=[]):
+        super().__init__(name=name, parent=parent, description=description, item_id=item_id, format_options=format_options)
         self.fileName = fileName
         self.routes = routes.copy()  # not sure if this is necessary
         self.layers = layers

@@ -74,7 +74,9 @@ def gen_book_LaTeX(book):
         else:
             photo.latexRef = ''
         if photo.description:
-            photo.description = photo.description + photo.latexRef
+            photo.latex_description = photo.description + photo.latexRef
+    for map in book.all_maps:
+        map.latex_description = map.description
 
     templateEnv = _set_templateEnv(book.paths['LaTeXTemplates'])
     mainTemplate = templateEnv.get_template("localBoulders.tex")

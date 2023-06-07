@@ -2,20 +2,20 @@
 %# ------------Macros---------------
 %# ---------------------------------
 %#
+%#
+%# --- loops through all images attached to item and checks to see if they should be placed here
 %% macro resolve_images(item, loc='b')
 %% for im in item.images
-%% if im.ref == 'pt' and not item.options['include_action_photos']
-%% continue
-%% endif
 %% if im.loc == loc
 \VAR{image(im, im.size)}
 %% endif
 %% endfor
 %% endmacro
 %#
-%% macro resolve_images_area_head(item, loc='b', size='f')
+%#
 %# --- this is sort of a hacky work around that prevents the template from starting and ending multicols immediately 
 %# --- if an area starts with a full width photo
+%% macro resolve_images_area_head(item, loc='b', size='f')
 %% if size == 'f' or size == 'h'
 %% for im in item.images
 %% if im.loc == loc and im.size == size
@@ -31,16 +31,23 @@
 %% endif
 %% endmacro
 %#
+%#
+%# --- Handles image placement. 
+%# --- Skips placement of action photos if "skip_action_photos" format option is entered
+%# --- Image placement syntax varies based on size
 %% macro image(im, size='h')
+%% if ('skip_action_photos' in im.book.format_options) and (im.ref == 'pt')
+%# --- bad form, but its early and I couldn't figure out how to do this without using else
+%% else
 %% if size == 'f' or size == 'h'
 	%% if size == 'f'
 	\end{multicols}
 	%% endif
-	\setbox0=\hbox{\begin{overpic}[width=0.8\linewidth]{\VAR{im.path_o+im.outFileName}}\VAR{caption1(im.description)}
+	\setbox0=\hbox{\begin{overpic}[width=0.8\linewidth]{\VAR{im.path_o+im.outFileName}}\VAR{caption1(im.latex_description)}
 	\end{overpic}}
 	\needspace{\ht0}
 	\begin{center}
-	\begin{overpic}[width=0.9\linewidth]{\VAR{im.path_o+im.outFileName}}\VAR{caption1(im.description)}\label{\VAR{im.ref}:\VAR{im.name}}
+	\begin{overpic}[width=0.9\linewidth]{\VAR{im.path_o+im.outFileName}}\VAR{caption1(im.latex_description)}\label{\VAR{im.ref}:\VAR{im.name}}
 	\end{overpic}
 	\end{center}
 	%% if size == 'f'
@@ -48,25 +55,31 @@
 	\begin{multicols}{2}
 	%% endif
 %% elif size == 'p'
-	\includepdf[picturecommand*={\label{\VAR{im.ref}:\VAR{im.name}}\VAR{caption2(im.description)}}]{\VAR{im.path_o+im.outFileName}}
+	\includepdf[picturecommand*={\label{\VAR{im.ref}:\VAR{im.name}}\VAR{caption2(im.latex_description)}}]{\VAR{im.path_o+im.outFileName}}
 %% elif size == 's'
 	\cleartoleftpage
-	\includepdf[pages=-, picturecommand*={\label{\VAR{im.ref}:\VAR{im.name}}\VAR{caption2(im.description)}}]{\VAR{im.path_o+im.outFileName}}
+	\includepdf[pages=-, picturecommand*={\label{\VAR{im.ref}:\VAR{im.name}}\VAR{caption2(im.latex_description)}}]{\VAR{im.path_o+im.outFileName}}
+%% endif
 %% endif
 %% endmacro
 %#
+%#
+%# --- Handles caption placement for half width (h) and full width (f) images. 
 %% macro caption1(description)
 %% if description
 \put (0,5) {\colorbox{\chapterColor}{\parbox{0.7\linewidth}{\textcolor{white}{\VAR{description}}}}}
 %% endif
 %% endmacro
 %#
+%# --- Handles caption placement for page (p) and spread (s) images. 
 %% macro caption2(description)
 %% if description
 \put (10,10) {\colorbox{\chapterColor}{\parbox{0.6\paperwidth}{\textcolor{white}{\VAR{description}}}}}
 %% endif
 %% endmacro
 %#
+%#
+%# --- Places a formatted title and description for the input climb. 
 %% macro climbLabel(climb)
 \needspace{1.5cm}
 \label{\VAR{climb.ref}:\VAR{climb.name}}
@@ -83,6 +96,8 @@
 \end{adjustwidth}
 %% endmacro
 %#
+%#
+%# --- Places a description followed by a linebreak so long as description is not empty
 %% macro description(description)
 %% if description != ''
 \VAR{description}\\
@@ -113,12 +128,12 @@
 \VAR{resolve_images(area, 'a')}
 
 %% for subArea in area.subareas.values()
-%% if subArea.name
+%% if 'supress_page_break' not in subArea.format_options
 \newpage
+%% endif
 \VAR{resolve_images(subArea)}
+%% if subArea.name
 \section{\VAR{subArea.getSubAreaLtr()} - \VAR{subArea.name}}\label{sa:\VAR{subArea.name}}
-%% else
-\VAR{resolve_images(subArea)}
 %% endif
 %% if subArea.gps
 \qrcode{\VAR{area.paths['qr_o']}\VAR{subArea.name}_qr.png}{http://maps.google.com/maps?q=\VAR{subArea.gps}}{Navigate to this sub area}
