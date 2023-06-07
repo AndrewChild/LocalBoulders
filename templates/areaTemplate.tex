@@ -113,10 +113,12 @@
 \VAR{resolve_images(area, 'a')}
 
 %% for subArea in area.subareas.values()
+%% if subArea.name
 \newpage
 \VAR{resolve_images(subArea)}
-%% if subArea.name
 \section{\VAR{subArea.getSubAreaLtr()} - \VAR{subArea.name}}\label{sa:\VAR{subArea.name}}
+%% else
+\VAR{resolve_images(subArea)}
 %% endif
 %% if subArea.gps
 \qrcode{\VAR{area.paths['qr_o']}\VAR{subArea.name}_qr.png}{http://maps.google.com/maps?q=\VAR{subArea.gps}}{Navigate to this sub area}
