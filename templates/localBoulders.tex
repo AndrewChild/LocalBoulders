@@ -72,7 +72,9 @@
 \title{\VAR{book.name}}
 \date{\VAR{book.date}}
 \maketitle
+%% if 'blank_page_after_title' in book.format_options
 \shipout\null
+%% endif
 
 \newcommand\chapterColor{MidnightBlue}
 \input{acknowledgements}

@@ -3,6 +3,7 @@
 \begin{flushleft}
 
 \needspace{1.5cm}
+%% if not 'suppress_routes_alphabetical_index' in book.format_options
 \section{Routes Alphabetical}
 \begin{center}
 \rowcolors{2}{MidnightBlue!10}{white}
@@ -12,7 +13,9 @@
 %% endfor
 \end{supertabular}
 \end{center}
+%% endif
 
+%% if not 'suppress_routes_grade_index' in book.format_options
 \needspace{1.5cm}
 \section{Routes by grade}
 \begin{center}
@@ -30,7 +33,9 @@
 %% endfor
 \end{supertabular}
 \end{center}
+%% endif
 
+%% if not 'suppress_First Ascents_index' in book.format_options
 \needspace{1.5cm}
 \section{Known First Ascents}
 \begin{center}
@@ -43,7 +48,9 @@
 %% endfor
 \end{supertabular}
 \end{center}
+%% endif
 
+%% if not ('suppress_photo_credits_index' in book.format_options) and not ('skip_action_photos' in book.format_options)
 %% if book.all_photos
 \needspace{1.5cm}
 \section{Photo Credits}
@@ -55,6 +62,7 @@
 %% endfor
 \end{supertabular}
 \end{center}
+%% endif
 %% endif
 \end{flushleft}
 \onecolumn
