@@ -81,7 +81,7 @@
 %#
 %# --- Places a formatted title and description for the input climb. 
 %% macro climbLabel(climb)
-\needspace{1.5cm}
+\needspace{2em}
 \label{\VAR{climb.ref}:\VAR{climb.name}}
 \colorbox{\VAR{climb.color_LaTeX}}{
 \parbox{0.95\linewidth}{
@@ -131,7 +131,7 @@
 %% if 'suppress_page_break' not in subArea.format_options
 \newpage
 %% else
-\needspace{5cm}
+\needspace{6em}
 %% endif
 \VAR{resolve_images(subArea)}
 %% if subArea.name
@@ -145,9 +145,9 @@
 
 %% for formation in subArea.formations.values()
 \VAR{resolve_images(formation)}
-\needspace{1.5cm}
+\needspace{3em}
 \subsection*{\VAR{formation.name}}\label{bf:\VAR{formation.name}}
-\VAR{description(formation.description)}	
+\VAR{description(formation.description)}
 \VAR{resolve_images(formation, 'a')}
 %% for route in formation.routes.values()
 \VAR{resolve_images(route)}
@@ -155,7 +155,7 @@
 \VAR{resolve_images(route, 'a')}
 %% if route.variations.values()
 \begin{adjustwidth}{0.5cm}{}				
-\needspace{3cm}
+\needspace{4em}
 \textbf{Variations:} \newline
 %% for variation in route.variations.values()
 \VAR{resolve_images(variation)}
