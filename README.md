@@ -8,6 +8,8 @@
         - maybe move class.ref to genLaTeX
 	- spread and full page formats should work for maps too
 	- a lot of functions still reference name when they should reference item_id
+	- move gps to Item class
+	- add gps support for formations, climbs, and variations
     LaTeX:
     - GPS index of boulders
 	- little bug where image links don't take you to the right page, but do display the right page

@@ -20,17 +20,28 @@ class Item:
     Base class for all items in the book hierarchy (book, area, subarea, etc.)
     """
 
-    def __init__(self, name, parent, description='', item_id=None, format_options=[]):
+    def __init__(self, name, parent, description='', item_id=None, format_options=[], gps=None, paths={}, options={}):
         self.name = name
         self.parent = parent
+        self.paths = paths
         self.description = description
         self.item_id = item_id
         self.format_options = format_options
-        if not self.item_id:
-            self.item_id = name
+        self.gps = gps
         self.photos = []    # container for all action and scenery photos attached to an item
         self.maps = []      # container for all layout maps and topos attached to an item
         self.images = []    # container for all images attached to item
+
+        if not self.item_id:
+            self.item_id = name
+        if not paths:
+            self.paths = parent.paths
+        if not options:
+            self.options = parent.options
+
+        if self.gps:
+            self.gps = self.gps.replace(' ', '')
+            create_qr(self.paths['qr_o'], 'http://maps.google.com/maps?q=' + self.gps, f'{self.item_id}')
 
     def assign_to_dic(self, container, connection):
         if connection.item_id in getattr(self, container):
@@ -76,9 +87,12 @@ class Book(Item):
         'include_action_photos': True,
     }
 
-    def __init__(self, name, filename='guideBook', description='', item_id=None, repo='', dl='', collaborators=[], subarea_numbering=True,
-                 paths={}, options={}, format_options=[]):
-        super().__init__(name=name, parent=None, description=description, item_id=item_id, format_options=format_options)
+    def __init__(self, name, filename='guideBook', description='', item_id=None, repo='', dl='', collaborators=[],
+                 subarea_numbering=True, paths={}, options={}, format_options=[], gps=None):
+        self.paths = {**self.__path_defaults, **paths}
+        self.options = {**self.__option_defaults, **options}
+        super().__init__(name=name, parent=None, description=description, item_id=item_id,
+                         format_options=format_options, paths=self.paths, options=self.options, gps=gps)
         self.filename = filename
         self.areas = OrderedDict()
         self.subareas = OrderedDict()
@@ -94,8 +108,6 @@ class Book(Item):
         self.dl = dl
         self.collaborators = collaborators
         self.subarea_numbering = subarea_numbering
-        self.paths = {**self.__path_defaults, **paths}
-        self.options = {**self.__option_defaults, **options}
 
         if dl:
             create_qr(self.paths['qr_o'], dl, f'{self.name}')
@@ -126,11 +138,9 @@ class Area(Item):
     ref = 'a'
 
     def __init__(self, name, parent, description='', item_id=None, gps=None, incomplete=False, format_options=[]):
-        super().__init__(name=name, parent=parent, description=description, item_id=item_id, format_options=format_options)
+        super().__init__(name=name, parent=parent, description=description, item_id=item_id, format_options=format_options, gps=gps)
         self.color = ''
         self.color_hex = ''
-        self.paths = parent.paths
-        self.options = parent.options
         self.incomplete = incomplete
         self.book = parent
         self.book.assign_to_dic(self.__class_id, self)
@@ -138,9 +148,6 @@ class Area(Item):
         self.formations = OrderedDict()
         self.routes = OrderedDict()
         self.variations = OrderedDict()
-        if gps:
-            self.gps = gps.replace(' ', '')
-            create_qr(self.paths['qr_o'], 'http://maps.google.com/maps?q=' + self.gps, f'{self.item_id}')
 
     def histogram(self):
         genHistogram(self)
@@ -161,9 +168,7 @@ class Subarea(Item):
     ref = 'sa'
 
     def __init__(self, name, parent, description='', item_id=None, gps=None, format_options=[]):
-        super().__init__(name=name, parent=parent, description=description, item_id=item_id, format_options=format_options)
-        self.paths = parent.paths
-        self.options = parent.options
+        super().__init__(name=name, parent=parent, description=description, item_id=item_id, format_options=format_options, gps=gps)
         self.area = parent
         self.book = parent.book
         self.book.assign_to_dic(self.__class_id, self)
@@ -171,9 +176,6 @@ class Subarea(Item):
         self.formations = OrderedDict()
         self.routes = OrderedDict()
         self.variations = OrderedDict()
-        if gps:
-            self.gps = gps.replace(' ', '')
-            create_qr(self.paths['qr_o'], r'http://maps.google.com/maps?q=' + self.gps, f'{self.item_id}')
 
     def getSubAreaLtr(self):
         """returns the guidebook letter id of sub area"""
@@ -188,8 +190,8 @@ class Formation(Item):
     __class_id = 'formations'
     ref = 'bd'
 
-    def __init__(self, name, parent, description='', item_id=None, format_options=[]):
-        super().__init__(name=name, parent=parent, description=description, item_id=item_id, format_options=format_options)
+    def __init__(self, name, parent, description='', item_id=None, format_options=[], gps=None):
+        super().__init__(name=name, parent=parent, description=description, item_id=item_id, format_options=format_options, gps=gps)
         self.subarea = parent
         self.book = parent.book
         self.area = parent.area
@@ -198,8 +200,6 @@ class Formation(Item):
         self.subarea.assign_to_dic(self.__class_id, self)
         self.routes = OrderedDict()
         self.variations = OrderedDict()
-        self.paths = parent.paths
-        self.options = parent.options
 
 
 class Route(Item, Climb):
@@ -208,12 +208,10 @@ class Route(Item, Climb):
     ref = 'rt'
 
     def __init__(self, name, parent, description='PLACEHOLDER', item_id=None, grade='?', rating=-1, serious=0,
-                 grade_unconfirmed=False, name_unconfirmed=False, FA=None, format_options=[]):
-        Item.__init__(self, name=name, parent=parent, description=description, item_id=item_id, format_options=format_options)
+                 grade_unconfirmed=False, name_unconfirmed=False, FA=None, format_options=[], gps=None):
+        Item.__init__(self, name=name, parent=parent, description=description, item_id=item_id, format_options=format_options, gps=gps)
         Climb.__init__(self, grade=grade, rating=rating, serious=serious, grade_unconfirmed=grade_unconfirmed,
                        name_unconfirmed=name_unconfirmed, FA=FA)
-        self.paths = parent.paths
-        self.options = parent.options
         self.boulder = parent
         self.book = parent.book
         self.area = parent.area
@@ -249,12 +247,10 @@ class Variation(Item, Climb):
     ref = 'vr'
 
     def __init__(self, name, parent, description='PLACEHOLDER', item_id=None, grade='?', rating=-1, serious=0,
-                 grade_unconfirmed=False, name_unconfirmed=False, FA=None, format_options=[]):
-        Item.__init__(self, name=name, parent=parent, description=description, item_id=item_id, format_options=format_options)
+                 grade_unconfirmed=False, name_unconfirmed=False, FA=None, format_options=[], gps=None):
+        Item.__init__(self, name=name, parent=parent, description=description, item_id=item_id, format_options=format_options, gps=gps)
         Climb.__init__(self, grade=grade, rating=rating, serious=serious, grade_unconfirmed=grade_unconfirmed,
                        name_unconfirmed=name_unconfirmed, FA=FA)
-        self.paths = parent.paths
-        self.options = parent.options
         self.route = parent
         self.book = parent.book
         self.area = parent.area
@@ -289,8 +285,6 @@ class Photo(Item):
         self.loc = loc
         self.credit = credit
         self.route = route
-        self.paths = parent.paths
-        self.options = parent.options
         self.book = parent.book
         self.book.all_photos.append(self)
         self.parent.photos.append(self)
@@ -346,8 +340,6 @@ class Topo(Item):
         self.border = border
         self.size = size
         self.loc = loc
-        self.paths = parent.paths
-        self.options = parent.options
         self.book = parent.book
         self.book.all_maps.append(self)
         self.parent.maps.append(self)
@@ -387,8 +379,6 @@ class AreaMap(Item):
         self.border = border
         self.size = size
         self.loc = loc
-        self.paths = parent.paths
-        self.options = parent.options
         self.routes = []
         self.book = parent.book
         self.book.all_maps.append(self)
@@ -428,8 +418,6 @@ class SubAreaMap(Item):
         self.size = size
         self.loc = loc
         self.outFileName = outFileName
-        self.paths = parent.paths
-        self.options = parent.options
         self.book = parent.book
         self.book.all_maps.append(self)
         self.parent.maps.append(self)
