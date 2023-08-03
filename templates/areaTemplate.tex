@@ -39,6 +39,7 @@
 %% if ('skip_action_photos' in im.book.format_options) and (im.ref == 'pt') and ('force_include' not in im.format_options)
 %# --- bad form, but its early and I couldn't figure out how to do this without using else
 %% else
+\phantomsection\label{\VAR{im.ref}:\VAR{im.item_id}}
 %% if size == 'f' or size == 'h'
 	%% if size == 'f'
 	\end{multicols}
@@ -47,7 +48,7 @@
 	\end{overpic}}
 	\needspace{\ht0}
 	\begin{center}
-	\begin{overpic}[width=0.9\linewidth]{\VAR{im.path_o+im.outFileName}}\VAR{caption1(im.latex_description)}\label{\VAR{im.ref}:\VAR{im.name}}
+	\begin{overpic}[width=0.9\linewidth]{\VAR{im.path_o+im.outFileName}}\VAR{caption1(im.latex_description)}
 	\end{overpic}
 	\end{center}
 	%% if size == 'f'
@@ -55,10 +56,10 @@
 	\begin{multicols}{2}
 	%% endif
 %% elif size == 'p'
-	\includepdf[picturecommand*={\label{\VAR{im.ref}:\VAR{im.name}}\VAR{caption2(im.latex_description)}}]{\VAR{im.path_o+im.outFileName}}
+	\includepdf[picturecommand*={\VAR{caption2(im.latex_description)}}]{\VAR{im.path_o+im.outFileName}}
 %% elif size == 's'
 	\cleartoleftpage
-	\includepdf[pages=-, picturecommand*={\label{\VAR{im.ref}:\VAR{im.name}}\VAR{caption2(im.latex_description)}}]{\VAR{im.path_o+im.outFileName}}
+	\includepdf[pages=-, picturecommand*={\VAR{caption2(im.latex_description)}}]{\VAR{im.path_o+im.outFileName}}
 %% endif
 %% endif
 %% endmacro
@@ -82,7 +83,7 @@
 %# --- Places a formatted title and description for the input climb. 
 %% macro climbLabel(climb)
 \needspace{2em}
-\label{\VAR{climb.ref}:\VAR{climb.name}}
+\phantomsection\label{\VAR{climb.ref}:\VAR{climb.item_id}}
 \colorbox{\VAR{climb.color_LaTeX}}{
 \parbox{0.95\linewidth}{
 \hspace{-1ex}\textbf{$\Box$
@@ -123,7 +124,7 @@
 \begin{multicols}{2}
 \VAR{gps(area)}
 %% if area.routes.values() and ('suppress_histogram' not in area.format_options)
-\includegraphics[width=\linewidth]{\VAR{area.paths['histogram_o']}/\VAR{area.name}.png}
+\includegraphics[width=\linewidth]{\VAR{area.paths['histogram_o']}/\VAR{area.item_id}.png}
 \end{multicols}
 \begin{multicols}{2}
 %% endif
@@ -142,7 +143,7 @@
 %% endif
 \VAR{resolve_images(subArea)}
 %% if subArea.name
-\section{\VAR{subArea.getSubAreaLtr()} - \VAR{subArea.name}}\label{sa:\VAR{subArea.name}}
+\section{\VAR{subArea.getSubAreaLtr()} - \VAR{subArea.name}}\phantomsection\label{sa:\VAR{subArea.item_id}}
 %% endif
 \VAR{gps(subArea)}
 \VAR{description(subArea.description)}
@@ -151,7 +152,7 @@
 %% for formation in subArea.formations.values()
 \VAR{resolve_images(formation)}
 \needspace{3em}
-\subsection*{\VAR{formation.name}}\label{bf:\VAR{formation.name}}
+\subsection*{\VAR{formation.name}}\phantomsection\label{bf:\VAR{formation.item_id}}
 \VAR{gps(formation)}
 \VAR{description(formation.description)}
 \VAR{resolve_images(formation, 'a')}

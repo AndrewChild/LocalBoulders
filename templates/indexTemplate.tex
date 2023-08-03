@@ -9,7 +9,7 @@
 \rowcolors{2}{MidnightBlue!10}{white}
 \begin{supertabular}{p{0.76\linewidth}p{0.08\linewidth}}
 %% for climb in book.climbs.values() | sort(attribute="name")
-\VAR{climb.name} \VAR{climb.grade_str} & \pageref{\VAR{climb.ref}:\VAR{climb.name}} \\
+\VAR{climb.name} \VAR{climb.grade_str} & \pageref{\VAR{climb.ref}:\VAR{climb.item_id}} \\
 %% endfor
 \end{supertabular}
 \end{center}
@@ -23,19 +23,19 @@
 \begin{supertabular}{p{0.18\linewidth}p{0.13\linewidth}p{0.45\linewidth}p{0.08\linewidth}}
 %% for climb in book.climbs.values() | sort(reverse=true, attribute="rating") | sort(attribute="gradeNum")
 %% if climb.grade_scale == 'Hueco'
-\VAR{climb.rating_LaTeX} \VAR{climb.serious_LaTeX}&\VAR{climb.grade_str}&\VAR{climb.name} & \pageref{\VAR{climb.ref}:\VAR{climb.name}} \\
+\VAR{climb.rating_LaTeX} \VAR{climb.serious_LaTeX}&\VAR{climb.grade_str}&\VAR{climb.name} & \pageref{\VAR{climb.ref}:\VAR{climb.item_id}} \\
 %% endif
 %% endfor
 %% for climb in book.climbs.values() | sort(reverse=true, attribute="rating") | sort(attribute="gradeNum")
 %% if climb.grade_scale == 'YDS'
-\VAR{climb.rating_LaTeX}\VAR{climb.serious_LaTeX}&\VAR{climb.grade_str}&\VAR{climb.name} & \pageref{\VAR{climb.ref}:\VAR{climb.name}} \\
+\VAR{climb.rating_LaTeX}\VAR{climb.serious_LaTeX}&\VAR{climb.grade_str}&\VAR{climb.name} & \pageref{\VAR{climb.ref}:\VAR{climb.item_id}} \\
 %% endif
 %% endfor
 \end{supertabular}
 \end{center}
 %% endif
 
-%% if not 'suppress_First Ascents_index' in book.format_options
+%% if not 'suppress_first_ascents_index' in book.format_options
 \needspace{1.5cm}
 \section{Known First Ascents}
 \begin{center}
@@ -57,9 +57,9 @@
 \begin{center}
 \rowcolors{2}{MidnightBlue!10}{white}
 \begin{supertabular}{p{0.76\linewidth}p{0.08\linewidth}}
-%% for photo in book.all_photos
+%% for photo in book.all_photos | sort(attribute="credit")
 %% if photo.credit
-\VAR{photo.credit} & \pageref{\VAR{photo.ref}:\VAR{photo.name}} \\
+\VAR{photo.credit} & \pageref{\VAR{photo.ref}:\VAR{photo.item_id}} \\
 %% endif
 %% endfor
 \end{supertabular}

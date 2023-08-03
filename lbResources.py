@@ -186,7 +186,7 @@ def genHistogram(area):
     ax.set_xticks(ind, labels=labels)
     ax.yaxis.set_major_locator(MaxNLocator(integer=True))
 
-    plt.savefig(f'./maps/plots/{area.name}.png')
+    plt.savefig(f'./maps/plots/{area.item_id}.png')
 
 
 def create_qr(path, s, name):

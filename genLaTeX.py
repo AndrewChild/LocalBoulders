@@ -70,7 +70,7 @@ def gen_book_LaTeX(book):
 
     for photo in book.all_photos:
         if photo.route:
-            photo.latexRef = ' \\vpageref[][Description]{{{}:{}}}'.format(photo.route.ref, photo.route.name)
+            photo.latexRef = ' \\vpageref[][Description]{{{}:{}}}'.format(photo.route.ref, photo.route.item_id)
         else:
             photo.latexRef = ''
         if photo.description:
@@ -94,7 +94,7 @@ def gen_book_LaTeX(book):
 
     for area in book.areas.values():
         area.histogram()
-        f = open(f"{book.paths['LaTeXOut']}" + area.name + '.tex', 'w', encoding="utf-8")
+        f = open(f"{book.paths['LaTeXOut']}" + area.item_id + '.tex', 'w', encoding="utf-8")
         f.write(areaTemplate.render(area=area))
         f.close()
 

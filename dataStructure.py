@@ -111,7 +111,7 @@ class Book(Item):
         self.subarea_numbering = subarea_numbering
 
         if dl:
-            create_qr(self.paths['qr_o'], dl, f'{self.name}')
+            create_qr(self.paths['qr_o'], dl, f'{self.item_id}')
 
     def gen(self):
         self._init_paths()
@@ -157,7 +157,7 @@ class Area(Item):
     def update(self):
         ct = 0
         for area in self.parent.areas.values():
-            if area.name == self.name:
+            if area.item_id == self.item_id:
                 area_colors = self.parent.area_colors
                 area_colors_hex = self.parent.area_colors_hex
                 self.color = area_colors[ct % len(area_colors)]
@@ -184,7 +184,7 @@ class Subarea(Item):
         """returns the guidebook letter id of sub area"""
         ct = 65  # start counter on the unicode number encoding for the 'A' character
         for sub_area in self.parent.subareas.values():
-            if sub_area.name == self.name:
+            if sub_area.item_id == self.item_id:
                 return chr(ct)
             ct = ct + 1
 
@@ -238,7 +238,7 @@ class Route(Item, Climb):
         for subArea in query_subareas:
             for boulder in subArea.formations.values():  # sub area also contains a dictionary of all routes but this has to be done in a multi step process in order to get the correct route numbering
                 for route in boulder.routes.values():
-                    if route.name == self.name:
+                    if route.item_id == self.item_id:
                         if as_int:
                             return ct
                         else:
@@ -273,7 +273,7 @@ class Variation(Item, Climb):
         """returns the guidebook route number of the variation"""
         ct = 97  # start counter on the unicode number encoding for the 'a' character
         for variation in self.parent.variations.values():
-            if variation.name == self.name:
+            if variation.item_id == self.item_id:
                 return self.parent.getRtNum() + chr(ct)
             ct = ct + 1
 
@@ -284,7 +284,7 @@ class Photo(Item):
     ref = 'pt'
     class_name = 'photo'
 
-    def __init__(self, name, parent, fileName, description=None, item_id=None, size='h', loc='b', path=None, credit=None,
+    def __init__(self, name, parent, fileName, description=None, item_id=None, size='h', loc='b', path=None, credit='',
                  route=None, format_options=[]):
         super().__init__(name=name, parent=parent, description=description, item_id=item_id, format_options=format_options)
         self.fileName = fileName
