@@ -122,7 +122,7 @@
 \raggedcolumns
 \begin{multicols}{2}
 \VAR{gps(area)}
-%% if area.routes.values()
+%% if area.routes.values() and ('suppress_histogram' not in area.format_options)
 \includegraphics[width=\linewidth]{\VAR{area.paths['histogram_o']}/\VAR{area.name}.png}
 \end{multicols}
 \begin{multicols}{2}
