@@ -58,7 +58,9 @@
 \rowcolors{2}{MidnightBlue!10}{white}
 \begin{supertabular}{p{0.76\linewidth}p{0.08\linewidth}}
 %% for photo in book.all_photos
+%% if photo.credit
 \VAR{photo.credit} & \pageref{\VAR{photo.ref}:\VAR{photo.name}} \\
+%% endif
 %% endfor
 \end{supertabular}
 \end{center}

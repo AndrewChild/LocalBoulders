@@ -68,6 +68,7 @@ class Climb:
 class Book(Item):
     __class_id = 'books'
     ref = 'bk'
+    class_name = 'book'
     area_colors = ['BrickRed', 'RoyalPurple', 'BurntOrange', 'Aquamarine', 'RubineRed', 'PineGreen']
     area_colors_hex = ['#CB4154', '#7851A9', '#CC5500', '#00B5BD', '#E0115F', '#01796F']
     __path_defaults = {
@@ -136,6 +137,7 @@ class Book(Item):
 class Area(Item):
     __class_id = 'areas'
     ref = 'a'
+    class_name = 'area'
 
     def __init__(self, name, parent, description='', item_id=None, gps=None, incomplete=False, format_options=[]):
         super().__init__(name=name, parent=parent, description=description, item_id=item_id, format_options=format_options, gps=gps)
@@ -166,6 +168,7 @@ class Area(Item):
 class Subarea(Item):
     __class_id = 'subareas'
     ref = 'sa'
+    class_name = 'sub area'
 
     def __init__(self, name, parent, description='', item_id=None, gps=None, format_options=[]):
         super().__init__(name=name, parent=parent, description=description, item_id=item_id, format_options=format_options, gps=gps)
@@ -189,6 +192,7 @@ class Subarea(Item):
 class Formation(Item):
     __class_id = 'formations'
     ref = 'bd'
+    class_name = 'formation'
 
     def __init__(self, name, parent, description='', item_id=None, format_options=[], gps=None):
         super().__init__(name=name, parent=parent, description=description, item_id=item_id, format_options=format_options, gps=gps)
@@ -206,6 +210,7 @@ class Route(Item, Climb):
     """class object for an individual route or boulder"""
     __class_id = 'routes'
     ref = 'rt'
+    class_name = 'route'
 
     def __init__(self, name, parent, description='PLACEHOLDER', item_id=None, grade='?', rating=-1, serious=0,
                  grade_unconfirmed=False, name_unconfirmed=False, FA=None, format_options=[], gps=None):
@@ -245,6 +250,7 @@ class Variation(Item, Climb):
     """class object for variations of routs"""
     __class_id = 'variations'
     ref = 'vr'
+    class_name = 'variation'
 
     def __init__(self, name, parent, description='PLACEHOLDER', item_id=None, grade='?', rating=-1, serious=0,
                  grade_unconfirmed=False, name_unconfirmed=False, FA=None, format_options=[], gps=None):
@@ -276,6 +282,7 @@ class Photo(Item):
     """class object for general photos (action, scenery, etc.)"""
     __class_id = 'photos'
     ref = 'pt'
+    class_name = 'photo'
 
     def __init__(self, name, parent, fileName, description=None, item_id=None, size='h', loc='b', path=None, credit=None,
                  route=None, format_options=[]):
@@ -330,6 +337,7 @@ class Topo(Item):
     """class object for route topos"""
     __class_id = 'topos'
     ref = 'tp'
+    class_name = 'topo'
 
     def __init__(self, name, parent, fileName, description=None, item_id=None, routes={}, layers=[], border='', size='h',
                  loc='b', path_i=None, path_o=None, format_options=[]):
@@ -369,6 +377,7 @@ class AreaMap(Item):
     """class object for sub area maps"""
     __class_id = 'areaMaps'
     ref = 'am'
+    class_name = 'area map'
 
     def __init__(self, name, parent, fileName, description=None, item_id=None, sub_areas={}, layers=[], border='',
                  size='h', loc='b', path_i=None, path_o=None, outFileName=None, format_options=[]):
@@ -407,6 +416,7 @@ class SubAreaMap(Item):
     """class object for sub area maps"""
     __class_id = 'subAreaMaps'
     ref = 'sm'
+    class_name = 'sub area map'
 
     def __init__(self, name, parent, fileName, description=None, item_id=None, routes={}, layers=[], border='', size='h',
                  loc='b', path_i=None, path_o=None, outFileName=None, format_options=[]):
