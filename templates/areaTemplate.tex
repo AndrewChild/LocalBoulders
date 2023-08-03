@@ -99,10 +99,13 @@
 %% endmacro
 %#
 %#
-%# --- Places a description followed by a linebreak so long as description is not empty
-%% macro description(description)
-%% if description != ''
-\VAR{description}\\
+%# --- Places a description, and bolded note so long as those attributes aren't empty
+%% macro body(item)		
+%% if item.description
+\VAR{item.description}\\
+%% endif
+%% if item.note
+\textbf{NOTE: \VAR{item.note}}\\
 %% endif
 %% endmacro
 %#
@@ -129,7 +132,7 @@
 \begin{multicols}{2}
 %% endif
 \VAR{resolve_images_area_head(area, size='h')}
-\VAR{description(area.description)}
+\VAR{body(area)}
 %% if area.incomplete
 \textbf{NOTE: This area is mostly incomplete. Look forward to more information in future revisions of this book or contribute your own knowledge on github.}\\
 %% endif
@@ -146,7 +149,7 @@
 \section{\VAR{subArea.getSubAreaLtr()} - \VAR{subArea.name}}\phantomsection\label{sa:\VAR{subArea.item_id}}
 %% endif
 \VAR{gps(subArea)}
-\VAR{description(subArea.description)}
+\VAR{body(subArea)}
 \VAR{resolve_images(subArea, 'a')}
 
 %% for formation in subArea.formations.values()
@@ -154,7 +157,7 @@
 \needspace{3em}
 \subsection*{\VAR{formation.name}}\phantomsection\label{bf:\VAR{formation.item_id}}
 \VAR{gps(formation)}
-\VAR{description(formation.description)}
+\VAR{body(formation)}
 \VAR{resolve_images(formation, 'a')}
 %% for route in formation.routes.values()
 \VAR{resolve_images(route)}

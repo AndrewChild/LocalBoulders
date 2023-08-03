@@ -139,11 +139,11 @@ class Area(Item):
     ref = 'a'
     class_name = 'area'
 
-    def __init__(self, name, parent, description='', item_id=None, gps=None, incomplete=False, format_options=[]):
+    def __init__(self, name, parent, description='', item_id=None, gps=None, format_options=[], note=None):
         super().__init__(name=name, parent=parent, description=description, item_id=item_id, format_options=format_options, gps=gps)
         self.color = ''
         self.color_hex = ''
-        self.incomplete = incomplete
+        self.note = note
         self.book = parent
         self.book.assign_to_dic(self.__class_id, self)
         self.subareas = OrderedDict()
@@ -170,8 +170,9 @@ class Subarea(Item):
     ref = 'sa'
     class_name = 'sub area'
 
-    def __init__(self, name, parent, description='', item_id=None, gps=None, format_options=[]):
+    def __init__(self, name, parent, description='', item_id=None, gps=None, format_options=[], note=None):
         super().__init__(name=name, parent=parent, description=description, item_id=item_id, format_options=format_options, gps=gps)
+        self.note = note
         self.area = parent
         self.book = parent.book
         self.book.assign_to_dic(self.__class_id, self)
@@ -194,8 +195,9 @@ class Formation(Item):
     ref = 'bd'
     class_name = 'formation'
 
-    def __init__(self, name, parent, description='', item_id=None, format_options=[], gps=None):
+    def __init__(self, name, parent, description='', item_id=None, format_options=[], gps=None, note=None):
         super().__init__(name=name, parent=parent, description=description, item_id=item_id, format_options=format_options, gps=gps)
+        self.note = note
         self.subarea = parent
         self.book = parent.book
         self.area = parent.area

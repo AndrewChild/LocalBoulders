@@ -9,7 +9,6 @@
 	- Generate a JSON file for Andrew Young's project
     LaTeX:
     - GPS index of boulders
-	- Expand area inclomplete function to just allow any kind of bolded warning to be added at the end of the description
     Other:
     - Consider alternatives to LaTeX. HTML?
     - documentation
