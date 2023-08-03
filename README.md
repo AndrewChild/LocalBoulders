@@ -7,10 +7,9 @@
         - maybe move class.ref to genLaTeX
 	- spread and full page formats should work for maps too
 	- a lot of functions still reference name when they should reference item_id
-	- need a way to flag photo objects to be included in non print version of book
     LaTeX:
     - GPS index of boulders
-	- little bug where image links don't take you to the right page, but do display the right page
+	- little bug where image links don't take you to the right page, but do display the right page (this is possibly due to ghostscript and fixable with exiftool)
 	- add book options for index sections
 	- Expand area inclomplete function to just allow any kind of bolded warning to be added at the end of the description
     Other:
