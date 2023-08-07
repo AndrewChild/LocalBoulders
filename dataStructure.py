@@ -91,7 +91,7 @@ class ItemImage(Item):
         self.aspect_ratio = None
         if size == 'p':
             self.aspect_ratio = self.page_aspects[self.book.options['paper size']]
-        elif size == 's':
+        elif size in ['s', 'pr']:
             self.aspect_ratio = 1/self.page_aspects[self.book.options['paper size']]
 
     def save_insert(self):
@@ -126,6 +126,7 @@ class ItemMap(ItemImage):
         'h': 124 / 60,  # half page width
         'f': 124 / 124,  # full page width
         'p': 124 / 148,  # page width (i.e. photo page insert)
+        'pr': 124 / 210,  # page width (i.e. photo page insert)
         's': 124 / (148 * 2),  # 2-page spread
     }
 
@@ -149,7 +150,7 @@ class ItemMap(ItemImage):
 
     def update(self):
         update_svg(self)
-        if self.size == 'p' or self.size == 's':
+        if self.size in ['p', 'pr', 's']:
             self.save_insert()
 
 

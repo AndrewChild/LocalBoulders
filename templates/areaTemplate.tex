@@ -16,7 +16,7 @@
 %# --- this is sort of a hacky work around that prevents the template from starting and ending multicols immediately 
 %# --- if an area starts with a full width photo
 %% macro resolve_images_area_head(item, loc='b', size='f')
-%% if size == 'f' or size == 'h'
+%% if size in ['f', 'h']
 %% for im in item.images
 %% if im.loc == loc and im.size == size
 \VAR{image(im, size='h')}
@@ -40,7 +40,7 @@
 %# --- bad form, but its early and I couldn't figure out how to do this without using else
 %% else
 \phantomsection\label{\VAR{im.ref}:\VAR{im.item_id}}
-%% if size == 'f' or size == 'h'
+%% if size in ['f', 'h']
 	%% if size == 'f'
 	\end{multicols}
 	%% endif
@@ -57,6 +57,8 @@
 	%% endif
 %% elif size == 'p'
 	\includepdf[picturecommand*={\VAR{caption2(im.latex_description)}}]{\VAR{im.path_o+im.out_file_name}}
+%% elif size == 'pr'
+	\includepdf[landscape=true, picturecommand*={\VAR{caption2(im.latex_description)}}]{\VAR{im.path_o+im.out_file_name}}
 %% elif size == 's'
 	\cleartoleftpage
 	\includepdf[pages=-, picturecommand*={\VAR{caption2(im.latex_description)}}]{\VAR{im.path_o+im.out_file_name}}
