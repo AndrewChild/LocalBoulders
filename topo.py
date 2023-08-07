@@ -224,7 +224,7 @@ def update_svg(ItemMap):
             return
 
     tree.write(newSVG)
-    fileObj = open(newSVG)
+    file_Obj = open(newSVG)
     if ItemMap.size in ['f', 'h']:
         print(f'writing {xmlFile} to png')
         if ItemMap.size == 'h':
@@ -234,7 +234,7 @@ def update_svg(ItemMap):
         cairosvg.svg2png(file_obj=file_Obj, write_to=newImage, dpi=200, output_width=owidth)
     else:
         print(f'writing {xmlFile} to pdf')
-        cairosvg.svg2png(file_obj=fileObj, write_to=newImage, dpi=200)
+        cairosvg.svg2png(file_obj=file_Obj, write_to=newImage, dpi=200)
 
 
     fileObj.close()
