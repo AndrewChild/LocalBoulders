@@ -237,7 +237,7 @@ def update_svg(ItemMap):
         cairosvg.svg2png(file_obj=file_Obj, write_to=newImage, dpi=200)
 
 
-    fileObj.close()
+    file_Obj.close()
     return
 
 
