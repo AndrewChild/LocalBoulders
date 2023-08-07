@@ -44,11 +44,11 @@
 	%% if size == 'f'
 	\end{multicols}
 	%% endif
-	\setbox0=\hbox{\begin{overpic}[width=0.8\linewidth]{\VAR{im.path_o+im.outFileName}}\VAR{caption1(im.latex_description)}
+	\setbox0=\hbox{\begin{overpic}[width=0.8\linewidth]{\VAR{im.path_o+im.out_file_name}}\VAR{caption1(im.latex_description)}
 	\end{overpic}}
 	\needspace{\ht0}
 	\begin{center}
-	\begin{overpic}[width=0.9\linewidth]{\VAR{im.path_o+im.outFileName}}\VAR{caption1(im.latex_description)}
+	\begin{overpic}[width=0.9\linewidth]{\VAR{im.path_o+im.out_file_name}}\VAR{caption1(im.latex_description)}
 	\end{overpic}
 	\end{center}
 	%% if size == 'f'
@@ -56,10 +56,10 @@
 	\begin{multicols}{2}
 	%% endif
 %% elif size == 'p'
-	\includepdf[picturecommand*={\VAR{caption2(im.latex_description)}}]{\VAR{im.path_o+im.outFileName}}
+	\includepdf[picturecommand*={\VAR{caption2(im.latex_description)}}]{\VAR{im.path_o+im.out_file_name}}
 %% elif size == 's'
 	\cleartoleftpage
-	\includepdf[pages=-, picturecommand*={\VAR{caption2(im.latex_description)}}]{\VAR{im.path_o+im.outFileName}}
+	\includepdf[pages=-, picturecommand*={\VAR{caption2(im.latex_description)}}]{\VAR{im.path_o+im.out_file_name}}
 %% endif
 %% endif
 %% endmacro

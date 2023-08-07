@@ -28,14 +28,17 @@ class Item:
         self.item_id = item_id
         self.format_options = format_options
         self.gps = gps
-        self.photos = []    # container for all action and scenery photos attached to an item
-        self.maps = []      # container for all layout maps and topos attached to an item
-        self.images = []    # container for all images attached to item
+        self.photos = []  # container for all action and scenery photos attached to an item
+        self.maps = []  # container for all layout maps and topos attached to an item
+        self.images = []  # container for all images attached to item
 
         if not self.item_id:
             self.item_id = name
-        if not paths:
+        if not self.paths:
             self.paths = parent.paths
+        else:
+            if parent:
+                self.paths = {**parent.paths, **paths}
         if not options:
             self.options = parent.options
 
@@ -65,6 +68,91 @@ class Climb:
         self.FA = FA
 
 
+class ItemImage(Item):
+    """
+    Base class for all image items (photos, topos, and maps. Inherits from item
+    """
+    page_aspects = { # holds aspect ratios of various paper sizes. currently only A5 is supported
+        'A5': 148/210
+    }
+
+    def __init__(self, name, parent, file_name, description=None, item_id=None, size='h', loc='b', format_options=[],
+                 paths={}):
+        super().__init__(name=name, parent=parent, description=description, item_id=item_id,
+                         format_options=format_options, paths=paths)
+        self.file_name = file_name
+        self.out_file_name = file_name
+        self.path = self.paths['photos']
+        self.path_o = self.path
+        self.size = size
+        self.loc = loc
+        self.book = parent.book
+        self.parent.images.append(self)
+        self.aspect_ratio = None
+        if size == 'p':
+            self.aspect_ratio = self.page_aspects[self.book.options['paper size']]
+        elif size == 's':
+            self.aspect_ratio = 1/self.page_aspects[self.book.options['paper size']]
+
+    def save_insert(self):
+        im = Image.open(self.path_o + self.out_file_name)
+        self.out_file_name = self.file_name.split('.')[0] + '.pdf'
+        w_i, h_i = im.size
+        aspect_ratio_i = w_i / h_i
+        if aspect_ratio_i < self.aspect_ratio:
+            h = w_i / self.aspect_ratio
+            h_adj = (h_i - h) / 2
+            im = im.crop((0, 0 + h_adj, w_i, h_i - h_adj))
+        else:
+            w = h_i * self.aspect_ratio
+            w_adj = (w_i - w) / 2
+            im = im.crop((0 + w_adj, 0, w_i - w_adj, h_i))
+
+        if self.size == 's':
+            w, h = im.size
+            im1 = im.crop((0, 0, w / 2, h))
+            im2 = im.crop((w / 2, 0, w, h))
+            im1.save(self.path_o + self.out_file_name, 'PDF', resolution=100.0, save_all=True, append_images=[im2])
+        else:
+            im.save(self.path_o + self.out_file_name, 'PDF', resolution=100.0, save_all=True)
+
+
+class ItemMap(ItemImage):
+    """
+    Base class for annoted map images (topos and maps)
+    """
+    photo_scales = {  # this is the amount that annotations should be scaled by for each photo size. This is
+        # currently hard coded for the LaTeX template
+        'h': 124 / 60,  # half page width
+        'f': 124 / 124,  # full page width
+        'p': 124 / 148,  # page width (i.e. photo page insert)
+        's': 124 / (148 * 2),  # 2-page spread
+    }
+
+    def __init__(self, name, parent, file_name, path_id, description=None, item_id=None, size='h', loc='b',
+                 out_file_name=None, format_options=[], paths={}, layers=[], border=''):
+        super().__init__(name=name, parent=parent, file_name=file_name, description=description, item_id=item_id,
+                         size=size, loc=loc, format_options=format_options, paths=paths)
+        self.layers = layers
+        self.border = border
+        self.book.all_maps.append(self)
+        self.parent.maps.append(self)
+
+        self.path_o = self.paths[f'{path_id}_o']
+        self.path_i = self.paths[f'{path_id}_i']
+        if out_file_name:
+            self.out_file_name = out_file_name
+        else:
+            self.out_file_name = file_name.split('.')[0] + '_c.png'
+
+        self.scale = self.photo_scales[self.size]
+
+    def update(self):
+        update_svg(self)
+        if self.size == 'p' or self.size == 's':
+            self.save_insert()
+
+
 class Book(Item):
     __class_id = 'books'
     ref = 'bk'
@@ -83,26 +171,28 @@ class Book(Item):
         'photos': './images/'
     }
     __option_defaults = {
-        'subarea_numbering': True,  # if yes route numbering resets at zero for each sub area, if no it restarts for each area
-        'aspect_ratio': 'A5',       # controls cropping of p (page) and s (spread) action photos A5 is the only option right now
+        'subarea_numbering': True,
+        # if yes route numbering resets at zero for each sub area, if no it restarts for each area
+        'paper size': 'A5',
+        # controls cropping of p (page) and s (spread) action photos A5 is the only option right now
         'include_action_photos': True,
     }
 
-    def __init__(self, name, filename='guideBook', description='', item_id=None, repo='', dl='', collaborators=[],
+    def __init__(self, name, file_name='guideBook', description='', item_id=None, repo='', dl='', collaborators=[],
                  subarea_numbering=True, paths={}, options={}, format_options=[], gps=None):
         self.paths = {**self.__path_defaults, **paths}
         self.options = {**self.__option_defaults, **options}
         super().__init__(name=name, parent=None, description=description, item_id=item_id,
                          format_options=format_options, paths=self.paths, options=self.options, gps=gps)
-        self.filename = filename
+        self.file_name = file_name
         self.areas = OrderedDict()
         self.subareas = OrderedDict()
         self.formations = OrderedDict()
         self.routes = OrderedDict()
         self.variations = OrderedDict()
         self.climbs = OrderedDict()  # container for routes and variations
-        self.all_photos = []    # container for all action and scenery photos in book
-        self.all_maps = []      # container for all layout maps and topos in book
+        self.all_photos = []  # container for all action and scenery photos in book
+        self.all_maps = []  # container for all layout maps and topos in book
 
         self.date = datetime.today().strftime('%Y-%m-%d')
         self.repo = repo
@@ -114,8 +204,6 @@ class Book(Item):
             create_qr(self.paths['qr_o'], dl, f'{self.item_id}')
 
     def gen(self):
-        self._init_paths()
-        self._update()
         gen_book_LaTeX(self)
 
     def _init_paths(self):
@@ -127,11 +215,12 @@ class Book(Item):
                 print(f'Creating new directory: {path}')
                 os.makedirs(path)
 
-    def _update(self):
+    def update(self):
+        self._init_paths()
         for area in self.areas.values():
             area.update()
         for map_item in self.all_maps:
-            update_svg(map_item)
+            map_item.update()
 
 
 class Area(Item):
@@ -140,7 +229,8 @@ class Area(Item):
     class_name = 'area'
 
     def __init__(self, name, parent, description='', item_id=None, gps=None, format_options=[], note=None):
-        super().__init__(name=name, parent=parent, description=description, item_id=item_id, format_options=format_options, gps=gps)
+        super().__init__(name=name, parent=parent, description=description, item_id=item_id,
+                         format_options=format_options, gps=gps)
         self.color = ''
         self.color_hex = ''
         self.note = note
@@ -171,7 +261,8 @@ class Subarea(Item):
     class_name = 'sub area'
 
     def __init__(self, name, parent, description='', item_id=None, gps=None, format_options=[], note=None):
-        super().__init__(name=name, parent=parent, description=description, item_id=item_id, format_options=format_options, gps=gps)
+        super().__init__(name=name, parent=parent, description=description, item_id=item_id,
+                         format_options=format_options, gps=gps)
         self.note = note
         self.area = parent
         self.book = parent.book
@@ -196,7 +287,8 @@ class Formation(Item):
     class_name = 'formation'
 
     def __init__(self, name, parent, description='', item_id=None, format_options=[], gps=None, note=None):
-        super().__init__(name=name, parent=parent, description=description, item_id=item_id, format_options=format_options, gps=gps)
+        super().__init__(name=name, parent=parent, description=description, item_id=item_id,
+                         format_options=format_options, gps=gps)
         self.note = note
         self.subarea = parent
         self.book = parent.book
@@ -216,7 +308,8 @@ class Route(Item, Climb):
 
     def __init__(self, name, parent, description='PLACEHOLDER', item_id=None, grade='?', rating=-1, serious=0,
                  grade_unconfirmed=False, name_unconfirmed=False, FA=None, format_options=[], gps=None):
-        Item.__init__(self, name=name, parent=parent, description=description, item_id=item_id, format_options=format_options, gps=gps)
+        Item.__init__(self, name=name, parent=parent, description=description, item_id=item_id,
+                      format_options=format_options, gps=gps)
         Climb.__init__(self, grade=grade, rating=rating, serious=serious, grade_unconfirmed=grade_unconfirmed,
                        name_unconfirmed=name_unconfirmed, FA=FA)
         self.boulder = parent
@@ -256,7 +349,8 @@ class Variation(Item, Climb):
 
     def __init__(self, name, parent, description='PLACEHOLDER', item_id=None, grade='?', rating=-1, serious=0,
                  grade_unconfirmed=False, name_unconfirmed=False, FA=None, format_options=[], gps=None):
-        Item.__init__(self, name=name, parent=parent, description=description, item_id=item_id, format_options=format_options, gps=gps)
+        Item.__init__(self, name=name, parent=parent, description=description, item_id=item_id,
+                      format_options=format_options, gps=gps)
         Climb.__init__(self, grade=grade, rating=rating, serious=serious, grade_unconfirmed=grade_unconfirmed,
                        name_unconfirmed=name_unconfirmed, FA=FA)
         self.route = parent
@@ -280,177 +374,73 @@ class Variation(Item, Climb):
             ct = ct + 1
 
 
-class Photo(Item):
+class Photo(ItemImage):
     """class object for general photos (action, scenery, etc.)"""
     __class_id = 'photos'
     ref = 'pt'
     class_name = 'photo'
 
-    def __init__(self, name, parent, fileName, description=None, item_id=None, size='h', loc='b', path=None, credit='',
-                 route=None, format_options=[]):
-        super().__init__(name=name, parent=parent, description=description, item_id=item_id, format_options=format_options)
-        self.fileName = fileName
-        self.size = size
-        self.loc = loc
+    def __init__(self, name, parent, file_name, description=None, item_id=None, size='h', loc='b', credit='',
+                 route=None, format_options=[], paths={}):
+        super().__init__(name=name, parent=parent, file_name=file_name, description=description, item_id=item_id,
+                         size=size, loc=loc, format_options=format_options, paths=paths)
         self.credit = credit
         self.route = route
-        self.book = parent.book
         self.book.all_photos.append(self)
         self.parent.photos.append(self)
-        self.parent.images.append(self)
 
-        if path:
-            self.path = path
-        else:
-            self.path = parent.paths['photos']
-        self.path_o = self.path
-        self.outFileName = self.fileName
         if self.size == 'p' or self.size == 's':
-            im = Image.open(self.path_o + self.fileName)
-            self.fileName = self.fileName + '.pdf'
-            if self.book.options['aspect_ratio'] == 'A5':
-                aspect_ratio_s = 1.4139
-                aspect_ratio_p = 1/aspect_ratio_s
-            if size == 's':
-                aspect_ratio = aspect_ratio_s
-            else:
-                aspect_ratio = aspect_ratio_p
-            w_i, h_i = im.size
-            aspect_ratio_i = w_i/h_i
-            if aspect_ratio_i < aspect_ratio:
-                h = w_i/aspect_ratio
-                h_adj = (h_i - h)/2
-                im = im.crop((0, 0+h_adj, w_i, h_i-h_adj))
-            else:
-                w = h_i*aspect_ratio
-                w_adj = (w_i - w)/2
-                im = im.crop((0+w_adj, 0, w_i-w_adj, h_i))
-
-            if size == 's':
-                w, h = im.size
-                im1 = im.crop((0, 0, w/2, h))
-                im2 = im.crop((w/2, 0, w, h))
-                im1.save(self.path_o + self.fileName, 'PDF', resolution=100.0, save_all=True, append_images=[im2])
-            else:
-                im.save(self.path_o + self.fileName, 'PDF', resolution=100.0, save_all=True)
+            self.save_insert()
 
 
-class Topo(Item):
+class Topo(ItemMap):
     """class object for route topos"""
     __class_id = 'topos'
     ref = 'tp'
     class_name = 'topo'
 
-    def __init__(self, name, parent, fileName, description=None, item_id=None, routes={}, layers=[], border='', size='h',
-                 loc='b', path_i=None, path_o=None, format_options=[]):
-        super().__init__(name=name, parent=parent, description=description, item_id=item_id, format_options=format_options)
-        self.fileName = fileName
+    def __init__(self, name, parent, file_name, description=None, item_id=None, routes={}, layers=[], border='',
+                 size='h', loc='b', out_file_name=None, format_options=[], paths={}):
+        super().__init__(name=name, parent=parent, file_name=file_name, path_id='topo', description=description,
+                         item_id=item_id, size=size, loc=loc, out_file_name=out_file_name,
+                         format_options=format_options,
+                         paths=paths, layers=layers, border=border)
         self.routes = routes.copy()  # not sure if this is necessary
-        self.layers = layers
-        self.border = border
-        self.size = size
-        self.loc = loc
-        self.book = parent.book
-        self.book.all_maps.append(self)
-        self.parent.maps.append(self)
-        self.parent.images.append(self)
-
-        if path_i:
-            self.path_i = path_i
-        else:
-            self.path_i = parent.paths['topo_i']
-        if path_o:
-            self.path_o = path_o
-        else:
-            self.path_o = parent.paths['topo_o']
-
-        self.outFileName = fileName.split('.')[0] + '_c.png'
-
-        if self.size == 'f':
-            self.scale = 1.0
-        else:
-            self.scale = 2.0
 
         for route in routes.values():
             route.hasTopo = True
 
 
-class AreaMap(Item):
+class AreaMap(ItemMap):
     """class object for sub area maps"""
     __class_id = 'areaMaps'
     ref = 'am'
     class_name = 'area map'
 
-    def __init__(self, name, parent, fileName, description=None, item_id=None, sub_areas={}, layers=[], border='',
-                 size='h', loc='b', path_i=None, path_o=None, outFileName=None, format_options=[]):
-        super().__init__(name=name, parent=parent, description=description, item_id=item_id, format_options=format_options)
-        self.fileName = fileName
+    def __init__(self, name, parent, file_name, description=None, item_id=None, sub_areas={}, layers=[], border='',
+                 size='h', loc='b', out_file_name=None, format_options=[], paths={}):
+        super().__init__(name=name, parent=parent, file_name=file_name, path_id='area', description=description,
+                         item_id=item_id, size=size, loc=loc, out_file_name=out_file_name,
+                         format_options=format_options,
+                         paths=paths, layers=layers, border=border)
         self.sub_areas = sub_areas.copy()  # not sure if this is necessary
-        self.layers = layers
-        self.border = border
-        self.size = size
-        self.loc = loc
         self.routes = []
-        self.book = parent.book
-        self.book.all_maps.append(self)
-        self.parent.maps.append(self)
-        self.parent.images.append(self)
-
-        if path_i:
-            self.path_i = path_i
-        else:
-            self.path_i = parent.paths['area_i']
-        if path_o:
-            self.path_o = path_o
-        else:
-            self.path_o = parent.paths['area_o']
-
-        if not outFileName:
-            self.outFileName = fileName.split('.')[0] + '_c.png'
-
-        if self.size == 'f':
-            self.scale = 1.0
-        else:
-            self.scale = 2.0
 
 
-class SubAreaMap(Item):
+class SubAreaMap(ItemMap):
     """class object for sub area maps"""
     __class_id = 'subAreaMaps'
     ref = 'sm'
     class_name = 'sub area map'
 
-    def __init__(self, name, parent, fileName, description=None, item_id=None, routes={}, layers=[], border='', size='h',
-                 loc='b', path_i=None, path_o=None, outFileName=None, format_options=[]):
-        super().__init__(name=name, parent=parent, description=description, item_id=item_id, format_options=format_options)
-        self.fileName = fileName
+    def __init__(self, name, parent, file_name, description=None, item_id=None, routes={}, layers=[], border='',
+                 size='h',
+                 loc='b', out_file_name=None, format_options=[], paths={}):
+        super().__init__(name=name, parent=parent, file_name=file_name, path_id='subarea', description=description,
+                         item_id=item_id, size=size, loc=loc, out_file_name=out_file_name,
+                         format_options=format_options,
+                         paths=paths, layers=layers, border=border)
         self.routes = routes.copy()  # not sure if this is necessary
-        self.layers = layers
-        self.border = border
-        self.size = size
-        self.loc = loc
-        self.outFileName = outFileName
-        self.book = parent.book
-        self.book.all_maps.append(self)
-        self.parent.maps.append(self)
-        self.parent.images.append(self)
-
-        if path_i:
-            self.path_i = path_i
-        else:
-            self.path_i = parent.paths['subarea_i']
-        if path_o:
-            self.path_o = path_o
-        else:
-            self.path_o = parent.paths['subarea_o']
-
-        if not outFileName:
-            self.outFileName = fileName.split('.')[0] + '_c.png'
-
-        if self.size == 'f':
-            self.scale = 1.0
-        else:
-            self.scale = 2.0
 
 
 if __name__ == '__main__':

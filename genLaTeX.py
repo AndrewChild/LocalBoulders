@@ -102,7 +102,7 @@ def gen_book_LaTeX(book):
     f.write(indicesTemplate.render(book=book))
     f.close()
 
-    paths_to_srcub = [f'{book.filename}.pdf', 'guideBook.aux', 'guideBook.log']
+    paths_to_srcub = [f'{book.file_name}.pdf', 'guideBook.aux', 'guideBook.log']
     for p in paths_to_srcub:
         if os.path.exists(p):
             os.remove(p)
@@ -121,4 +121,4 @@ def gen_book_LaTeX(book):
                                 '-dBATCH', '-dPrinted=false', '-sOutputFile=guideBook-compressed.pdf', 'guideBook.pdf'])
     process.wait()
     os.remove('guideBook.pdf')
-    os.rename('guideBook-compressed.pdf', f'{book.filename}.pdf')
+    os.rename('guideBook-compressed.pdf', f'{book.file_name}.pdf')

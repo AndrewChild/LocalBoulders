@@ -6,7 +6,7 @@
 	- move LaTeX specific stuff to its own folder/project
         - maybe move class.ref to genLaTeX
 	- spread and full page formats should work for maps too
-	- Generate a JSON file for Andrew Young's project
+	- reassess photo scales, half size is not actually 1/2 of the full size width (60mm vs 124mm)
     LaTeX:
     - GPS index of boulders
     Other:

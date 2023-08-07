@@ -71,14 +71,18 @@ def _gen_label(elm, label, color, scale):
     return circleAttributes, labelAttributes, textAttributes
 
 
-def _update_border(root, data_input, namespaces):
+def _update_border(root, ItemMap, namespaces, scale):
+    viewBox_i = root.attrib['viewBox']
+    viewBox_i = [float(x) for x in viewBox_i.split()]
+    width_i = viewBox_i[2] - viewBox_i[0]
+    width_f = width_i
     for subTree in root.findall('./svg:g', namespaces):
         #if border is defined try to find the border rectangle and format it
-        if data_input.border:
+        if ItemMap.border:
             elements = subTree.findall('./svg:rect', namespaces)
             for elm in elements:
                 elm_id = elm.attrib['id']
-                if elm_id == data_input.border:
+                if elm_id == ItemMap.border:
                     borderAttributes = elm.attrib
                     subTree.remove(elm)
                     root.attrib['width'] = borderAttributes['width']
@@ -87,10 +91,41 @@ def _update_border(root, data_input, namespaces):
                                                            borderAttributes['y'],
                                                            borderAttributes['width'],
                                                            borderAttributes['height'])
-    scale = round(data_input.scale*float(root.attrib['width'])/1920, 2)
+                    width_f = float(borderAttributes['width'])
+    scale = round(scale * width_f / width_i, 2)
     return scale
 
-def update_svg(data_input, layer_mode=False):
+
+def _crop_to_aspect(root, ItemMap, scale):
+    '''
+    Checks if an aspect ratio for the map is defined and if so crops the image to fit that aspect
+    '''
+    if ItemMap.aspect_ratio:
+        viewBox_i = root.attrib['viewBox']
+        viewBox_i = [float(x) for x in viewBox_i.split()]
+        viewBox_f = viewBox_i
+        width_i = viewBox_i[2]
+        height_i = viewBox_i[3]
+        aspect_ratio_i = width_i / height_i
+        if aspect_ratio_i < ItemMap.aspect_ratio:
+            height_f = width_i / ItemMap.aspect_ratio
+            width_f = width_i
+            h_adj = (height_i - height_f) / 2
+            viewBox_f[1] = viewBox_f[1] + h_adj
+            viewBox_f[3] = height_f
+        else:
+            width_f = height_i * ItemMap.aspect_ratio
+            height_f = height_i
+            w_adj = (width_i - width_f) / 2
+            viewBox_f[0] = viewBox_f[0] + w_adj
+            viewBox_f[2] = width_f
+        root.attrib['width'] = str(width_f)
+        root.attrib['height'] = str(height_f)
+        root.attrib['viewBox'] = ' '.join([str(x) for x in viewBox_f])
+        scale = round(scale * width_f / width_i, 2)
+    return scale
+
+def update_svg(ItemMap):
     namespaces = {
         'inkscape': "http://www.inkscape.org/namespaces/inkscape",
         'sodipodi': "http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd",
@@ -99,28 +134,30 @@ def update_svg(data_input, layer_mode=False):
     }
     n = r'{http://www.w3.org/2000/svg}'
 
-    xmlFile = data_input.path_i + data_input.fileName
+    xmlFile = ItemMap.path_i + ItemMap.file_name
     tree = ET.parse(xmlFile)
     root = tree.getroot()
 
-    scale = _update_border(root, data_input, namespaces)
+    scale = round(ItemMap.scale * float(root.attrib['width']) / 1920, 2) # create a local instance of scale so that the object attribute isn't manipulated
+    scale = _update_border(root, ItemMap, namespaces, scale)
+    scale = _crop_to_aspect(root, ItemMap, scale)
 
     for subTree in root.findall('./svg:g', namespaces):
         sub_area_elemets = []
-        if hasattr(data_input, 'sub_areas'):
+        if hasattr(ItemMap, 'sub_areas'):
             for elm in subTree.findall('./svg:rect', namespaces):
-                if elm.attrib['id'] in data_input.sub_areas:
+                if elm.attrib['id'] in ItemMap.sub_areas:
                     sub_area_elemets.append(elm)
 
         #if specific layers are defined skip (empty) all other layers
-        if hasattr(data_input, 'layers') and data_input.layers:
+        if hasattr(ItemMap, 'layers') and ItemMap.layers:
             if '{http://www.inkscape.org/namespaces/inkscape}label' in subTree.attrib.keys():
-                if subTree.attrib['{http://www.inkscape.org/namespaces/inkscape}label'] not in data_input.layers:
+                if subTree.attrib['{http://www.inkscape.org/namespaces/inkscape}label'] not in ItemMap.layers:
                     #clear all elements from subtree
                     attributes = subTree.attrib
                     subTree.clear()
                     subTree.attrib = attributes
-            elif subTree.attrib['id'] not in data_input.layers:
+            elif subTree.attrib['id'] not in ItemMap.layers:
                 #clear all elements from subtree
                 attributes = subTree.attrib
                 subTree.clear()
@@ -128,9 +165,9 @@ def update_svg(data_input, layer_mode=False):
 
         if sub_area_elemets:
             for elm in sub_area_elemets:
-                sub_area = data_input.sub_areas[elm.attrib['id']]
+                sub_area = ItemMap.sub_areas[elm.attrib['id']]
                 label = sub_area.getSubAreaLtr()
-                color = data_input.parent.color_hex
+                color = ItemMap.parent.color_hex
                 elm.attrib['cx'] = str(float(elm.attrib['x']) + 0.5 * float(elm.attrib['width']))
                 elm.attrib['cy'] = str(float(elm.attrib['y']) + 0.5 * float(elm.attrib['height']))
                 circleAttributes, labelAttributes, textAttributes = _gen_label(elm, label, color, scale)
@@ -144,7 +181,7 @@ def update_svg(data_input, layer_mode=False):
         elements = subTree.findall('./svg:path', namespaces)
         for elm in elements:
             elm_id = elm.attrib['id']
-            if elm_id in data_input.routes:
+            if elm_id in ItemMap.routes:
                 dashlineAttributes = {
                     'id': elm_id + '_clone',
                     'style': f'fill:none;stroke:#FFFFFF;stroke-width:{7*scale};stroke-dasharray:{30*scale}, {30*scale}',
@@ -152,7 +189,7 @@ def update_svg(data_input, layer_mode=False):
                 }
                 lineAttributes = {
                     'id': elm_id,
-                    'style': f'fill:none;stroke:{data_input.routes[elm_id].color_hex};stroke-width:{7*scale};stroke-dasharray:none',
+                    'style': f'fill:none;stroke:{ItemMap.routes[elm_id].color_hex};stroke-width:{7 * scale};stroke-dasharray:none',
                     'd': elm.attrib['d']
                 }
                 if 'marker' in elm.attrib['style']:
@@ -167,10 +204,10 @@ def update_svg(data_input, layer_mode=False):
         elements = subTree.findall('./svg:ellipse', namespaces) + subTree.findall('./svg:circle', namespaces)
         for elm in elements:
             elm_id = elm.attrib['id']
-            if elm_id in data_input.routes:
+            if elm_id in ItemMap.routes:
 
-                label = data_input.routes[elm_id].getRtNum()
-                color = data_input.routes[elm_id].color_hex
+                label = ItemMap.routes[elm_id].getRtNum()
+                color = ItemMap.routes[elm_id].color_hex
 
                 circleAttributes, labelAttributes, textAttributes = _gen_label(elm, label, color, scale)
                 subTree.remove(elm)
@@ -181,7 +218,7 @@ def update_svg(data_input, layer_mode=False):
                         t = ET.SubElement(elm2, f'{n}text', textAttributes).text = str(label)
 
     # write to file
-    newSVG = data_input.path_o + data_input.outFileName.split('.')[0] + '.svg'
+    newSVG = ItemMap.path_o + ItemMap.out_file_name.split('.')[0] + '.svg'
     ET.indent(tree)
 
     if os.path.exists(newSVG):
@@ -194,7 +231,7 @@ def update_svg(data_input, layer_mode=False):
     newPNG = newSVG.replace('.svg', '.png')
     tree.write(newSVG)
     fileObj = open(newSVG)
-    if data_input.size == 'h':
+    if ItemMap.size == 'h':
         owidth = 600
     else:
         owidth = 1200
