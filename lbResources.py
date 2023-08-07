@@ -192,3 +192,12 @@ def genHistogram(area):
 def create_qr(path, s, name):
     qr_code = qrcode.make(s)
     qr_code.save(f'{path}{name}_qr.png')
+
+
+def mod_file_extension(file_base_name, new_extension):
+    '''
+    takes a file base name and changes the extension
+    '''
+    file_name_list = file_base_name.split('.')
+    file_name_list.pop()
+    return '.'.join(file_name_list) + new_extension

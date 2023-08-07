@@ -9,7 +9,7 @@ import sys
 from datetime import datetime
 from topo import update_svg
 from genLaTeX import gen_book_LaTeX
-from lbResources import genHistogram, get_grade_atts, create_qr
+from lbResources import genHistogram, get_grade_atts, create_qr, mod_file_extension
 from collections import OrderedDict
 from PIL import Image
 
@@ -96,7 +96,7 @@ class ItemImage(Item):
 
     def save_insert(self):
         im = Image.open(self.path_o + self.out_file_name)
-        self.out_file_name = self.file_name.split('.')[0] + '.pdf'
+        self.out_file_name = mod_file_extension(self.file_name, '.pdf')
         w_i, h_i = im.size
         aspect_ratio_i = w_i / h_i
         if aspect_ratio_i < self.aspect_ratio:
@@ -144,14 +144,17 @@ class ItemMap(ItemImage):
         if out_file_name:
             self.out_file_name = out_file_name
         else:
-            self.out_file_name = file_name.split('.')[0] + '_c.png'
+            if self.size in ['p', 'pr', 's']:
+                self.out_file_name = mod_file_extension(file_name, '_c.pdf')
+            else:
+                self.out_file_name = mod_file_extension(file_name, '_c.png')
 
         self.scale = self.photo_scales[self.size]
 
     def update(self):
         update_svg(self)
-        if self.size in ['p', 'pr', 's']:
-            self.save_insert()
+        #if self.size in ['p', 'pr', 's']:
+        #    self.save_insert()
 
 
 class Book(Item):
@@ -242,10 +245,8 @@ class Area(Item):
         self.routes = OrderedDict()
         self.variations = OrderedDict()
 
-    def histogram(self):
-        genHistogram(self)
-
     def update(self):
+        genHistogram(self)
         ct = 0
         for area in self.parent.areas.values():
             if area.item_id == self.item_id:

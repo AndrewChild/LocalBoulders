@@ -93,7 +93,6 @@ def gen_book_LaTeX(book):
     f.close()
 
     for area in book.areas.values():
-        area.histogram()
         f = open(f"{book.paths['LaTeXOut']}" + area.item_id + '.tex', 'w', encoding="utf-8")
         f.write(areaTemplate.render(area=area))
         f.close()

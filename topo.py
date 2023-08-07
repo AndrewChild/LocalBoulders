@@ -2,6 +2,7 @@ import xml.etree.ElementTree as ET
 import os
 import cairosvg
 import sys
+from lbResources import mod_file_extension
 
 
 def _getApproximateArialStringWidth(st, min_size=False):
@@ -21,12 +22,6 @@ def _getApproximateArialStringWidth(st, min_size=False):
         else: size += 50
     if min_size: size = max(size, 190)
     return size * 6 / 1000.0 # Convert to picas
-
-
-def _mod_file_name(filePath, mod):
-    file_bn = os.path.basename(filePath)
-    file_bn_list = file_bn.split('.')
-    return filePath.replace(file_bn, file_bn_list[0] + mod + '.' + file_bn_list[1])
 
 
 def _gen_label(elm, label, color, scale):
@@ -218,27 +213,30 @@ def update_svg(ItemMap):
                         t = ET.SubElement(elm2, f'{n}text', textAttributes).text = str(label)
 
     # write to file
-    newSVG = ItemMap.path_o + ItemMap.out_file_name.split('.')[0] + '.svg'
+    newImage = ItemMap.path_o + ItemMap.out_file_name
+    newSVG = ItemMap.path_o + mod_file_extension(ItemMap.out_file_name, '.svg')
     ET.indent(tree)
 
-    if os.path.exists(newSVG):
+    if os.path.exists(newImage):
         old_root = ET.parse(newSVG).getroot()
         if ET.tostring(root) == ET.tostring(old_root):
-            print(f'File {xmlFile} already up to date')
+            print(f'File {ItemMap.out_file_name} already up to date')
             return
 
-    print(f'writing {xmlFile} to png')
-    newPNG = newSVG.replace('.svg', '.png')
     tree.write(newSVG)
     fileObj = open(newSVG)
-    if ItemMap.size == 'h':
-        owidth = 600
+    if ItemMap.size in ['f', 'h']:
+        print(f'writing {xmlFile} to png')
+        if ItemMap.size == 'h':
+            owidth = 600
+        else:
+            owidth = 1200
+        cairosvg.svg2png(file_obj=file_Obj, write_to=newImage, dpi=200, output_width=owidth)
     else:
-        owidth = 1200
+        print(f'writing {xmlFile} to pdf')
+        cairosvg.svg2png(file_obj=fileObj, write_to=newImage, dpi=200)
 
-    cairosvg.svg2png(file_obj=fileObj,
-                     write_to=newPNG, dpi=200, output_width=owidth
-                     )
+
     fileObj.close()
     return
 
