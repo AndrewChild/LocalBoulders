@@ -1,5 +1,5 @@
 \twocolumn
-\formatChapter{Index}
+\formatUnnumberedChapter{Index}
 \begin{flushleft}
 
 \needspace{1.5cm}
@@ -36,18 +36,12 @@
 %% endif
 
 %% if not 'suppress_first_ascents_index' in book.format_options
-\needspace{1.5cm}
 \section{Known First Ascents}
-\begin{center}
-\rowcolors{2}{MidnightBlue!10}{white}
-\begin{supertabular}{p{0.42\linewidth}p{0.42\linewidth}}
 %% for climb in book.climbs.values() | sort(attribute="name")
 %% if climb.FA
-\VAR{climb.name} & \VAR{climb.FA}\\
+\textbf{\VAR{climb.name}:} \VAR{climb.FA}\\
 %% endif
 %% endfor
-\end{supertabular}
-\end{center}
 %% endif
 
 %% if not ('suppress_photo_credits_index' in book.format_options) and not ('skip_action_photos' in book.format_options)
