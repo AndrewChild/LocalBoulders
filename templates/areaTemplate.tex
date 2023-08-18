@@ -52,7 +52,6 @@
 	\end{overpic}
 	\end{center}
 	%% if size == 'f'
-	\raggedcolumns
 	\begin{multicols}{2}
 	%% endif
 %% elif size == 'p'
@@ -148,6 +147,12 @@
 \newpage
 %% else
 \needspace{6em}
+%% if 'section_break' in subArea.format_options
+\end{multicols}
+\hrule 
+\needspace{6em}
+\begin{multicols}{2}
+%% endif
 %% endif
 \VAR{resolve_images(subArea)}
 %% if subArea.name
