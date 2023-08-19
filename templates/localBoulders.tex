@@ -1,3 +1,4 @@
+%% import 'macros.tex' as m
 \documentclass[10pt, twoside]{report}
  \renewcommand{\familydefault}{\sfdefault}
 \usepackage[utf8]{inputenc}
@@ -21,6 +22,7 @@
 \usepackage{changepage} 
 \usepackage{needspace}
 \usepackage[percent]{overpic}
+\usepackage{pdflscape}
 \usepackage{pdfpages}
 \usepackage{colortbl}
 \usepackage{varioref}
@@ -30,8 +32,8 @@
 \pagestyle{fancy}
 
 \setlength\parindent{0pt}
-\setenumerate{leftmargin=*}
 \setlength{\tabcolsep}{3pt}
+\setenumerate{leftmargin=*}
 \renewcommand{\labelenumi}{\textbf{\arabic{enumi}}} % I don't think that this does anything anymore
 \renewcommand{\labelenumii}{\arabic{enumi}\alph{enumii}} % I don't think that this does anything anymore
 \setcounter{secnumdepth}{0} % prevents section (sub area) numbering
@@ -104,9 +106,11 @@
 %% endif
 
 \newcommand\chapterColor{MidnightBlue}
+\VAR{m.resolve_images(book, loc='b')}
 \input{acknowledgements}
 %% if not 'supress_TOC' in book.format_options
 \tableofcontents
+\VAR{m.resolve_images(book, loc='a')}
 \clearpage
 %% endif
 %% for area in book.areas.values()
@@ -115,5 +119,6 @@
 %% endfor 
 \renewcommand\chapterColor{MidnightBlue}
 \input{index}
+\VAR{m.resolve_images(book, loc='e')}
 
 \end{document}

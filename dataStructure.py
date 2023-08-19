@@ -95,7 +95,7 @@ class ItemImage(Item):
             self.aspect_ratio = 1/self.page_aspects[self.book.options['paper size']]
 
     def save_insert(self):
-        im = Image.open(self.path_o + self.out_file_name)
+        im = Image.open(self.path_o + self.out_file_name).convert('RGB')
         self.out_file_name = mod_file_extension(self.file_name, '.pdf')
         w_i, h_i = im.size
         aspect_ratio_i = w_i / h_i
@@ -194,6 +194,7 @@ class Book(Item):
         self.formations = OrderedDict()
         self.routes = OrderedDict()
         self.variations = OrderedDict()
+        self.book = self
         self.climbs = OrderedDict()  # container for routes and variations
         self.all_photos = []  # container for all action and scenery photos in book
         self.all_maps = []  # container for all layout maps and topos in book
@@ -391,7 +392,7 @@ class Photo(ItemImage):
         self.book.all_photos.append(self)
         self.parent.photos.append(self)
 
-        if self.size == 'p' or self.size == 's':
+        if self.size in ['p', 'pr', 's']:
             self.save_insert()
 
 

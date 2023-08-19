@@ -7,6 +7,9 @@
         - maybe move class.ref to genLaTeX
     LaTeX:
     - GPS index of boulders
+	- overhaul image captions
+	  - dynamically set put command based on page size and text ammound
+	  - If text doesn't use full box width change box size
     Other:
     - Consider alternatives to LaTeX. HTML?
     - documentation

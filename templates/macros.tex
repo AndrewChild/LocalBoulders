@@ -1,0 +1,140 @@
+%# --- loops through all images attached to item and checks to see if they should be placed here
+%% macro resolve_images(item, loc='b')
+%% for im in item.images
+%% if im.loc == loc
+\VAR{image(im, im.size)}
+%% endif
+%% endfor
+%% endmacro
+
+
+%# --- this is sort of a hacky work around that prevents the template from starting and ending multicols immediately 
+%# --- if an area starts with a full width photo
+%% macro resolve_images_area_head(item, loc='b', size='f')
+%% if size in ['f', 'h']
+%% for im in item.images
+%% if im.loc == loc and im.size == size
+\VAR{image(im, size='h')}
+%% endif
+%% endfor
+%% else
+%% for im in item.images
+%% if im.loc == loc and im.size == size
+\VAR{image(im, im.size)}
+%% endif
+%% endfor
+%% endif
+%% endmacro
+
+
+%# --- Handles image placement. 
+%# --- Skips placement of action photos if "skip_action_photos" format option is entered
+%# --- Image placement syntax varies based on size
+%% macro image(im, size='h')
+%% if ('skip_action_photos' in im.book.format_options) and (im.ref == 'pt') and ('force_include' not in im.format_options)
+%# --- bad form, but its early and I couldn't figure out how to do this without using else
+%% else
+\phantomsection\label{\VAR{im.ref}:\VAR{im.item_id}}
+%% if size in ['f', 'h']
+	%% if size == 'f'
+	\end{multicols}
+	%% endif
+	\setbox0=\hbox{\begin{overpic}[width=0.8\linewidth]{\VAR{im.path_o+im.out_file_name}}\VAR{caption1(im.latex_description)}
+	\end{overpic}}
+	\needspace{\ht0}
+	\begin{center}
+	\begin{overpic}[width=0.9\linewidth]{\VAR{im.path_o+im.out_file_name}}\VAR{caption1(im.latex_description)}
+	\end{overpic}
+	\end{center}
+	%% if size == 'f'
+	\begin{multicols}{2}
+	%% endif
+%% elif size == 'p'
+	\includepdf[picturecommand*={\VAR{caption2(im.latex_description)}}]{\VAR{im.path_o+im.out_file_name}}
+%% elif size == 'pr'
+  \begin{landscape}
+	\includepdf[angle=90, picturecommand*={\VAR{caption3(im.latex_description)}}]{\VAR{im.path_o+im.out_file_name}}
+  \end{landscape}
+%% elif size == 's'
+	\cleartoleftpage
+	\includepdf[pages=-, picturecommand*={\VAR{caption2(im.latex_description)}}]{\VAR{im.path_o+im.out_file_name}}
+%% endif
+%% endif
+%% endmacro
+
+
+%# --- Handles caption placement for half width (h) and full width (f) images. 
+%% macro caption1(description)
+%% if description
+\put (0,5) {
+\colorbox{\chapterColor}{
+\parbox{0.7\linewidth}{
+\textcolor{white}{
+\VAR{description}
+}}}}
+%% endif
+%% endmacro
+
+%# --- Handles caption placement for page (p) and spread (s) images. 
+%% macro caption2(description)
+%% if description
+\put (10,10) {
+\colorbox{\chapterColor}{
+\parbox{0.6\paperwidth}{
+\textcolor{white}{
+\VAR{description}
+}}}}
+%% endif
+%% endmacro
+
+
+%# --- Handles caption placement for page rotate (pr) images. 
+%% macro caption3(description)
+%% if description
+\put (400,10) {
+\rotatebox[origin =lb]{90}{
+\colorbox{\chapterColor}{
+\parbox{0.6\pageheight}{
+\textcolor{white}{
+\VAR{description}
+}}}}}
+%% endif
+%% endmacro
+
+
+%# --- Places a formatted title and description for the input climb. 
+%% macro climbLabel(climb)
+\needspace{2em}
+\phantomsection\label{\VAR{climb.ref}:\VAR{climb.item_id}}
+\colorbox{\VAR{climb.color_LaTeX}}{
+\parbox{0.95\linewidth}{
+\hspace{-1ex}\textbf{$\Box$
+\VAR{climb.getRtNum()} \VAR{climb.name}\VAR{climb.name_unconfirmed_LaTeX} \VAR{climb.grade_str}\VAR{climb.grade_unconfirmed_LaTeX} \VAR{climb.rating_LaTeX} \VAR{climb.serious_LaTeX}
+}}}
+\begin{adjustwidth}{1.3em}{}			
+\VAR{gps(climb)}
+\VAR{climb.description}
+%% if not climb.hasTopo
+  (No Topo)
+%% endif
+\end{adjustwidth}
+%% endmacro
+
+
+%# --- Places a description, and bolded note so long as those attributes aren't empty
+%% macro body(item)		
+%% if item.description
+\VAR{item.description}\\
+%% endif
+%% if item.note
+\textbf{NOTE: \VAR{item.note}}\\
+%% endif
+%% endmacro
+
+
+%# --- Checks if item has an associated gps qr code and places it if so
+%% macro gps(item)
+%% if item.gps and ('suppress_gps' not in item.format_options)
+\qrcode{\VAR{item.paths['qr_o']}/\VAR{item.item_id}_qr.png}{http://maps.google.com/maps?q=\VAR{item.gps}}{Navigate to this \VAR{item.class_name}}
+%% endif
+%% endmacro
