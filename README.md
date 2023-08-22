@@ -5,10 +5,11 @@
 	Python:
 	- move LaTeX specific stuff to its own folder/project
         - maybe move class.ref to genLaTeX
+	- make code more portable, remove hardcoded references to my file system
     LaTeX:
     - GPS index of boulders
 	- overhaul image captions
-	  - dynamically set put command based on page size and text ammound
+	  - dynamically set put command based on page size and text ammount
 	  - If text doesn't use full box width change box size
     Other:
     - Consider alternatives to LaTeX. HTML?
