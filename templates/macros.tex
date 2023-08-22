@@ -1,3 +1,21 @@
+%# --- Formats Chapter title and page headers
+%% macro chapter_head(name, unnumbered=False)
+\thispagestyle{empty}
+\colorlet{shadecolor}{\chapterColor}
+%% if unnumbered
+\chapter*{\VAR{name}}
+%% else
+\chapter{\VAR{name}}
+%% endif
+%# thruthfully I have no fucking idea why the code below works. Found a solution after like 20 min of trial and error
+\fancyhead{}
+\lhead[\textcolor{\chapterColor}{\rule[-2pt]{\textwidth}{15pt}}]{\textcolor{\chapterColor}{\rule[-2pt]{\textwidth}{15pt}}\hspace{-\textwidth}\color{white}\hspace{4pt}\protect\thepage\hspace{1ex}-\hspace{1ex}\VAR{name}}
+\rhead[\textcolor{\chapterColor}{\rule[-2pt]{\textwidth}{15pt}}\hspace{-\textwidth}\color{white}\VAR{name} \protect\thepage \hspace{4pt}]{\textcolor{\chapterColor}{\rule[-2pt]{\textwidth}{15pt}}}
+\fancyhead[RO]{}
+\fancyhead[RE]{\color{white}\VAR{name}\hspace{1ex}-\hspace{1ex}\protect\thepage \hspace{4pt}}
+%% endmacro
+
+
 %# --- loops through all images attached to item and checks to see if they should be placed here
 %% macro resolve_images(item, loc='b')
 %% for im in item.images
@@ -56,7 +74,8 @@
 	\includepdf[angle=90, picturecommand*={\VAR{caption3(im.latex_description)}}]{\VAR{im.path_o+im.out_file_name}}
   \end{landscape}
 %% elif size == 's'
-	\cleartoleftpage
+    \clearpage
+    \ifodd\value{page}\hbox{}\newpage\fi
 	\includepdf[pages=-, picturecommand*={\VAR{caption2(im.latex_description)}}]{\VAR{im.path_o+im.out_file_name}}
 %% endif
 %% endif
@@ -135,6 +154,23 @@
 %# --- Checks if item has an associated gps qr code and places it if so
 %% macro gps(item)
 %% if item.gps and ('suppress_gps' not in item.format_options)
-\qrcode{\VAR{item.paths['qr_o']}/\VAR{item.item_id}_qr.png}{http://maps.google.com/maps?q=\VAR{item.gps}}{Navigate to this \VAR{item.class_name}}
+\VAR{qrcode(
+  item.paths['qr_o']+'/'+item.item_id+'_qr.png',
+  'http://maps.google.com/maps?q='+item.gps,
+  'Navigate to this '+item.class_name
+  )}
 %% endif
+%% endmacro
+
+
+%# --- places a formatted qr code
+%% macro qrcode(path, link, text)
+\setbox0=\hbox{\includegraphics[width=0.45\linewidth]{\VAR{path}}}% Store image in \box0
+\needspace{\ht0}% Need at least the height of \box0
+\begin{center}
+\includegraphics[width=0.45\linewidth]{\VAR{path}}
+\end{center}
+\begin{center}
+\underline{\textcolor{blue}{\href{\VAR{link}}{\VAR{text}}}}
+\end{center}
 %% endmacro
