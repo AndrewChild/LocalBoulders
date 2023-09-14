@@ -6,10 +6,6 @@ import jinja2
 import os
 
 
-#install dir for ghost script. There is probably a better way to do this
-GS = r'C:\Program Files\gs\gs10.00.0\bin\gswin64.exe'
-
-
 def _get_rating_string(rating):
     """
     Returns LaTeX string equivlent to climb strar rating
@@ -116,8 +112,10 @@ def gen_book_LaTeX(book):
 
     #this bit calls ghost script to compress the PDF (this saves a lot of space and has no noticable effect on quality)
     #Requires a win 64 ghost script install
-    process = subprocess.Popen([GS, '-sDEVICE=pdfwrite', '-dCompatibilityLevel=1.5', '-dNOPAUSE', '-dQUIET',
-                                '-dBATCH', '-dPrinted=false', '-sOutputFile=guideBook-compressed.pdf', 'guideBook.pdf'])
-    process.wait()
-    os.remove('guideBook.pdf')
-    os.rename('guideBook-compressed.pdf', f'{book.file_name}.pdf')
+    if 'ghost_script' in book.paths.keys():
+        process = subprocess.Popen([book.paths['ghost_script'], '-sDEVICE=pdfwrite', '-dCompatibilityLevel=1.5',
+                                    '-dNOPAUSE', '-dQUIET', '-dBATCH', '-dPrinted=false',
+                                    '-sOutputFile=guideBook-compressed.pdf', 'guideBook.pdf'])
+        process.wait()
+        os.remove('guideBook.pdf')
+        os.rename('guideBook-compressed.pdf', f'{book.file_name}.pdf')

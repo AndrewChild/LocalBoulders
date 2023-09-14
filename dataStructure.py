@@ -7,11 +7,11 @@ This file holds all of the data strucutres used in the Local Boulders python scr
 import os.path
 import sys
 from datetime import datetime
+from collections import OrderedDict
+from PIL import Image
 from topo import update_svg
 from genLaTeX import gen_book_LaTeX
 from lbResources import genHistogram, get_grade_atts, create_qr, mod_file_extension
-from collections import OrderedDict
-from PIL import Image
 
 
 # --------------------------------
