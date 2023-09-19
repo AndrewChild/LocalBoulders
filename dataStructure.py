@@ -164,6 +164,7 @@ class Book(Item):
     area_colors = ['BrickRed', 'RoyalPurple', 'BurntOrange', 'Aquamarine', 'RubineRed', 'PineGreen']
     area_colors_hex = ['#CB4154', '#7851A9', '#CC5500', '#00B5BD', '#E0115F', '#01796F']
     __path_defaults = {
+        'graphics': './maps', #this is just a dummy that ensures that the maps folder is created
         'histogram_o': './maps/plots/',
         'qr_o': './maps/qr/',
         'topo_i': './maps/topos/',
@@ -189,6 +190,7 @@ class Book(Item):
         super().__init__(name=name, parent=None, description=description, item_id=item_id,
                          format_options=format_options, paths=self.paths, options=self.options, gps=gps)
         self.file_name = file_name
+        self.dl = dl
         self.areas = OrderedDict()
         self.subareas = OrderedDict()
         self.formations = OrderedDict()
@@ -205,9 +207,6 @@ class Book(Item):
         self.collaborators = collaborators
         self.subarea_numbering = subarea_numbering
 
-        if dl:
-            create_qr(self.paths['qr_o'], dl, f'{self.item_id}')
-
     def gen(self):
         gen_book_LaTeX(self)
 
@@ -222,6 +221,8 @@ class Book(Item):
 
     def update(self):
         self._init_paths()
+        if self.dl:
+            create_qr(self.paths['qr_o'], self.dl, f'{self.item_id}')
         for area in self.areas.values():
             area.update()
         for map_item in self.all_maps:
