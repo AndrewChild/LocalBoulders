@@ -180,15 +180,13 @@ class Book(Item):
         # if yes route numbering resets at zero for each sub area, if no it restarts for each area
         'paper size': 'A5',
         # controls cropping of p (page) and s (spread) action photos A5 is the only option right now
-        'include_action_photos': True,
     }
 
-    def __init__(self, name, file_name='guideBook', description='', item_id=None, repo='', dl='', collaborators=[],
-                 subarea_numbering=True, paths={}, options={}, format_options=[], gps=None):
+    def __init__(self, name, file_name='guideBook', repo='', dl='', collaborators=[], paths={}, options={},
+                 format_options=[]):
         self.paths = {**self.__path_defaults, **paths}
         self.options = {**self.__option_defaults, **options}
-        super().__init__(name=name, parent=None, description=description, item_id=item_id,
-                         format_options=format_options, paths=self.paths, options=self.options, gps=gps)
+        super().__init__(name=name, parent=None, format_options=format_options, paths=self.paths, options=self.options)
         self.file_name = file_name
         self.dl = dl
         self.areas = OrderedDict()
@@ -205,7 +203,6 @@ class Book(Item):
         self.repo = repo
         self.dl = dl
         self.collaborators = collaborators
-        self.subarea_numbering = subarea_numbering
 
     def gen(self):
         gen_book_LaTeX(self)
