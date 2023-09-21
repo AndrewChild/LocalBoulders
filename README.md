@@ -9,6 +9,12 @@ This project is being devloped on a 64 bit Windows environment, its highly likel
 - Ghost script (optional, but highly recommended)
 
 # TODO:
+	Documentation:
+	  - add general description of code structure
+	  - add input manual
+	  - add installation instructions
+	  - add indepth topo drawing tutorial
+	  - create gitHub project page
 	Python:
 	- move LaTeX specific stuff to its own folder/project
         - maybe move class.ref to genLaTeX
@@ -19,4 +25,3 @@ This project is being devloped on a 64 bit Windows environment, its highly likel
 	  - If text doesn't use full box width change box size
     Other:
     - Consider alternatives to LaTeX. HTML?
-    - documentation

@@ -40,7 +40,9 @@
 %% for formation in subArea.formations.values()
 \VAR{m.resolve_images(formation)}
 \needspace{10em}
+%% if formation.name
 \subsection*{\VAR{formation.name}}\phantomsection\label{bf:\VAR{formation.item_id}}
+%% endif
 \VAR{m.gps(formation)}
 \VAR{m.body(formation)}
 \VAR{m.resolve_images(formation, 'a')}
