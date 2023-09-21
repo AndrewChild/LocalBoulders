@@ -112,8 +112,8 @@ def gen_book_LaTeX(book):
 
     #this bit calls ghost script to compress the PDF (this saves a lot of space and has no noticable effect on quality)
     #Requires a win 64 ghost script install
-    if 'ghost_script' in book.paths.keys():
-        process = subprocess.Popen([book.paths['ghost_script'], '-sDEVICE=pdfwrite', '-dCompatibilityLevel=1.5',
+    if book.options['use_ghost_script']:
+        process = subprocess.Popen(['gswin64', '-sDEVICE=pdfwrite', '-dCompatibilityLevel=1.5',
                                     '-dNOPAUSE', '-dQUIET', '-dBATCH', '-dPrinted=false',
                                     '-sOutputFile=guideBook-compressed.pdf', 'guideBook.pdf'])
         process.wait()

@@ -178,6 +178,8 @@ class Book(Item):
     __option_defaults = {
         'subarea_numbering': True,
         # if yes route numbering resets at zero for each sub area, if no it restarts for each area
+        'use_ghost_script': True,
+        # if yes the pdf will be compressed using ghost script
         'paper size': 'A5',
         # controls cropping of p (page) and s (spread) action photos A5 is the only option right now
     }
