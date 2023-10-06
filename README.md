@@ -1,5 +1,8 @@
 # LocalBoulders
- Local Boulders is a work in progress framework for building bouldering guidebooks. The framework provides a hierachical data structure for route information in a format which can easily be passed to formats such as tex or html using the JINJA2 templating engine. Local Boulders also performs several usful automatic function such as numbering and color coding climbs and formatting annotated topos and maps. 
+ Local Boulders is a work in progress framework for building bouldering guidebooks. The framework provides a hierachical data structure for route information in a format which can easily be passed to formats such as tex or html using the JINJA2 templating engine. Local Boulders also performs several usful automatic function such as numbering and color coding climbs and formatting annotated topos and maps.
+ 
+# Documentation
+[Work in Progress Documentation](https://docs.google.com/document/d/1SdaC6Ra2RaYkczrwDnqLYQRvsJmOF2mg-aY8-hYBMIY/edit#heading=h.qtw326n5e7xy)
  
 # Required Software
 This project is being devloped on a 64 bit Windows environment, its highly likely that it will not run without modification on other systems. In addition to the following software several non native Python and LaTeX packages are used.
