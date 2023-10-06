@@ -13,10 +13,6 @@ This project is being devloped on a 64 bit Windows environment, its highly likel
 
 # TODO:
 	Documentation:
-	  - add general description of code structure
-	  - add input manual
-	  - add installation instructions
-	  - add indepth topo drawing tutorial
 	  - create gitHub project page
 	Python:
 	- move LaTeX specific stuff to its own folder/project
