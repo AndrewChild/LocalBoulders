@@ -17,6 +17,8 @@ This project is being devloped on a 64 bit Windows environment, its highly likel
 	Python:
 	- move LaTeX specific stuff to its own folder/project
         - maybe move class.ref to genLaTeX
+	- topo doesn't work when using linked images in svgs and the input and output files are different (svg loses track of linked image)
+	- there appears to be a bug in the histogram. Cliffs shows an that it has a 5.14 when it doesn't
     LaTeX:
     - GPS index of boulders
 	- overhaul image captions
