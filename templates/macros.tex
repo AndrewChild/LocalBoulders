@@ -50,6 +50,9 @@
 %# --- Skips placement of action photos if "skip_action_photos" format option is entered
 %# --- Image placement syntax varies based on size
 %% macro image(im, size='h')
+%% if im.class_name == 'text_insert'
+\VAR{text_insert(im)}
+%% else
 %% if ('skip_action_photos' in im.book.format_options) and (im.ref == 'pt') and ('force_include' not in im.format_options)
 %# --- bad form, but its early and I couldn't figure out how to do this without using else
 %% else
@@ -78,6 +81,7 @@
     \clearpage
     \ifodd\value{page}\hbox{}\newpage\fi
 	\includepdf[pages=-, picturecommand*={\VAR{caption2(im.latex_description)}}]{\VAR{im.path_o+im.out_file_name}}
+%% endif
 %% endif
 %% endif
 %% endmacro
@@ -174,4 +178,18 @@
 \begin{center}
 \underline{\textcolor{blue}{\href{\VAR{link}}{\VAR{text}}}}
 \end{center}
+%% endmacro
+
+
+%# --- Handles text insert placement. 
+%# --- Skips placement if "skip_text_inserts" format option is entered
+%% macro text_insert(ti)
+%% if not (('skip_text_inserts' in ti.book.format_options) and ('force_include' not in ti.format_options))
+\phantomsection\label{\VAR{ti.ref}:\VAR{ti.item_id}}
+\vspace{1ex}
+\colorbox{\chapterColor!40}{\parbox{0.95\linewidth}{
+\large{\textbf{\VAR{ti.name}}}\\
+\normalsize{\VAR{ti.description}}
+}}
+%% endif
 %% endmacro

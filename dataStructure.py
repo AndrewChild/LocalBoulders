@@ -377,6 +377,22 @@ class Variation(Item, Climb):
             ct = ct + 1
 
 
+class TextInsert(Item):
+    """class object for text inserts (short paragraphs/flavor text)"""
+    __class_id = 'insets'
+    ref = 'in'
+    class_name = 'text_insert'
+
+    def __init__(self, name, parent, description=None, item_id=None, loc='b', credit='', format_options=[], paths={}):
+        super().__init__(name=name, parent=parent, description=description, item_id=item_id,
+                         format_options=format_options, paths=paths)
+        self.credit = credit
+        self.loc = loc
+        self.book = parent.book
+        self.size = 'h'
+        self.parent.images.append(self)
+
+
 class Photo(ItemImage):
     """class object for general photos (action, scenery, etc.)"""
     __class_id = 'photos'
