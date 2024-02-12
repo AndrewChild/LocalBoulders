@@ -24,5 +24,6 @@ This project is being devloped on a 64 bit Windows environment, its highly likel
 	- overhaul image captions
 	  - dynamically set put command based on page size and text ammount
 	  - If text doesn't use full box width change box size
+	- indent paragraphs in text blocks if they are more than one paragraphs
     Other:
-    - Consider alternatives to LaTeX. HTML?
+    - Consider alternatives/additons to LaTeX. HTML? React Native? Flutter?
