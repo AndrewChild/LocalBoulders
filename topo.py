@@ -66,6 +66,25 @@ def _gen_label(elm, label, color, scale):
     return circleAttributes, labelAttributes, textAttributes
 
 
+def _transform(transform_att, coordinates):
+    '''
+    This function is intended to handle elements with a transform attribute (read about it here: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/transform)
+    if the attribute is present coordinates need to be adjusted according to the transform matrix which has the format
+    'matrix(a,b,c,d,e,f)'.
+    inputs:
+        transform_att (string): transform attribute from svg format
+        coordinates (list of strings): xy pair of coordinates to be transformed
+    '''
+    trans_matrix = transform_att[7:-1].split(',')  # convert to transform input to list
+    a, b, c, d, e, f, = [float(i) for i in trans_matrix]
+    x, y = [float(i) for i in coordinates]
+
+    new_x = x*a+y*c+e
+    new_y = x*b+d*y+f
+
+    return [str(new_x), str(new_y)]
+
+
 def _update_border(root, ItemMap, namespaces, scale):
     viewBox_i = root.attrib['viewBox']
     viewBox_i = [float(x) for x in viewBox_i.split()]
@@ -80,6 +99,19 @@ def _update_border(root, ItemMap, namespaces, scale):
                 if elm_id == ItemMap.border:
                     borderAttributes = elm.attrib
                     subTree.remove(elm)
+                    if 'transform' in subTree.keys():
+                        old_x1, old_y1 = borderAttributes['x'], borderAttributes['y']
+                        old_x2 = str(float(old_x1)+float(borderAttributes['width']))
+                        old_y2 = str(float(old_y1) + float(borderAttributes['height']))
+                        new_x1, new_y1 = _transform(subTree.attrib['transform'], [old_x1, old_y1])
+                        new_x2, new_y2 = _transform(subTree.attrib['transform'], [old_x2, old_y2])
+
+                        borderAttributes['x'] = new_x1
+                        borderAttributes['y'] = new_y1
+                        borderAttributes['width'] = str(float(new_x2)-float(new_x1))
+                        borderAttributes['height'] = str(float(new_y2) - float(new_y1))
+
+
                     root.attrib['width'] = borderAttributes['width']
                     root.attrib['height'] = borderAttributes['height']
                     root.attrib['viewBox'] = '{} {} {} {}'.format(borderAttributes['x'],
