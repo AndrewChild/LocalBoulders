@@ -21,7 +21,13 @@
 %% macro resolve_images(item, loc='b')
 %% for im in item.images
 %% if im.loc == loc
+%% if not im.size in ['h']
+	\end{multicols}
+%% endif
 \VAR{image(im, im.size)}
+%% if not im.size in ['h']
+	\begin{multicols}{2}
+%% endif
 %% endif
 %% endfor
 %% endmacro
@@ -29,20 +35,12 @@
 
 %# --- this is sort of a hacky work around that prevents the template from starting and ending multicols immediately 
 %# --- if an area starts with a full width photo
-%% macro resolve_images_area_head(item, loc='b', size='f')
-%% if size in ['f', 'h']
+%% macro resolve_images_area_head(item, loc='b', size=['f','s','p','pr','h'])
 %% for im in item.images
-%% if im.loc == loc and im.size == size
-\VAR{image(im, size='h')}
-%% endif
-%% endfor
-%% else
-%% for im in item.images
-%% if im.loc == loc and im.size == size
+%% if im.loc == loc and im.size in size
 \VAR{image(im, im.size)}
 %% endif
 %% endfor
-%% endif
 %% endmacro
 
 
@@ -58,9 +56,6 @@
 %% else
 \phantomsection\label{\VAR{im.ref}:\VAR{im.item_id}}
 %% if size in ['f', 'h']
-	%% if size == 'f'
-	\end{multicols}
-	%% endif
 	\setbox0=\hbox{\begin{overpic}[width=0.8\linewidth]{\VAR{im.path_o+im.out_file_name}}\VAR{caption1(im.latex_description)}
 	\end{overpic}}
 	\needspace{\ht0}
@@ -68,9 +63,6 @@
 	\begin{overpic}[width=0.9\linewidth]{\VAR{im.path_o+im.out_file_name}}\VAR{caption1(im.latex_description)}
 	\end{overpic}
 	\end{center}
-	%% if size == 'f'
-	\begin{multicols}{2}
-	%% endif
 %% elif size == 'p'
 	\includepdf[picturecommand*={\VAR{caption2(im.latex_description)}}]{\VAR{im.path_o+im.out_file_name}}
 %% elif size == 'pr'

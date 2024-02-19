@@ -1,10 +1,8 @@
 %% import 'macros.tex' as m
 %#
-\VAR{m.resolve_images_area_head(area, size='s')}
-\VAR{m.resolve_images_area_head(area, size='p')}
-\VAR{m.resolve_images_area_head(area, size='pr')}
+\VAR{m.resolve_images_area_head(area, size=['s','p','pr'])}
 \VAR{m.chapter_head( area.name)}
-\VAR{m.resolve_images_area_head(area, size='f')}
+\VAR{m.resolve_images_area_head(area, size=['f'])}
 \raggedcolumns
 \begin{multicols}{2}
 \VAR{m.gps(area)}
@@ -13,7 +11,7 @@
 \end{multicols}
 \begin{multicols}{2}
 %% endif
-\VAR{m.resolve_images_area_head(area, size='h')}
+\VAR{m.resolve_images_area_head(area, size=['h'])}
 \VAR{m.body(area)}
 \VAR{m.resolve_images(area, 'a')}
 

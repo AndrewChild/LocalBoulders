@@ -61,9 +61,9 @@
 %% endif
 
 \newcommand\chapterColor{MidnightBlue}
-\VAR{m.resolve_images(book, loc='b')}
+\VAR{m.resolve_images_area_head(book, loc='b')}
 \input{acknowledgements}
-\VAR{m.resolve_images(book, loc='a')}
+\VAR{m.resolve_images_area_head(book, loc='a')}
 %% if not 'supress_TOC' in book.format_options
 \tableofcontents
 \clearpage
@@ -74,6 +74,6 @@
 %% endfor 
 \renewcommand\chapterColor{MidnightBlue}
 \input{index}
-\VAR{m.resolve_images(book, loc='e')}
+\VAR{m.resolve_images_area_head(book, loc='e')}
 
 \end{document}
