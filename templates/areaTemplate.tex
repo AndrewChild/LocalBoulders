@@ -19,12 +19,17 @@
 %% if 'suppress_page_break' not in subArea.format_options
 \newpage
 %% else
+%% if 'column_break' in subArea.format_options
+\vfill\null
+\columnbreak
+%% else
 \needspace{6em}
 %% if 'section_break' in subArea.format_options
 \end{multicols}
 \hrule 
 \needspace{6em}
 \begin{multicols}{2}
+%% endif
 %% endif
 %% endif
 \VAR{m.resolve_images(subArea)}
