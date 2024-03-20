@@ -383,13 +383,13 @@ class TextInsert(Item):
     ref = 'in'
     class_name = 'text_insert'
 
-    def __init__(self, name, parent, description=None, item_id=None, loc='b', credit='', format_options=[], paths={}):
+    def __init__(self, name, parent, description=None, item_id=None, size='h', loc='b', credit='', format_options=[], paths={}):
         super().__init__(name=name, parent=parent, description=description, item_id=item_id,
                          format_options=format_options, paths=paths)
         self.credit = credit
         self.loc = loc
         self.book = parent.book
-        self.size = 'h'
+        self.size = size
         self.parent.images.append(self)
 
 

@@ -178,10 +178,17 @@
 %% macro text_insert(ti)
 %% if not (('skip_text_inserts' in ti.book.format_options) and ('force_include' not in ti.format_options))
 \phantomsection\label{\VAR{ti.ref}:\VAR{ti.item_id}}
-\vspace{1ex}
-\colorbox{\chapterColor!40}{\parbox{0.95\linewidth}{
-\large{\textbf{\VAR{ti.name}}}\\
-\normalsize{\VAR{ti.description}}
-}}
+\parbox{\linewidth}{
+\begin{mdframed}[frametitle={\VAR{ti.name}}, style=textinsert]
+%% if ti.size == 'h'
+\VAR{ti.description}
+%% elif ti.size =='f'
+\vspace*{-3ex}
+\begin{multicols}{2}
+\VAR{ti.description}
+\end{multicols}
+%% endif
+\end{mdframed}
+}
 %% endif
 %% endmacro
