@@ -226,6 +226,7 @@ class Book(Item):
             area.update()
         for map_item in self.all_maps:
             map_item.update()
+        genHistogram(self)
 
 
 class Area(Item):

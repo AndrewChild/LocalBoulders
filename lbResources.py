@@ -117,20 +117,20 @@ def get_grade_atts(grade):
     return color, color_hex, grade_number, grade_scale, grade_str
 
 
-def genHistogram(area):
-    print(f'Creating Route Histogram for {area.name}')
+def genHistogram(container):
+    print(f'Creating Route Histogram for {container.name}')
 
     # Count how many instances of a climb ther are at each grade.
     # Boulder list has form [?, B, 0, 1, ...]
     # Route list has form [?, 5.0, 5.1, ..., 5.10, 5.11, ...]
     boulder_instances = [0]*20
     route_instances = [0]*17
-    for route in area.routes.values():
+    for route in container.routes.values():
         if route.grade_scale == 'Hueco':
             boulder_instances[int(round(route.gradeNum))+2] += 1
         else:
             route_instances[int(round(route.gradeNum))+1] += 1
-    for route in area.variations.values():
+    for route in container.variations.values():
         if route.grade_scale == 'Hueco':
             boulder_instances[int(round(route.gradeNum))+2] += 1
         else:
@@ -186,7 +186,7 @@ def genHistogram(area):
     ax.set_xticks(ind, labels=labels)
     ax.yaxis.set_major_locator(MaxNLocator(integer=True))
 
-    plt.savefig(f'./maps/plots/{area.item_id}.png')
+    plt.savefig(f'./maps/plots/{container.item_id}.png')
 
 
 def create_qr(path, s, name):
