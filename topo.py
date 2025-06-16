@@ -75,12 +75,21 @@ def _transform(transform_att, coordinates):
         transform_att (string): transform attribute from svg format
         coordinates (list of strings): xy pair of coordinates to be transformed
     '''
-    trans_matrix = transform_att[7:-1].split(',')  # convert to transform input to list
-    a, b, c, d, e, f, = [float(i) for i in trans_matrix]
     x, y = [float(i) for i in coordinates]
+    if 'matrix' in transform_att:
+        trans_matrix = transform_att[7:-1].split(',')  # convert to transform input to list
+        a, b, c, d, e, f, = [float(i) for i in trans_matrix]
+        new_x = x*a+y*c+e
+        new_y = x*b+d*y+f
+    elif 'translate' in transform_att:
+        trans_matrix = transform_att[10:-1].split(',')  # convert to transform input to list
+        a, b = [float(i) for i in trans_matrix]
+        new_x = x+a
+        new_y = y+b
+    else:
+        new_x = x
+        new_y = y
 
-    new_x = x*a+y*c+e
-    new_y = x*b+d*y+f
 
     return [str(new_x), str(new_y)]
 

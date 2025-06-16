@@ -161,8 +161,8 @@ class Book(Item):
     __class_id = 'books'
     ref = 'bk'
     class_name = 'book'
-    area_colors = ['BrickRed', 'RoyalPurple', 'BurntOrange', 'Aquamarine', 'RubineRed', 'PineGreen']
-    area_colors_hex = ['#CB4154', '#7851A9', '#CC5500', '#00B5BD', '#E0115F', '#01796F']
+    area_colors = ['BrickRed', 'RoyalPurple', 'BurntOrange', 'Aquamarine', 'RubineRed', 'PineGreen', 'Bittersweet']
+    area_colors_hex = ['#CB4154', '#7851A9', '#CC5500', '#00B5BD', '#E0115F', '#01796F', '#C04F17']
     __path_defaults = {
         'graphics': './maps', #this is just a dummy that ensures that the maps folder is created
         'histogram_o': './maps/plots/',
