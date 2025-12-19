@@ -114,7 +114,7 @@ def gen_book_LaTeX(book):
     #Requires a win 64 ghost script install
     if book.options['use_ghost_script']:
         process = subprocess.Popen(['gswin64', '-sDEVICE=pdfwrite', '-dCompatibilityLevel=1.5',
-                                    '-dNOPAUSE', '-dQUIET', '-dBATCH', '-dPrinted=false',
+                                    '-dNOPAUSE', '-dQUIET', '-dBATCH', '-dPrinted=false', '-dAutoRotatePages=/None',
                                     '-sOutputFile=guideBook-compressed.pdf', 'guideBook.pdf'])
         process.wait()
         os.remove('guideBook.pdf')

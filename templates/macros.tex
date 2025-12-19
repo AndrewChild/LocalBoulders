@@ -65,6 +65,8 @@
 	\end{center}
 %% elif size == 'p'
 	\includepdf[picturecommand*={\VAR{caption2(im.latex_description)}}]{\VAR{im.path_o+im.out_file_name}}
+%% elif (size == 'pr') and ('no_image_rotation' in im.book.format_options)
+	\includepdf[angle=90, picturecommand*={\VAR{caption3(im.latex_description)}}]{\VAR{im.path_o+im.out_file_name}}
 %% elif size == 'pr'
   \begin{landscape}
 	\includepdf[angle=90, picturecommand*={\VAR{caption3(im.latex_description)}}]{\VAR{im.path_o+im.out_file_name}}
