@@ -3,6 +3,10 @@ import os
 import cairosvg
 import sys
 from lbResources import mod_file_extension
+"""
+Contains update_svg() function which opens an svg file associated with a ItemMap object and replaces all place holder 
+vectors with formatted vectors
+"""
 
 
 def _getApproximateArialStringWidth(st, min_size=False):
@@ -276,7 +280,6 @@ def update_svg(ItemMap):
     else:
         print(f'writing {xmlFile} to pdf')
         cairosvg.svg2png(file_obj=file_Obj, write_to=newImage, dpi=200)
-
 
     file_Obj.close()
     return
