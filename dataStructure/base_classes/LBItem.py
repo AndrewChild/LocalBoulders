@@ -50,5 +50,6 @@ class LBItem:
         qr_code = qrcode.make(s)
         qr_code.save(f'{path}{name}_qr.png')
 
+
 if __name__ == '__main__':
     sys.exit()
