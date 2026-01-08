@@ -4,20 +4,21 @@ Local Boulders Guidebook builder v0.6
 import sys
 from collections import OrderedDict
 from dataStructure.base_classes import Item
+from dataclasses import dataclass
+from typing import ClassVar
 
 
+@dataclass
 class Formation(Item):
-    __class_id = 'formations'
-    ref = 'bd'
-    class_name = 'formation'
+    __class_id: ClassVar[str] = 'formations'
+    ref: ClassVar[str] = 'bd'
+    class_name: ClassVar[str] = 'formation'
 
-    def __init__(self, name, parent, description='', item_id=None, format_options=[], gps=None, note=None):
-        super().__init__(name=name, parent=parent, description=description, item_id=item_id,
-                         format_options=format_options, gps=gps)
-        self.note = note
-        self.subarea = parent
-        self.book = parent.book
-        self.area = parent.area
+    def __post_init__(self):
+        super().__post_init__()
+        self.subarea = self.parent
+        self.book = self.parent.book
+        self.area = self.parent.area
         self.book.assign_to_dic(self.__class_id, self)
         self.area.assign_to_dic(self.__class_id, self)
         self.subarea.assign_to_dic(self.__class_id, self)

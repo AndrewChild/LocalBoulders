@@ -5,35 +5,39 @@ import sys
 from PIL import Image
 from topo import update_svg
 from lbResources import get_grade_atts, create_qr, mod_file_extension
+from dataclasses import dataclass, field
+from typing import Dict, List, Any
 
 
-# --------------------------------
+@dataclass
 class Item:
     """
     Base class for all items in the book hierarchy (book, area, subarea, etc.)
     """
+    name: str
+    options: Dict[str, Any] = field(default_factory=dict, kw_only=True)
+    paths: Dict[str, Any] = field(default_factory=dict, kw_only=True)
+    format_options: List[str] = field(default_factory=list, kw_only=True)
+    description: str = field(default='', kw_only=True)
+    gps: str = field(default='', kw_only=True)
+    parent: object = field(default=None, kw_only=True)
+    item_id: str = field(default=None, kw_only=True)
+    note: str = field(default=None, kw_only=True)
 
-    def __init__(self, name, parent, description='', item_id=None, format_options=[], gps=None, paths={}, options={}):
-        self.name = name
-        self.parent = parent
-        self.paths = paths
-        self.description = description
-        self.item_id = item_id
-        self.format_options = format_options
-        self.gps = gps
+    def __post_init__(self):
         self.photos = []  # container for all action and scenery photos attached to an item
         self.maps = []  # container for all layout maps and topos attached to an item
         self.images = []  # container for all images attached to item
 
         if not self.item_id:
-            self.item_id = name
+            self.item_id = self.name
         if not self.paths:
-            self.paths = parent.paths
+            self.paths = self.parent.paths
         else:
-            if parent:
-                self.paths = {**parent.paths, **paths}
-        if not options:
-            self.options = parent.options
+            if self.parent:
+                self.paths = {**self.parent.paths, **self.paths}
+        if not self.options and self.parent:
+            self.options = self.parent.options
 
         if self.gps:
             self.gps = self.gps.replace(' ', '')
@@ -45,47 +49,49 @@ class Item:
         getattr(self, container).update({connection.item_id: connection})
 
 
-class Climb:
+@dataclass
+class Climb(Item):
     """
-    Base class for all items that contain route information (e.g. boulder problem, rope route, boulder vaiation)
+    Base class for all items that contain route information (e.g. boulder problem, rope route, boulder variation)
     """
+    grade: str = '?'
+    description: str = "PLACEHOLDER"
+    rating: int = -1
+    serious: int = 0
+    grade_unconfirmed: bool = False
+    name_unconfirmed: bool = False
+    FA: str = None
 
-    def __init__(self, grade='?', rating=-1, serious=0, grade_unconfirmed=False, name_unconfirmed=False, FA=None):
-        self.grade = grade
-        self.rating = int(rating)
-        self.serious = serious
-        self.grade_unconfirmed = grade_unconfirmed
-        self.name_unconfirmed = name_unconfirmed
-        self.color, self.color_hex, self.gradeNum, self.grade_scale, self.grade_str = get_grade_atts(grade)
+    def __post_init__(self):
+        super().__post_init__()
+        self.color, self.color_hex, self.gradeNum, self.grade_scale, self.grade_str = get_grade_atts(self.grade)
         self.hasTopo = False
-        self.FA = FA
 
 
+@dataclass
 class ItemImage(Item):
     """
-    Base class for all image items (photos, topos, and maps. Inherits from item
+    Base class for all image items (photos, topos, and maps. Inherits from item)
     """
-    page_aspects = { # holds aspect ratios of various paper sizes. currently only A5 is supported
-        'A5': 148/210
-    }
+    file_name: str
+    size: str = field(default='h', kw_only=True)
+    loc: str = field(default='b', kw_only=True)
 
-    def __init__(self, name, parent, file_name, description=None, item_id=None, size='h', loc='b', format_options=[],
-                 paths={}):
-        super().__init__(name=name, parent=parent, description=description, item_id=item_id,
-                         format_options=format_options, paths=paths)
-        self.file_name = file_name
-        self.out_file_name = file_name
+    def __post_init__(self):
+        super().__post_init__()
+        self.out_file_name = self.file_name
         self.path = self.paths['photos']
         self.path_o = self.path
-        self.size = size
-        self.loc = loc
-        self.book = parent.book
+        self.book = self.parent.book
         self.parent.images.append(self)
         self.aspect_ratio = None
-        if size == 'p':
-            self.aspect_ratio = self.page_aspects[self.book.options['paper size']]
-        elif size in ['s', 'pr']:
-            self.aspect_ratio = 1/self.page_aspects[self.book.options['paper size']]
+        page_aspects = {  # holds aspect ratios of various paper sizes. currently only A5 is supported
+            'A5': 148 / 210
+        }
+        if self.size == 'p':
+            self.aspect_ratio = page_aspects[self.book.options['paper size']]
+        elif self.size in ['s', 'pr']:
+            self.aspect_ratio = 1/page_aspects[self.book.options['paper size']]
 
     def save_insert(self):
         im = Image.open(self.path_o + self.out_file_name).convert('RGB')
@@ -110,44 +116,48 @@ class ItemImage(Item):
             im.save(self.path_o + self.out_file_name, 'PDF', resolution=100.0, save_all=True)
 
 
+@dataclass
 class ItemMap(ItemImage):
     """
-    Base class for annoted map images (topos and maps)
+    Base class for annotated map images (topos and maps)
     """
-    photo_scales = {  # this is the amount that annotations should be scaled by for each photo size. This is
-        # currently hard coded for the LaTeX template
-        'h': 124 / 60,  # half page width
-        'f': 124 / 124,  # full page width
-        'p': 124 / 148,  # page width (i.e. photo page insert)
-        'pr': 124 / 210,  # page width (i.e. photo page insert)
-        's': 124 / (148 * 2),  # 2-page spread
-    }
+    file_name: str
+    routes: List[object] = field(default_factory=list)
+    sub_areas: Dict[str, Any] = field(default_factory=dict)
+    out_file_name: str = field(default=None, kw_only=True)
+    layers: List[str] = field(default_factory=list, kw_only=True)
+    border: str = field(default=None, kw_only=True)
 
-    def __init__(self, name, parent, file_name, path_id, description=None, item_id=None, size='h', loc='b',
-                 out_file_name=None, format_options=[], paths={}, layers=[], border=''):
-        super().__init__(name=name, parent=parent, file_name=file_name, description=description, item_id=item_id,
-                         size=size, loc=loc, format_options=format_options, paths=paths)
-        self.layers = layers
-        self.border = border
+    def __post_init__(self):
+        out_file_name = self.out_file_name
+        super().__post_init__()
+        self.out_file_name = out_file_name # hacky workaround to prevent ItemImage from overwriting this
+        self.routes = self.routes.copy()  # not sure if this is necessary
+
         self.book.all_maps.append(self)
         self.parent.maps.append(self)
 
-        self.path_o = self.paths[f'{path_id}_o']
-        self.path_i = self.paths[f'{path_id}_i']
-        if out_file_name:
-            self.out_file_name = out_file_name
-        else:
-            if self.size in ['p', 'pr', 's']:
-                self.out_file_name = mod_file_extension(file_name, '_c.pdf')
-            else:
-                self.out_file_name = mod_file_extension(file_name, '_c.png')
+        self.path_o = self.paths[f'{self.path_id}_o']
+        self.path_i = self.paths[f'{self.path_id}_i']
 
-        self.scale = self.photo_scales[self.size]
+        if not self.out_file_name:
+            if self.size in ['p', 'pr', 's']:
+                self.out_file_name = mod_file_extension(self.file_name, '_c.pdf')
+            else:
+                self.out_file_name = mod_file_extension(self.file_name, '_c.png')
+
+        photo_scales = {  # this is the amount that annotations should be scaled by for each photo size. This is
+            # currently hard coded for the LaTeX template
+            'h': 124 / 60,  # half page width
+            'f': 124 / 124,  # full page width
+            'p': 124 / 148,  # page width (i.e. photo page insert)
+            'pr': 124 / 210,  # page width (i.e. photo page insert)
+            's': 124 / (148 * 2),  # 2-page spread
+        }
+        self.scale = photo_scales[self.size]
 
     def update(self):
         update_svg(self)
-        #if self.size in ['p', 'pr', 's']:
-        #    self.save_insert()
 
 
 if __name__ == '__main__':

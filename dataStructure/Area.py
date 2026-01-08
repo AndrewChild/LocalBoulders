@@ -5,20 +5,21 @@ import sys
 from collections import OrderedDict
 from lbResources import genHistogram
 from dataStructure.base_classes import Item
+from dataclasses import dataclass
+from typing import ClassVar
 
 
+@dataclass
 class Area(Item):
-    __class_id = 'areas'
-    ref = 'a'
-    class_name = 'area'
+    __class_id: ClassVar[str] = 'areas'
+    ref: ClassVar[str] = 'a'
+    class_name: ClassVar[str] = 'area'
 
-    def __init__(self, name, parent, description='', item_id=None, gps=None, format_options=[], note=None):
-        super().__init__(name=name, parent=parent, description=description, item_id=item_id,
-                         format_options=format_options, gps=gps)
-        self.color = ''
-        self.color_hex = ''
-        self.note = note
-        self.book = parent
+    def __post_init__(self):
+        super().__post_init__()
+        self.color_hex = None
+        self.color = None
+        self.book = self.parent
         self.book.assign_to_dic(self.__class_id, self)
         self.subareas = OrderedDict()
         self.formations = OrderedDict()

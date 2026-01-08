@@ -3,25 +3,24 @@ Local Boulders Guidebook builder v0.6
 """
 import sys
 from dataStructure.base_classes import Item, Climb
+from dataclasses import dataclass
+from typing import ClassVar
 
 
-class Variation(Item, Climb):
+@dataclass
+class Variation(Climb):
     """class object for variations of routs"""
-    __class_id = 'variations'
-    ref = 'vr'
-    class_name = 'variation'
+    __class_id: ClassVar[str] = 'variations'
+    ref: ClassVar[str] = 'vr'
+    class_name: ClassVar[str] = 'variation'
 
-    def __init__(self, name, parent, description='PLACEHOLDER', item_id=None, grade='?', rating=-1, serious=0,
-                 grade_unconfirmed=False, name_unconfirmed=False, FA=None, format_options=[], gps=None):
-        Item.__init__(self, name=name, parent=parent, description=description, item_id=item_id,
-                      format_options=format_options, gps=gps)
-        Climb.__init__(self, grade=grade, rating=rating, serious=serious, grade_unconfirmed=grade_unconfirmed,
-                       name_unconfirmed=name_unconfirmed, FA=FA)
-        self.route = parent
-        self.book = parent.book
-        self.area = parent.area
-        self.subarea = parent.subarea
-        self.boulder = parent.boulder
+    def __post_init__(self):
+        super().__post_init__()
+        self.route = self.parent
+        self.book = self.parent.book
+        self.area = self.parent.area
+        self.subarea = self.parent.subarea
+        self.boulder = self.parent.boulder
         self.book.assign_to_dic(self.__class_id, self)
         self.book.assign_to_dic('climbs', self)
         self.area.assign_to_dic(self.__class_id, self)

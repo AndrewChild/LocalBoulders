@@ -8,15 +8,22 @@ from collections import OrderedDict
 from genLaTeX import gen_book_LaTeX
 from lbResources import genHistogram, create_qr
 from dataStructure.base_classes import Item
+from dataclasses import dataclass, field
+from typing import Dict, List, Any, ClassVar
 
 
+@dataclass(kw_only=True)
 class Book(Item):
-    __class_id = 'books'
-    ref = 'bk'
-    class_name = 'book'
-    area_colors = ['BrickRed', 'RoyalPurple', 'BurntOrange', 'Aquamarine', 'RubineRed', 'PineGreen', 'Bittersweet']
-    area_colors_hex = ['#CB4154', '#7851A9', '#CC5500', '#00B5BD', '#E0115F', '#01796F', '#C04F17']
-    __path_defaults = {
+    repo: str
+    dl: str
+    collaborators: List[str]
+    file_name: str = 'guidebook'
+    options: Dict[str, Any] = field(default_factory=dict)
+
+    __class_id: ClassVar[str] = 'books'
+    ref: ClassVar[str] = 'bk'
+    class_name: ClassVar[str] = 'book'
+    __path_defaults: ClassVar[Dict[str, Any]] = {
         'graphics': './maps', #this is just a dummy that ensures that the maps folder is created
         'histogram_o': './maps/plots/',
         'qr_o': './maps/qr/',
@@ -28,7 +35,7 @@ class Book(Item):
         'area_o': './maps/area/out/',
         'photos': './images/'
     }
-    __option_defaults = {
+    __option_defaults: ClassVar[List[str]] = {
         'subarea_numbering': True,
         # if yes route numbering resets at zero for each sub area, if no it restarts for each area
         'use_ghost_script': True,
@@ -37,27 +44,24 @@ class Book(Item):
         # controls cropping of p (page) and s (spread) action photos A5 is the only option right now
     }
 
-    def __init__(self, name, file_name='guideBook', repo='', dl='', collaborators=[], paths={}, options={},
-                 format_options=[]):
-        self.paths = {**self.__path_defaults, **paths}
-        self.options = {**self.__option_defaults, **options}
-        super().__init__(name=name, parent=None, format_options=format_options, paths=self.paths, options=self.options)
-        self.file_name = file_name
-        self.dl = dl
+    def __post_init__(self):
+        super().__post_init__()
+        self.paths = {**self.__path_defaults, **self.paths}
+        self.options = {**self.__option_defaults, **self.options}
+
+        self.book = self
         self.areas = OrderedDict()
         self.subareas = OrderedDict()
         self.formations = OrderedDict()
         self.routes = OrderedDict()
         self.variations = OrderedDict()
-        self.book = self
         self.climbs = OrderedDict()  # container for routes and variations
         self.all_photos = []  # container for all action and scenery photos in book
         self.all_maps = []  # container for all layout maps and topos in book
 
         self.date = datetime.today().strftime('%Y-%m-%d')
-        self.repo = repo
-        self.dl = dl
-        self.collaborators = collaborators
+        self.area_colors = ['BrickRed', 'RoyalPurple', 'BurntOrange', 'Aquamarine', 'RubineRed', 'PineGreen', 'Bittersweet']
+        self.area_colors_hex = ['#CB4154', '#7851A9', '#CC5500', '#00B5BD', '#E0115F', '#01796F', '#C04F17']
 
     def gen(self):
         gen_book_LaTeX(self)

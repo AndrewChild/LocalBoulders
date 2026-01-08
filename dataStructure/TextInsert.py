@@ -3,21 +3,24 @@ Local Boulders Guidebook builder v0.6
 """
 import sys
 from dataStructure.base_classes import Item
+from dataclasses import dataclass
+from typing import ClassVar
 
 
+@dataclass
 class TextInsert(Item):
     """class object for text inserts (short paragraphs/flavor text)"""
-    __class_id = 'insets'
-    ref = 'in'
-    class_name = 'text_insert'
+    size: str = 'h'
+    loc: str = 'b'
+    credit: str = None
 
-    def __init__(self, name, parent, description=None, item_id=None, size='h', loc='b', credit='', format_options=[], paths={}):
-        super().__init__(name=name, parent=parent, description=description, item_id=item_id,
-                         format_options=format_options, paths=paths)
-        self.credit = credit
-        self.loc = loc
-        self.book = parent.book
-        self.size = size
+    __class_id: ClassVar[str] = 'inserts'
+    ref: ClassVar[str] = 'in'
+    class_name: ClassVar[str] = 'text_insert'
+
+    def __post_init__(self):
+        super().__post_init__()
+        self.book = self.parent.book
         self.parent.images.append(self)
 
 
