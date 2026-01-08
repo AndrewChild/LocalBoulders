@@ -4,13 +4,13 @@ Local Boulders Guidebook builder v0.6
 import sys
 from collections import OrderedDict
 from lbResources import genHistogram
-from dataStructure.base_classes.Item import Item
+from dataStructure.base_classes.LBItem import LBItem
 from dataclasses import dataclass
 from typing import ClassVar
 
 
 @dataclass
-class Area(Item):
+class Area(LBItem):
     __class_id: ClassVar[str] = 'areas'
     ref: ClassVar[str] = 'a'
     class_name: ClassVar[str] = 'area'

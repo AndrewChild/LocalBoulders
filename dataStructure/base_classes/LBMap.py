@@ -3,14 +3,14 @@ Local Boulders Guidebook builder v0.6
 """
 import sys
 from update_svg import update_svg
-from dataStructure.base_classes.ItemImage import ItemImage
+from dataStructure.base_classes.LBImage import LBImage
 from lbResources import mod_file_extension
 from dataclasses import dataclass, field
 from typing import Dict, List, Any
 
 
 @dataclass
-class ItemMap(ItemImage):
+class LBMap(LBImage):
     """
     Base class for annotated map images (topos and maps)
     """

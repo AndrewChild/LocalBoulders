@@ -2,13 +2,13 @@
 Local Boulders Guidebook builder v0.6
 """
 import sys
-from dataStructure.base_classes.Item import Item
+from dataStructure.base_classes.LBItem import LBItem
 from lbResources import get_grade_atts
 from dataclasses import dataclass
 
 
 @dataclass
-class Climb(Item):
+class Climb(LBItem):
     """
     Base class for all items that contain route information (e.g. boulder problem, rope route, boulder variation)
     """

@@ -5,13 +5,13 @@ Data Structures
 This file holds all of the data strucutres used in the Local Boulders python scripts
 """
 import sys
-from dataStructure.base_classes.ItemMap import ItemMap
+from dataStructure.base_classes.LBMap import LBMap
 from dataclasses import dataclass
 from typing import ClassVar
 
 
 @dataclass
-class AreaMap(ItemMap):
+class AreaMap(LBMap):
     """class object for sub area maps"""
     __class_id: ClassVar[str] = 'areaMaps'
     ref: ClassVar[str] = 'am'

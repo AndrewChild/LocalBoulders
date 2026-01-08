@@ -3,13 +3,13 @@ Local Boulders Guidebook builder v0.6
 """
 import sys
 from collections import OrderedDict
-from dataStructure.base_classes.Item import Item
+from dataStructure.base_classes.LBItem import LBItem
 from dataclasses import dataclass
 from typing import ClassVar
 
 
 @dataclass
-class Subarea(Item):
+class Subarea(LBItem):
     __class_id: ClassVar[str] = 'subareas'
     ref: ClassVar[str] = 'sa'
     class_name: ClassVar[str] = 'sub area'

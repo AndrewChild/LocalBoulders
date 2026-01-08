@@ -3,13 +3,13 @@ Local Boulders Guidebook builder v0.6
 """
 import sys
 from collections import OrderedDict
-from dataStructure.base_classes.Item import Item
+from dataStructure.base_classes.LBItem import LBItem
 from dataclasses import dataclass
 from typing import ClassVar
 
 
 @dataclass
-class Formation(Item):
+class Formation(LBItem):
     __class_id: ClassVar[str] = 'formations'
     ref: ClassVar[str] = 'bd'
     class_name: ClassVar[str] = 'formation'

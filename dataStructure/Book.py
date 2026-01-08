@@ -7,13 +7,13 @@ from datetime import datetime
 from collections import OrderedDict
 from genLaTeX import gen_book_LaTeX
 from lbResources import genHistogram
-from dataStructure.base_classes.Item import Item
+from dataStructure.base_classes.LBItem import LBItem
 from dataclasses import dataclass, field
 from typing import Dict, List, Any, ClassVar
 
 
 @dataclass(kw_only=True)
-class Book(Item):
+class Book(LBItem):
     repo: str
     dl: str
     collaborators: List[str]

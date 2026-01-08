@@ -3,13 +3,13 @@ Local Boulders Guidebook builder v0.6
 """
 import sys
 from PIL import Image
-from dataStructure.base_classes.Item import Item
+from dataStructure.base_classes.LBItem import LBItem
 from lbResources import mod_file_extension
 from dataclasses import dataclass, field
 
 
 @dataclass
-class ItemImage(Item):
+class LBImage(LBItem):
     """
     Base class for all image items (photos, topos, and maps. Inherits from item)
     """

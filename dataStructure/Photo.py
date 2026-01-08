@@ -2,13 +2,13 @@
 Local Boulders Guidebook builder v0.6
 """
 import sys
-from dataStructure.base_classes.ItemImage import ItemImage
+from dataStructure.base_classes.LBImage import LBImage
 from dataclasses import dataclass
 from typing import ClassVar
 
 
 @dataclass
-class Photo(ItemImage):
+class Photo(LBImage):
     """class object for general photos (action, scenery, etc.)"""
     route: object = None
     credit: str = ''

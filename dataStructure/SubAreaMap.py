@@ -2,13 +2,13 @@
 Local Boulders Guidebook builder v0.6
 """
 import sys
-from dataStructure.base_classes.ItemMap import ItemMap
+from dataStructure.base_classes.LBMap import LBMap
 from dataclasses import dataclass
 from typing import ClassVar
 
 
 @dataclass
-class SubAreaMap(ItemMap):
+class SubAreaMap(LBMap):
     """class object for sub area maps"""
     __class_id: ClassVar[str] = 'subAreaMaps'
     ref: ClassVar[str] = 'sm'

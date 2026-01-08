@@ -8,7 +8,7 @@ from typing import Dict, List, Any
 
 
 @dataclass
-class Item:
+class LBItem:
     """
     Base class for all items in the book hierarchy (book, area, subarea, etc.)
     """
