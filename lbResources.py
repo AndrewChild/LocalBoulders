@@ -1,3 +1,4 @@
+import sys
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MaxNLocator
 import numpy as np
@@ -44,21 +45,18 @@ def _get_grade_number_YDS(grade):
 
 def _get_grade_number_Hueco(grade):
     if _is_int(grade):
-        return int(grade)
+        return int(grade)+0.5
     else:
         if grade == '?':
             grade_number = -2
         elif grade == 'B':
             grade_number = -1
         elif grade[-1] == '+':
-            grade_number = int(grade[:-1])+0.1
-        elif '/' in grade:
-            split_grades = grade.split("/")
-            grade_number = int(split_grades[0])+0.5
+            grade_number = int(grade[:-1])+0.6
         elif grade[-1] == '-':
-            grade_number = int(grade[:-1])-0.1
+            grade_number = int(grade[:-1])+0.4
         else:
-            grade_number = np.average([int(x) for x in grade.split('/')])
+            grade_number = np.average([_get_grade_number_Hueco(x) for x in grade.split('/')])
     return grade_number
 
 
@@ -120,21 +118,17 @@ def get_grade_atts(grade):
 def genHistogram(container):
     print(f'Creating Route Histogram for {container.name}')
 
-    # Count how many instances of a climb ther are at each grade.
+    # Count how many instances of a climb there are at each grade.
     # Boulder list has form [?, B, 0, 1, ...]
     # Route list has form [?, 5.0, 5.1, ..., 5.10, 5.11, ...]
     boulder_instances = [0]*20
     route_instances = [0]*17
-    for route in container.routes.values():
-        if route.grade_scale == 'Hueco':
-            boulder_instances[int(round(route.gradeNum))+2] += 1
+    all_climbs = list(container.routes.values()) + list(container.variations.values())
+    for climb in all_climbs:
+        if climb.grade_scale == 'Hueco':
+            boulder_instances[int(climb.gradeNum)+2] += 1
         else:
-            route_instances[int(round(route.gradeNum))+1] += 1
-    for route in container.variations.values():
-        if route.grade_scale == 'Hueco':
-            boulder_instances[int(round(route.gradeNum))+2] += 1
-        else:
-            route_instances[int(round(route.gradeNum))+1] += 1
+            route_instances[int(climb.gradeNum)+1] += 1
 
     # assign color and label to each Boulder grade bin
     boulder_colors = []
@@ -196,3 +190,7 @@ def mod_file_extension(file_base_name, new_extension):
     file_name_list = file_base_name.split('.')
     file_name_list.pop()
     return '.'.join(file_name_list) + new_extension
+
+
+if __name__ == '__main__':
+    sys.exit()
