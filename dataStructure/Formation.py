@@ -3,7 +3,7 @@ Local Boulders Guidebook builder v0.6
 """
 import sys
 from collections import OrderedDict
-from dataStructure.base_classes import Item
+from dataStructure.base_classes.Item import Item
 from dataclasses import dataclass
 from typing import ClassVar
 

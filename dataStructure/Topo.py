@@ -2,7 +2,7 @@
 Local Boulders Guidebook builder v0.6
 """
 import sys
-from dataStructure.base_classes import ItemMap
+from dataStructure.base_classes.ItemMap import ItemMap
 from dataclasses import dataclass
 from typing import ClassVar
 

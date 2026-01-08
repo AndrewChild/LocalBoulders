@@ -5,7 +5,7 @@ Data Structures
 This file holds all of the data strucutres used in the Local Boulders python scripts
 """
 import sys
-from dataStructure.base_classes import ItemMap
+from dataStructure.base_classes.ItemMap import ItemMap
 from dataclasses import dataclass
 from typing import ClassVar
 

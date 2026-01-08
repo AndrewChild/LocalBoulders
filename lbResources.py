@@ -2,7 +2,6 @@ import matplotlib.pyplot as plt
 from matplotlib.ticker import MaxNLocator
 import numpy as np
 import webcolors
-import qrcode
 
 
 def _is_int(object):
@@ -83,7 +82,8 @@ def _get_grade_number(grade: str):
 
 
 def get_grade_atts(grade):
-    """ generate the grade attributes
+    """
+    generate the grade attributes
     """
     grade_number, grade_scale = _get_grade_number(grade)
     colors = ['black', 'green', 'RoyalBlue', 'DarkGoldenrod', 'DarkRed']
@@ -187,11 +187,6 @@ def genHistogram(container):
     ax.yaxis.set_major_locator(MaxNLocator(integer=True))
 
     plt.savefig(f'./maps/plots/{container.item_id}.png')
-
-
-def create_qr(path, s, name):
-    qr_code = qrcode.make(s)
-    qr_code.save(f'{path}{name}_qr.png')
 
 
 def mod_file_extension(file_base_name, new_extension):

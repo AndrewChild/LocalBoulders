@@ -6,8 +6,8 @@ import os.path
 from datetime import datetime
 from collections import OrderedDict
 from genLaTeX import gen_book_LaTeX
-from lbResources import genHistogram, create_qr
-from dataStructure.base_classes import Item
+from lbResources import genHistogram
+from dataStructure.base_classes.Item import Item
 from dataclasses import dataclass, field
 from typing import Dict, List, Any, ClassVar
 
@@ -78,7 +78,7 @@ class Book(Item):
     def update(self):
         self._init_paths()
         if self.dl:
-            create_qr(self.paths['qr_o'], self.dl, f'{self.item_id}')
+            self.create_qr(self.paths['qr_o'], self.dl, f'{self.item_id}')
         for area in self.areas.values():
             area.update()
         for map_item in self.all_maps:
