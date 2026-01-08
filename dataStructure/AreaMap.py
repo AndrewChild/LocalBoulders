@@ -6,23 +6,20 @@ This file holds all of the data strucutres used in the Local Boulders python scr
 """
 import sys
 from dataStructure.base_classes import ItemMap
+from dataclasses import dataclass
+from typing import ClassVar
 
 
+@dataclass
 class AreaMap(ItemMap):
     """class object for sub area maps"""
-    __class_id = 'areaMaps'
-    ref = 'am'
-    class_name = 'area map'
+    __class_id: ClassVar[str] = 'areaMaps'
+    ref: ClassVar[str] = 'am'
+    class_name: ClassVar[str] = 'area map'
 
-    def __init__(self, name, parent, file_name, description=None, item_id=None, sub_areas={}, layers=[], border='',
-                 size='h', loc='b', out_file_name=None, format_options=[], paths={}):
-        super().__init__(name=name, parent=parent, file_name=file_name, path_id='area', description=description,
-                         item_id=item_id, size=size, loc=loc, out_file_name=out_file_name,
-                         format_options=format_options,
-                         paths=paths, layers=layers, border=border)
-        self.sub_areas = sub_areas.copy()  # not sure if this is necessary
-        self.routes = []
-
+    def __post_init__(self):
+        self.path_id = 'area'
+        super().__post_init__()
 
 if __name__ == '__main__':
     sys.exit()
