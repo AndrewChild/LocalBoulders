@@ -45,7 +45,10 @@ def _get_grade_number_YDS(grade):
 
 def _get_grade_number_Hueco(grade):
     if _is_int(grade):
-        return int(grade)+0.5
+        if grade != -2:
+            return int(grade)+0.5
+        else:
+            return int(grade)
     else:
         if grade == '?':
             grade_number = -2
@@ -90,11 +93,11 @@ def get_grade_atts(grade):
         grade_str = 'V'+str(grade)
         if grade_number == -2:
             color = colors[0]
-        elif grade_number <= 3:
+        elif grade_number <= 3.6:
             color = colors[1]
-        elif grade_number <= 6:
+        elif grade_number <= 6.6:
             color = colors[2]
-        elif grade_number <= 9:
+        elif grade_number <= 9.6:
             color = colors[3]
         else:
             color = colors[4]
