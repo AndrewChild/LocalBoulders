@@ -36,6 +36,26 @@
 \end{center}
 %% endif
 
+%% if not 'suppress_gps_index' in book.format_options
+\needspace{1.5cm}
+\section{Approximate GPS Locations}
+%% for area in book.areas.values()
+\subsection{Formations in \VAR{area.name}}
+\begin{center}
+\rowcolors{2}{MidnightBlue!10}{white}
+\begin{supertabular}{p{0.44\linewidth}p{0.44\linewidth}}
+%% for formation in area.formations.values() | sort(attribute="name")
+%% if formation.gps
+%\setbox0=\hbox{\includegraphics[width=0.6\linewidth]{\VAR{formation.paths['qr_o']+'/'+formation.item_id+'_qr.png'}}}% Store image in \box0
+%\needspace{\ht0}% Need at least the height of \box0
+\VAR{formation.name} & \VAR{formation.latitude|round(5)},\newline\VAR{formation.longitude|round(5)} \\
+%% endif
+%% endfor
+\end{supertabular}
+\end{center}
+%% endfor
+%% endif
+
 %% if not 'suppress_first_ascents_index' in book.format_options
 \section{Known First Ascents}
 %% for climb in book.climbs.values() | sort(attribute="name")

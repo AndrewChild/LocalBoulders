@@ -39,6 +39,8 @@ class LBItem:
 
         if self.gps:
             self.gps = self.gps.replace(' ', '')
+            self.latitude = float(self.gps.split(',')[0])
+            self.longitude = float(self.gps.split(',')[1])
             self.create_qr(self.paths['qr_o'], 'http://maps.google.com/maps?q=' + self.gps, f'{self.item_id}')
 
     def assign_to_dic(self, container, connection):
