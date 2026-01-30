@@ -43,12 +43,12 @@
 \subsection{Formations in \VAR{area.name}}
 \begin{center}
 \rowcolors{2}{MidnightBlue!10}{white}
-\begin{supertabular}{p{0.44\linewidth}p{0.44\linewidth}}
+\begin{supertabular}{p{0.38\linewidth}p{0.5\linewidth}}
 %% for formation in area.formations.values() | sort(attribute="name")
 %% if formation.gps
 %\setbox0=\hbox{\includegraphics[width=0.6\linewidth]{\VAR{formation.paths['qr_o']+'/'+formation.item_id+'_qr.png'}}}% Store image in \box0
 %\needspace{\ht0}% Need at least the height of \box0
-\VAR{formation.name} & \VAR{formation.latitude|round(5)},\newline\VAR{formation.longitude|round(5)} \\
+\VAR{formation.name} & \VAR{"%.5f"|format(formation.latitude)}, \VAR{"%.5f"|format(formation.longitude)} \\
 %% endif
 %% endfor
 \end{supertabular}
