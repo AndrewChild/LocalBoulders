@@ -183,7 +183,7 @@ def genHistogram(container):
     ax.set_xticks(ind, labels=labels)
     ax.yaxis.set_major_locator(MaxNLocator(integer=True))
 
-    plt.savefig(f'./maps/plots/{container.item_id}.png')
+    plt.savefig(f'{container.paths["histogram_o"]}{container.item_id}.png')
 
 
 def mod_file_extension(file_base_name, new_extension):
