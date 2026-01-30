@@ -166,6 +166,17 @@ def _crop_to_aspect(root, ItemMap, scale):
     return scale
 
 def update_svg(ItemMap):
+    newImage = ItemMap.path_o + ItemMap.out_file_name
+    newSVG = ItemMap.path_o + mod_file_extension(ItemMap.out_file_name, '.svg')
+    xmlFile = ItemMap.path_i + ItemMap.file_name
+
+    # check if file needs to be updated
+    if os.path.exists(newImage):
+        # if the new image is newer than the input file do not update it
+        if os.path.getmtime(newImage) > os.path.getmtime(xmlFile):
+            print(f'File {ItemMap.out_file_name} already up to date')
+            return
+
     namespaces = {
         'inkscape': "http://www.inkscape.org/namespaces/inkscape",
         'sodipodi': "http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd",
@@ -174,7 +185,6 @@ def update_svg(ItemMap):
     }
     n = r'{http://www.w3.org/2000/svg}'
 
-    xmlFile = ItemMap.path_i + ItemMap.file_name
     tree = ET.parse(xmlFile)
     root = tree.getroot()
 
@@ -258,10 +268,9 @@ def update_svg(ItemMap):
                         t = ET.SubElement(elm2, f'{n}text', textAttributes).text = str(label)
 
     # write to file
-    newImage = ItemMap.path_o + ItemMap.out_file_name
-    newSVG = ItemMap.path_o + mod_file_extension(ItemMap.out_file_name, '.svg')
     ET.indent(tree)
 
+    # check if the new image is actually different and only update if it is
     if os.path.exists(newImage):
         old_root = ET.parse(newSVG).getroot()
         if ET.tostring(root) == ET.tostring(old_root):
