@@ -14,6 +14,7 @@ class LBImage(LBItem):
     Base class for all image items (photos, topos, and maps. Inherits from item)
     """
     file_name: str
+    width: float = field(default=0.9, kw_only=True)
     size: str = field(default='h', kw_only=True)
     loc: str = field(default='b', kw_only=True)
 

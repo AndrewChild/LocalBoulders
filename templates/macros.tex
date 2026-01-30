@@ -56,11 +56,11 @@
 %% else
 \phantomsection\label{\VAR{im.ref}:\VAR{im.item_id}}
 %% if size in ['f', 'h']
-	\setbox0=\hbox{\begin{overpic}[width=0.8\linewidth]{\VAR{im.path_o+im.out_file_name}}\VAR{caption1(im.latex_description)}
+	\setbox0=\hbox{\begin{overpic}[width=\VAR{im.width}\linewidth]{\VAR{im.path_o+im.out_file_name}}\VAR{caption1(im.latex_description)}
 	\end{overpic}}
 	\needspace{\ht0}
 	\begin{center}
-	\begin{overpic}[width=0.9\linewidth]{\VAR{im.path_o+im.out_file_name}}\VAR{caption1(im.latex_description)}
+	\begin{overpic}[width=\VAR{im.width}\linewidth]{\VAR{im.path_o+im.out_file_name}}\VAR{caption1(im.latex_description)}
 	\end{overpic}
 	\end{center}
 %% elif size == 'p'
