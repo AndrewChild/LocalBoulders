@@ -20,10 +20,10 @@ This project is being devloped on a 64 bit Windows environment, its highly likel
 	- topo doesn't work when using linked images in svgs and the input and output files are different (svg loses track of linked image)
 	- switch from reading the data in from python files to a SQL based approach
     LaTeX:
-    - GPS index of boulders
 	- overhaul image captions
 	  - dynamically set put command based on page size and text amount
 	  - If text doesn't use full box width change box size
 	- indent paragraphs in text blocks if they are more than one paragraphs
+	- need to support asymmetric left right margins for print
     Other:
     - Consider alternatives/additons to LaTeX. HTML? React Native? Flutter?
