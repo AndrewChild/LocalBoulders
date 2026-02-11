@@ -164,14 +164,15 @@
 
 %# --- places a formatted qr code
 %% macro qrcode(path, link, text)
-\setbox0=\hbox{\includegraphics[width=0.45\linewidth]{\VAR{path}}}% Store image in \box0
+\setbox0=\hbox{\includegraphics[width=0.4\linewidth]{\VAR{path}}}% Store image in \box0
 \needspace{\ht0}% Need at least the height of \box0
-\begin{center}
-\includegraphics[width=0.45\linewidth]{\VAR{path}}
-\end{center}
-\begin{center}
-\underline{\textcolor{blue}{\href{\VAR{link}}{\VAR{text}}}}
-\end{center}
+\begin{minipage}[c]{0.5\linewidth}{
+\includegraphics[width=0.8\linewidth]{\VAR{path}}}
+\end{minipage}
+\begin{minipage}[c]{0.5\linewidth}{
+\textcolor{blue}{\parbox{0.8\linewidth}{\href{\VAR{link}}{\ul{\VAR{text}}}}}}
+\end{minipage}
+\\
 %% endmacro
 
 
