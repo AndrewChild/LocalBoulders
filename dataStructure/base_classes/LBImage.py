@@ -27,7 +27,8 @@ class LBImage(LBItem):
         self.parent.images.append(self)
         self.aspect_ratio = None
         page_aspects = {  # holds aspect ratios of various paper sizes. currently only A5 is supported
-            'A5': 148 / 210
+            'A5': 148 / 210,
+            'A5bld': 6.09/8.66,  # A5 with 0.13in bleed
         }
         if self.size == 'p':
             self.aspect_ratio = page_aspects[self.book.options['paper size']]

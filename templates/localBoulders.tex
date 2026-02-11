@@ -2,7 +2,7 @@
 \documentclass[10pt, twoside]{report}
  \renewcommand{\familydefault}{\sfdefault}
 \usepackage[utf8]{inputenc}
-\usepackage[a5paper,margin=0.5cm,bottom=0.5cm,top=1.5cm]{geometry}
+\usepackage[papersize={6.09in,8.66in},inner=0.63in,outer=0.38in,bottom=0.38in,top=0.83in]{geometry} %A5 with 0.13" bleed
 \usepackage{enumitem}
 \usepackage[explicit]{titlesec}
 \usepackage{graphicx}
@@ -30,10 +30,15 @@
 %-------------- Formatting -------------------
 \usepackage{fancyhdr}
 \pagestyle{fancy}
+\fancyhf{} % Clears all header and footer fields
 \setlength\parindent{0pt}
 \setlength{\tabcolsep}{3pt}
 \setcounter{secnumdepth}{0} % prevents section (sub area) numbering
 \graphicspath{ {../} }
+% these next three lines prevent page numbers from showing up on chapter header pages
+\makeatletter
+\let\ps@plain\ps@empty
+\makeatother
 
 \titleformat{\chapter}[display]
   {\normalfont\color{white} \begin {shaded*}\bfseries}
