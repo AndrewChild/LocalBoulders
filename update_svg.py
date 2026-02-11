@@ -171,11 +171,11 @@ def update_svg(ItemMap):
     xmlFile = ItemMap.path_i + ItemMap.file_name
 
     # check if file needs to be updated
-    if os.path.exists(newImage):
-        # if the new image is newer than the input file do not update it
-        if os.path.getmtime(newImage) > os.path.getmtime(xmlFile):
-            print(f'File {ItemMap.out_file_name} already up to date')
-            return
+    # if os.path.exists(newImage):
+    #     # if the new image is newer than the input file do not update it
+    #     if os.path.getmtime(newImage) > os.path.getmtime(xmlFile):
+    #         print(f'File {ItemMap.out_file_name} already up to date')
+    #         return
 
     namespaces = {
         'inkscape': "http://www.inkscape.org/namespaces/inkscape",
