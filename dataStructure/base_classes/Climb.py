@@ -3,7 +3,6 @@ Local Boulders Guidebook builder v0.6
 """
 import sys
 from dataStructure.base_classes.LBItem import LBItem
-from lbResources import get_grade_atts
 from dataclasses import dataclass
 
 
@@ -22,7 +21,6 @@ class Climb(LBItem):
 
     def __post_init__(self):
         super().__post_init__()
-        self.color, self.color_hex, self.gradeNum, self.grade_scale, self.grade_str = get_grade_atts(self.grade)
         self.hasTopo = False
 
 

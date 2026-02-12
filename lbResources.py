@@ -82,39 +82,25 @@ def _get_grade_number(grade: str):
         return _get_grade_number_Hueco(grade), grade_scale
 
 
-def get_grade_atts(grade):
+def get_grade_atts(grade, color_scales):
     """
     generate the grade attributes
     """
     grade_number, grade_scale = _get_grade_number(grade)
-    colors = ['black', 'green', 'RoyalBlue', 'DarkGoldenrod', 'DarkRed']
+
+    color = color_scales['colors'][-1]
+    for i, threshold in enumerate(color_scales[grade_scale]):
+        if grade_number <= threshold:
+            color = color_scales['colors'][i]
+            break
+
+    color_hex = webcolors.name_to_hex(color)
 
     if grade_scale == 'Hueco':
         grade_str = 'V'+str(grade)
-        if grade_number == -2:
-            color = colors[0]
-        elif grade_number <= 3.6:
-            color = colors[1]
-        elif grade_number <= 6.6:
-            color = colors[2]
-        elif grade_number <= 9.6:
-            color = colors[3]
-        else:
-            color = colors[4]
     else:
         grade_str = str(grade)
-        if grade_number == -1:
-            color = colors[0]
-        elif grade_number <= 10:
-            color = colors[1]
-        elif grade_number <= 12:
-            color = colors[2]
-        elif grade_number <= 14:
-            color = colors[3]
-        else:
-            color = colors[4]
 
-    color_hex = webcolors.name_to_hex(color)
     return color, color_hex, grade_number, grade_scale, grade_str
 
 
@@ -137,7 +123,7 @@ def genHistogram(container):
     boulder_colors = []
     boulder_labels = []
     for i in range(len(boulder_instances)):
-        boulder_colors.append(get_grade_atts(i-2)[1])
+        boulder_colors.append(get_grade_atts(i-2, container.book.color_scales)[1])
         if i == 0:
             boulder_labels.append('V?')
         elif i == 1:
@@ -150,10 +136,10 @@ def genHistogram(container):
     route_labels = []
     for i in range(len(route_instances)):
         if i == 0:
-            route_colors.append(get_grade_atts(f'5.?')[1])
+            route_colors.append(get_grade_atts(f'5.?', container.book.color_scales)[1])
             route_labels.append('5.?')
         else:
-            route_colors.append(get_grade_atts(f'5.{i-1}')[1])
+            route_colors.append(get_grade_atts(f'5.{i-1}', container.book.color_scales)[1])
             route_labels.append(f'5.{i-1}')
 
     # combine boulders and routes into one list
@@ -172,17 +158,28 @@ def genHistogram(container):
         colors.pop(bin_index)
         labels.pop(bin_index)
 
-    ind = np.arange(len(instances))    # the x locations for the groups
-    width = 0.8     # the width of the bars: can also be len(x) sequence
-
     fig, ax = plt.subplots()
 
-    ax.bar(ind, instances, width, color=colors)
+    # ind = np.arange(len(instances))    # the x locations for the groups
+    # width = 0.8     # the width of the bars: can also be len(x) sequence
+    # ax.bar(ind, instances, width, color=colors)
+    #
+    # ax.axhline(0, color='grey', linewidth=0.8)
+    # ax.set_xticks(ind, labels=labels)
+    # ax.yaxis.set_major_locator(MaxNLocator(integer=True))
+    #
+    # if 'wide_histogram' in container.format_options:
+    #     fig.set_size_inches(16,6)
 
-    ax.axhline(0, color='grey', linewidth=0.8)
-    ax.set_xticks(ind, labels=labels)
-    ax.yaxis.set_major_locator(MaxNLocator(integer=True))
+    height = 0.75*max(min(len(labels)*0.5+1, 12), 6)  # minimum aspect 8x6 max is 8x12
 
+    ax.barh(labels, instances, color=colors)
+    ax.invert_yaxis()  # Invert the Y-axis
+    # Force integer ticks on the x-axis
+    ax.xaxis.set_major_locator(MaxNLocator(integer=True))
+    fig.set_size_inches(6, height)
+
+    plt.tight_layout()
     plt.savefig(f'{container.paths["histogram_o"]}{container.item_id}.png')
 
 

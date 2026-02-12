@@ -3,6 +3,7 @@ Local Boulders Guidebook builder v0.6
 """
 import sys
 from dataStructure.base_classes.Climb import Climb
+from lbResources import get_grade_atts
 from dataclasses import dataclass
 from typing import ClassVar
 
@@ -27,6 +28,7 @@ class Variation(Climb):
         self.subarea.assign_to_dic(self.__class_id, self)
         self.boulder.assign_to_dic(self.__class_id, self)
         self.route.assign_to_dic(self.__class_id, self)
+        self.color, self.color_hex, self.gradeNum, self.grade_scale, self.grade_str = get_grade_atts(self.grade, self.book.color_scales)
 
     def getRtNum(self):
         """returns the guidebook route number of the variation"""

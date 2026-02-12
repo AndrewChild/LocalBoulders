@@ -62,6 +62,11 @@ class Book(LBItem):
         self.date = datetime.today().strftime('%Y-%m-%d')
         self.area_colors = ['BrickRed', 'RoyalPurple', 'BurntOrange', 'Aquamarine', 'RubineRed', 'PineGreen', 'Bittersweet']
         self.area_colors_hex = ['#CB4154', '#7851A9', '#CC5500', '#00B5BD', '#E0115F', '#01796F', '#C04F17']
+        self.color_scales = {
+            'colors': ['black', 'green', 'RoyalBlue', 'DarkGoldenrod', 'DarkRed'],
+            'Hueco': [-2, 3.6, 6.6, 9.6],
+            'YDS': [-1, 10, 12, 14],
+        }
 
     def gen(self):
         gen_book_LaTeX(self)
