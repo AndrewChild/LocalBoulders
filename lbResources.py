@@ -171,13 +171,13 @@ def genHistogram(container):
     # if 'wide_histogram' in container.format_options:
     #     fig.set_size_inches(16,6)
 
-    height = 0.75*max(min(len(labels)*0.5+1, 12), 6)  # minimum aspect 8x6 max is 8x12
+    height = 0.5*max(min(len(labels)*0.5+1, 12), 6)  # minimum aspect 8x6 max is 8x12
 
     ax.barh(labels, instances, color=colors)
     ax.invert_yaxis()  # Invert the Y-axis
     # Force integer ticks on the x-axis
     ax.xaxis.set_major_locator(MaxNLocator(integer=True))
-    fig.set_size_inches(6, height)
+    fig.set_size_inches(4, height)
 
     plt.tight_layout()
     plt.savefig(f'{container.paths["histogram_o"]}{container.item_id}.png')
