@@ -23,7 +23,6 @@ This project is being devloped on a 64 bit Windows environment, its highly likel
 	- overhaul image captions
 	  - dynamically set put command based on page size and text amount
 	  - If text doesn't use full box width change box size
-	- indent paragraphs in text blocks if they are more than one paragraphs
-	- need to support asymmetric left right margins for print
+	  - would be nice to be able to dynamically scale images to the bottom of a page see discussion here (https://tex.stackexchange.com/questions/502129/fill-remaining-page-with-image)
     Other:
     - Consider alternatives/additons to LaTeX. HTML? React Native? Flutter?
