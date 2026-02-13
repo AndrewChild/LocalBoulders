@@ -60,7 +60,12 @@
 	\end{overpic}}
 	\needspace{\ht0}
 	\begin{center}
-	\begin{overpic}[width=\VAR{im.width}\linewidth]{\VAR{im.path_o+im.out_file_name}}\VAR{caption1(im.latex_description, im.width)}
+%% if 'fill_to_bottom' in im.format_options
+	% image dimensions as large as possible
+	\begin{overpic}[height=\measurepage,width=\linewidth,keepaspectratio]{\VAR{im.path_o+im.out_file_name}}\VAR{caption1(im.latex_description, 0.85)}
+%% else
+	\begin{overpic}[width=\VAR{im.width}\linewidth]{\VAR{im.path_o+im.out_file_name}}\VAR{caption1(im.latex_description, 0.85)}
+%% endif
 	\end{overpic}
 	\end{center}
 %% elif size == 'p'
