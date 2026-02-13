@@ -128,9 +128,13 @@ def _postprocess_LaTeX(book):
                     lines_new.pop()
                 elif (r'\null\newpage' in lines[i]) and (r'\begin{multicols}' in lines[i-1]):
                     # make multicols begin after new page to prevent blank pages from being generated
-                    lines_new.pop()
-                    lines_new.append(lines[i])
-                    lines_new.append(lines[i-1])
+                    if (r'\includepdf' in lines[i-2]):
+                        # skip newpage command after page insert command
+                        continue
+                    else:
+                        lines_new.pop()
+                        lines_new.append(lines[i])
+                        lines_new.append(lines[i-1])
                 else:
                     lines_new.append(lines[i])
 
