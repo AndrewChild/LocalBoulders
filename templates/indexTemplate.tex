@@ -71,12 +71,23 @@
 \section{Photo Credits}
 \begin{center}
 \rowcolors{2}{MidnightBlue!10}{white}
-\begin{supertabular}{p{0.76\linewidth}p{0.08\linewidth}}
+\begin{supertabular}{p{0.52\linewidth}p{0.40\linewidth}}
+%# This is extremely jank
+%% set ns = namespace(last_credit = '')
 %% for photo in book.all_photos | sort(attribute="credit")
 %% if photo.credit
-\VAR{photo.credit} & \pageref{\VAR{photo.ref}:\VAR{photo.item_id}} \\
+%% if photo.credit != ns.last_credit
+%% if ns.last_credit != ''
+\\
+%% endif
+\VAR{photo.credit} & \pageref{\VAR{photo.ref}:\VAR{photo.item_id}}%
+%% else
+, \pageref{\VAR{photo.ref}:\VAR{photo.item_id}}%
+%% endif
+%% set ns.last_credit = photo.credit
 %% endif
 %% endfor
+\\
 \end{supertabular}
 \end{center}
 %% endif
