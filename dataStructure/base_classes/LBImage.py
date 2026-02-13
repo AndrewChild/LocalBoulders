@@ -59,7 +59,15 @@ class LBImage(LBItem):
             im1.save(self.path_o + self.out_file_name, 'PDF', resolution=100.0, save_all=True, append_images=[im2])
         else:
             im.save(self.path_o + self.out_file_name, 'PDF', resolution=100.0, save_all=True)
-
+        im.close()
+            
+    def get_aspect_ratio(self):
+        if self.size in ['p', 'pr', 's']:
+            return self.aspect_ratio
+        else:
+            with Image.open(self.path_o + self.out_file_name).convert('RGB') as im:
+                w, h = im.size
+            return w / h
 
 if __name__ == '__main__':
     sys.exit()
