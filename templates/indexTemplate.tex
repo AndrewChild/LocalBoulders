@@ -92,6 +92,21 @@
 \end{center}
 %% endif
 %% endif
+
+%% if not ('special_thanks' in book.format_options)
+%% if book.special_thanks
+\needspace{1.5cm}
+\section{Special Thanks}
+\begin{center}
+\rowcolors{2}{MidnightBlue!10}{white}
+\begin{supertabular}{p{0.92\linewidth}}
+%% for thank in book.special_thanks
+\VAR{thank}\\
+%% endfor
+\end{supertabular}
+\end{center}
+%% endif
+%% endif
 \end{flushleft}
 \onecolumn
 \clearpage

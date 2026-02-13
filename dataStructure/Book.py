@@ -19,6 +19,7 @@ class Book(LBItem):
     collaborators: List[str]
     file_name: str = 'guidebook'
     options: Dict[str, Any] = field(default_factory=dict)
+    special_thanks: List[str] = field(default_factory=list, kw_only=True)
 
     __class_id: ClassVar[str] = 'books'
     ref: ClassVar[str] = 'bk'
