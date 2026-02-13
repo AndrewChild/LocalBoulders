@@ -127,7 +127,7 @@ def _postprocess_LaTeX(book):
                 if (r'\end{multicols}' in lines[i]) and (r'\begin{multicols}' in lines[i-1]):
                     # if multi cols is being started and immediately ended remove both lines
                     lines_new.pop()
-                elif (r'\null\newpage' in lines[i]) and (r'\begin{multicols}' in lines[i-1]):
+                elif (r'\newpage' in lines[i]) and (r'\begin{multicols}' in lines[i-1]):
                     # make multicols begin after new page to prevent blank pages from being generated
                     if (r'\includepdf' in lines[i-2]):
                         # skip newpage command after page insert command
