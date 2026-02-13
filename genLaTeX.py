@@ -120,7 +120,8 @@ def _postprocess_LaTeX(book):
         with open(tex_inp, 'r') as f:
             # Read all non-empty lines into a list
             lines = [line for line in f if line.strip()]
-            # check for special cases
+
+            # check for special cases if none add line to list of new lines
             lines_new = [lines[0]]
             for i in range(1,len(lines)):
                 if (r'\end{multicols}' in lines[i]) and (r'\begin{multicols}' in lines[i-1]):
