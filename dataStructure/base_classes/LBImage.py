@@ -32,8 +32,10 @@ class LBImage(LBItem):
         }
         if self.size == 'p':
             self.aspect_ratio = page_aspects[self.book.options['paper size']]
-        elif self.size in ['s', 'pr']:
+        elif self.size == 'pr':
             self.aspect_ratio = 1/page_aspects[self.book.options['paper size']]
+        elif self.size == 's':
+            self.aspect_ratio = page_aspects[self.book.options['paper size']]*2
 
     def save_insert(self):
         im = Image.open(self.path_o + self.out_file_name).convert('RGB')
@@ -42,15 +44,16 @@ class LBImage(LBItem):
         aspect_ratio_i = w_i / h_i
         if aspect_ratio_i < self.aspect_ratio:
             h = w_i / self.aspect_ratio
+            w = w_i
             h_adj = (h_i - h) / 2
             im = im.crop((0, 0 + h_adj, w_i, h_i - h_adj))
         else:
+            h = h_i
             w = h_i * self.aspect_ratio
             w_adj = (w_i - w) / 2
             im = im.crop((0 + w_adj, 0, w_i - w_adj, h_i))
 
         if self.size == 's':
-            w, h = im.size
             im1 = im.crop((0, 0, w / 2, h))
             im2 = im.crop((w / 2, 0, w, h))
             im1.save(self.path_o + self.out_file_name, 'PDF', resolution=100.0, save_all=True, append_images=[im2])
