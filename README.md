@@ -1,5 +1,5 @@
 # LocalBoulders
- Local Boulders is a work in progress framework for building bouldering guidebooks. The framework provides a hierarchical data structure for route information in a format which can easily be passed to formats such as tex or html using the JINJA2 templating engine. Local Boulders also performs several useful automatic function such as numbering and color coding climbs and formatting annotated topos and maps.
+ Local Boulders is a work in progress framework for building bouldering guidebooks. The framework provides a hierarchical data structure for route information in a format which can easily be passed to formats such as tex or html using the JINJA2 templating engine. LocalBoulders also performs several useful automatic functions such as numbering and color coding climbs and formatting annotated topos and maps.
  
 # Documentation
 [Work in Progress Documentation](https://docs.google.com/document/d/1SdaC6Ra2RaYkczrwDnqLYQRvsJmOF2mg-aY8-hYBMIY/edit#heading=h.qtw326n5e7xy)
@@ -23,6 +23,5 @@ This project is being devloped on a 64 bit Windows environment, its highly likel
 	- overhaul image captions
 	  - dynamically set put command based on page size and text amount
 	  - If text doesn't use full box width change box size
-	  - would be nice to be able to dynamically scale images to the bottom of a page see discussion here (https://tex.stackexchange.com/questions/502129/fill-remaining-page-with-image)
     Other:
     - Consider alternatives/additons to LaTeX. HTML? React Native? Flutter?
