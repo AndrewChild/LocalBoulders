@@ -4,6 +4,8 @@ Local Boulders Guidebook builder v0.6
 import subprocess
 import jinja2
 import os
+from pypdf import PdfReader, PdfWriter
+from pypdf.generic import RectangleObject
 from pathlib import Path
 from dataStructure.base_classes.LBItem import LBItem
 
@@ -168,6 +170,36 @@ def _generate_PDF(book):
         process.wait()
         os.remove('guideBook.pdf')
         os.rename('guideBook-compressed.pdf', f'{book.file_name}.pdf')
+
+    # this bit uses pypdf to apply a bleed box to the pdf (important for printing)
+    if book.options['bleed_box']:
+        print('applying bleed box')
+        margin = book.options['bleed_box']
+        reader = PdfReader(f'{book.file_name}.pdf')
+        writer = PdfWriter()
+
+        for page in reader.pages:
+            # Get current dimensions
+            mb = page.mediabox
+            # Create a new box with added margin
+            new_box = RectangleObject((
+                mb.left + margin,
+                mb.bottom + margin,
+                mb.right - margin,
+                mb.top - margin
+            ))
+
+            # Set new boxes
+            page.trimbox = new_box
+            page.bleedbox = mb
+            writer.add_page(page)
+
+        print(f'  - original box: {mb.left}, {mb.bottom}, {mb.right}, {mb.top},')
+        print(f'  - new box: {new_box.left}, {new_box.bottom}, {new_box.right}, {new_box.top},')
+
+        with open(f'{book.file_name}.pdf', "wb") as f:
+            writer.write(f)
+
 
 
 def gen_book_LaTeX(book):

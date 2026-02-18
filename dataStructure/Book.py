@@ -37,12 +37,14 @@ class Book(LBItem):
         'photos': './images/'
     }
     __option_defaults: ClassVar[List[str]] = {
-        'subarea_numbering': True,
         # if yes route numbering resets at zero for each sub area, if no it restarts for each area
-        'use_ghost_script': True,
+        'subarea_numbering': True,
         # if yes the pdf will be compressed using ghost script
-        'paper size': 'A5bld',
+        'use_ghost_script': True,
         # controls cropping of p (page) and s (spread) action photos A5bld is A5 with bleed region
+        'paper size': 'A5bld',
+        # bleed box margin to apply to pdf in PDF units
+        'bleed_box': 9.36
     }
 
     def __post_init__(self):
